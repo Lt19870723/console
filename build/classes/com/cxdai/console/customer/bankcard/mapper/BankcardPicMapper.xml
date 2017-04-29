@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.bankcard.mapper.BankcardPicMapper">
+
+<!-- 结果集 -->
+<resultMap type="com.cxdai.console.customer.bankcard.entity.BankcardPic" id="bankcardPicMap">
+	<result property="picType" 			column="pic_type" />
+	<result property="picUrl"			column="pic_url" />
+	<result property="bcId"				column="bc_id" />
+	<result property="userId"			column="user_id" />
+	<result property="addTime"			column="add_time" />
+	<result property="addIp"			column="add_ip" />
+</resultMap>
+
+<!-- 查询资料图片 -->
+<select id="getPicsByBcId" parameterType="Integer" resultMap="bankcardPicMap">
+select * from t_bankcard_pic where bc_id=#{bcId} and status = 0 
+</select>
+
+</mapper>

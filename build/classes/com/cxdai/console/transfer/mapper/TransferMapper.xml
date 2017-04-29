@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.transfer.mapper.TransferMapper">
+	   
+<resultMap id="transferVoResultMap" type="com.cxdai.console.transfer.vo.TransferVo">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="BORROW_ID" property="borrowId" jdbcType="INTEGER" />
+		<result column="BORROW_NAME" property="borrowName" jdbcType="VARCHAR" />
+		<result column="BORROW_CREDIT_RATING" property="borrowCreditRating" jdbcType="VARCHAR" />
+		<result column="BORROW_APR" property="borrowApr" jdbcType="DECIMAL" />
+		<result column="BORROW_STYLE" property="borrowStyle" jdbcType="TINYINT" />
+		<result column="BORROW_TIME_LIMIT" property="borrowTimeLimit" jdbcType="TINYINT" />
+		<result column="BORROW_ORDER" property="borrowOrder" jdbcType="TINYINT" />
+		<result column="TENDER_ID" property="tenderId" jdbcType="INTEGER" />
+		<result column="TENDER_CAPITAL" property="tenderCapital" jdbcType="DECIMAL" />
+		<result column="TRANSFER_NAME" property="transferName" jdbcType="VARCHAR" />
+		<result column="TRANSFER_CONTENT" property="transferContent" jdbcType="VARCHAR" />
+		<result column="TRANSFER_CREDIT_RATING" property="transferCreditRating" jdbcType="VARCHAR" />
+		<result column="CAPITAL" property="capital" jdbcType="DECIMAL" />
+		<result column="INTEREST" property="interest" jdbcType="DECIMAL" />
+		<result column="ACCOUNT" property="account" jdbcType="DECIMAL" />
+		<result column="COEF" property="coef" jdbcType="DECIMAL" />
+		<result column="ACCOUNT_REAL" property="accountReal" jdbcType="DECIMAL" />
+		<result column="MANAGE_FEE" property="manageFee" jdbcType="DECIMAL" />
+		<result column="INTEREST_MANAGE_FEE" property="interestManageFee" jdbcType="DECIMAL" />
+		<result column="INTEREST_DIFF" property="interestDiff" jdbcType="DECIMAL" />
+		<result column="GAIN_LOSS" property="gainLoss" jdbcType="DECIMAL" />
+		<result column="MOST_ACCOUNT" property="mostAccount" jdbcType="DECIMAL" />
+		<result column="LOWEST_ACCOUNT" property="lowestAccount" jdbcType="DECIMAL" />
+		<result column="VALID_TIME" property="validTime" jdbcType="TINYINT" />
+		<result column="BID_PASSWORD" property="bidPassword" jdbcType="VARCHAR" />
+		<result column="USER_ID" property="userId" jdbcType="INTEGER" />
+		<result column="IS_AUTOTRANSFER" property="isAutotransfer" jdbcType="TINYINT" />
+		<result column="TIMING_TIME" property="timingTime" jdbcType="TIMESTAMP" />
+		<result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+		<result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+		<result column="ADD_MAC" property="addMac" jdbcType="VARCHAR" />
+		<result column="ADD_SYSTEM" property="addSystem" jdbcType="TINYINT" />
+		<result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="SUCCESS_TIME" property="successTime" jdbcType="TIMESTAMP" />
+		<result column="TENDER_TIMES" property="tenderTimes" jdbcType="TINYINT" />
+		<result column="ACCOUNT_YES" property="accountYes" jdbcType="DECIMAL" />
+		<result column="CANCEL_USER" property="cancelUser" jdbcType="INTEGER" />
+		<result column="CANCEL_TIME" property="cancelTime" jdbcType="TIMESTAMP" />
+		<result column="CANCEL_IP" property="cancelIp" jdbcType="VARCHAR" />
+		<result column="CANCEL_MAC" property="cancelMac" jdbcType="VARCHAR" />
+		<result column="CANCEL_REMARK" property="cancelRemark" jdbcType="VARCHAR" />
+		<result column="CONTRACT_NO" property="contractNo" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="TINYINT" />
+		<result column="SENDMESSAGE" property="sendmessage" jdbcType="TINYINT" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="statustr" property="statustr" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="cancelUserStr" property="cancelUserStr" jdbcType="VARCHAR" />
+</resultMap>
+
+
+
+<resultMap id="subscribeVoResultMap" type="com.cxdai.console.transfer.vo.SubscribeVo">
+		<id column="subscribeUsername" property="subscribeUsername" jdbcType="VARCHAR" />
+		<result column="Account" property="account" jdbcType="DECIMAL" />
+		<result column="ADD_TIME" property="addTime" jdbcType="DECIMAL" />
+</resultMap>
+	    
+	   
+  <sql id="Base_Column_List">
+		ID, BORROW_ID, BORROW_NAME, BORROW_CREDIT_RATING, BORROW_APR,
+		BORROW_STYLE, BORROW_TIME_LIMIT,
+		BORROW_ORDER, TENDER_ID, TENDER_CAPITAL, TRANSFER_NAME, TRANSFER_CONTENT,
+		TRANSFER_CREDIT_RATING,
+		CAPITAL, INTEREST, ACCOUNT, COEF, ACCOUNT_REAL, MANAGE_FEE,
+		INTEREST_MANAGE_FEE,
+		INTEREST_DIFF, GAIN_LOSS, MOST_ACCOUNT, LOWEST_ACCOUNT, VALID_TIME, BID_PASSWORD,
+		USER_ID, IS_AUTOTRANSFER, TIMING_TIME, ADD_TIME, ADD_IP, ADD_MAC, PLATFORM,
+		END_TIME, SUCCESS_TIME,
+		TENDER_TIMES, ACCOUNT_YES, CANCEL_USER, CANCEL_TIME, CANCEL_IP, CANCEL_MAC,
+		CANCEL_REMARK,
+		CONTRACT_NO, STATUS, SENDMESSAGE, REMARK
+ </sql>
+	   
+	   
+	      
+	   <select id="queryPageListByCnd"   resultMap="transferVoResultMap"  parameterType="com.cxdai.console.transfer.vo.TransferCnd"   > 
+		  SELECT bt.*,    
+		     case    
+		      when   bta.`STATUS`= 1  THEN '待审核'   
+		      when   bta.`STATUS` = 2    THEN '初审核不通过'
+		      when   bta.`STATUS` = 3    THEN '初审核通过'
+		      when   bta.`STATUS` = 4    THEN '复审核不通过'
+		      when   bta.`STATUS` = 5    THEN '复审核通过'
+		    end as statustr,  m.username  
+		      from  rocky_b_transfer_approved   bta inner join rocky_b_transfer bt  on bta.TRANSFER_ID  = bt.id 
+		      inner join  rocky_member m  on bt.user_id=m.id
+		  <include refid="wheresql"/>
+		  order by   ADD_TIME  desc 
+	   </select>
+	   
+	  <select id="queryCountPageListByCnd"   resultType="java.lang.Integer"  parameterType="com.cxdai.console.transfer.vo.TransferCnd"   > 
+		  SELECT count(1) from  rocky_b_transfer_approved   bta inner join rocky_b_transfer bt
+		  on bta.TRANSFER_ID  = bt.id 
+		  <include refid="wheresql"/>
+	   </select>
+	   
+	    
+	   <sql id="wheresql">
+		      <where>
+				   <if test="transferCnd.name!=null and transferCnd.name!='' ">and bt.TRANSFER_NAME  like  concat('%',#{transferCnd.name},'%')</if>
+				   <if test="transferCnd.beginTime !=null and transferCnd.beginTime !='' ">and    bt.ADD_TIME  &gt;  DATE_FORMAT(#{transferCnd.beginTime},'%y-%m-%d %H:%i:%s')    </if>
+				    <if test="transferCnd.endTime !=null and transferCnd.endTime !='' ">and  bt.ADD_TIME  &lt;   DATE_FORMAT(DATE_ADD( #{transferCnd.endTime} , INTERVAL 1  DAY ) ,'%y-%m-%d %H:%i:%s')</if>
+				   <if test="transferCnd.status!=null and transferCnd.status!=''">and bta.STATUS =  #{transferCnd.status} </if>
+				   <if test="transferCnd.borrowStatus!=null and transferCnd.borrowStatus!=''">and bt.STATUS =  #{transferCnd.borrowStatus} </if>
+		     </where>
+	   </sql>
+	   
+	    <update id="updateStute"    parameterType="com.cxdai.console.transfer.vo.TransferVo"  >
+	        update  rocky_b_transfer  set `STATUS` =#{transfer.status} , TRANSFER_CREDIT_RATING=#{transfer.borrowCreditRating}   where ID=  #{transfer.id}
+	    </update>
+	    
+	    
+	     <select id="queryPageAllTransferListByCnd"   resultMap="transferVoResultMap"  parameterType="com.cxdai.console.transfer.vo.TransferListCnd"   > 
+		     SELECT t.*  , m.username    
+		      <choose>
+					  <when test="transferListCnd.transferType==6">
+					 	,   case when t.status =5  THEN '自动撤标'   when t.status =6  THEN '手动撤标'   END  AS statustr ,  case when t.status =5  THEN '系统'   when t.status =6  THEN  
+					 	 CASE  WHEN t.USER_ID=t.CANCEL_USER THEN
+							   (SELECT rm.username from rocky_member rm where rm.id=cancel_user)
+							   WHEN  t.CANCEL_USER =0  THEN  '系统' 
+							    ELSE
+							   (SELECT rs.NAME from rocky_staff rs  where rs.id=cancel_user)
+							  END
+					 	     END  AS  cancelUserStr 
+					  </when>
+					  <otherwise>
+					 
+					  </otherwise>
+				  </choose>
+		            from  rocky_b_transfer t  left join rocky_member m  on t.user_id=m.id 
+			  <include refid="transferlistwheresql"/>  
+			 
+			   <choose>
+					  <when test="transferListCnd.transferType==4">
+					  order by   SUCCESS_TIME  desc 
+					  </when>
+					  <when test="transferListCnd.transferType==6">
+					    order by   CANCEL_TIME  desc 
+					  </when>
+					  <otherwise>
+					   order by   ADD_TIME  desc 
+					  </otherwise>
+			  </choose>
+			   
+	      </select>
+	    
+	    
+	    
+	    <select id="queryCountPageAllTransferListByCnd"   resultType="java.lang.Integer"    parameterType="com.cxdai.console.transfer.vo.TransferListCnd"   > 
+		     SELECT  count(1)   from  rocky_b_transfer t  left join rocky_member m  on t.user_id=m.id 
+			  <include refid="transferlistwheresql"/>  
+	      </select>
+
+	    	      
+	   <sql id="transferlistwheresql">
+		       <where>
+				  <choose>
+					  <when test="transferListCnd.transferType==6">
+					 and ( t.STATUS=6 or t.status =5 )
+					  </when>
+					  <otherwise>
+					 and   t.STATUS=#{transferListCnd.transferType}
+					  </otherwise>
+				  </choose>
+				    <if test="transferListCnd.name!=null and transferListCnd.name!='' ">and t.TRANSFER_NAME  like  concat('%',#{transferListCnd.name},'%')</if>
+				    <if test="transferListCnd.transferUserName!=null and transferListCnd.transferUserName!='' ">and m.username  like  concat('%',#{transferListCnd.transferUserName},'%')</if>
+				    <if test="transferListCnd.type!=null and transferListCnd.type!='' ">and t.BORROW_TYPE = #{transferListCnd.type} </if>
+				    <if test="transferListCnd.beginTime !=null and transferListCnd.beginTime !='' ">and    t.ADD_TIME  &gt;  DATE_FORMAT(#{transferListCnd.beginTime},'%y-%m-%d %H:%i:%s')    </if>
+				    <if test="transferListCnd.endTime !=null and transferListCnd.endTime !='' ">and  t.ADD_TIME  &lt;   DATE_FORMAT(DATE_ADD( #{transferListCnd.endTime} , INTERVAL 1  DAY ) ,'%y-%m-%d %H:%i:%s')  </if>
+					<if test="transferListCnd.transferSuccessbeginTime !=null and transferListCnd.transferSuccessbeginTime !='' ">and    t.SUCCESS_TIME  &gt;  DATE_FORMAT(#{transferListCnd.transferSuccessbeginTime},'%y-%m-%d %H:%i:%s')    </if>
+					<if test="transferListCnd.transferSuccessendTime !=null and transferListCnd.transferSuccessendTime !='' ">and  t.SUCCESS_TIME  &lt;   DATE_FORMAT(DATE_ADD(#{transferListCnd.transferSuccessendTime} , INTERVAL 1  DAY ) ,'%y-%m-%d %H:%i:%s') </if>
+					<if test="transferListCnd.transferCancelbeginTime !=null and transferListCnd.transferCancelbeginTime !='' ">and    t.CANCEL_TIME  &gt;  DATE_FORMAT(#{transferListCnd.transferCancelbeginTime},'%y-%m-%d %H:%i:%s')    </if>
+					<if test="transferListCnd.transferCancelendTime !=null and transferListCnd.transferCancelendTime !='' ">and  t.CANCEL_TIME  &lt;    DATE_FORMAT(DATE_ADD(#{transferListCnd.transferCancelendTime} , INTERVAL 1  DAY )  ,'%y-%m-%d %H:%i:%s')   </if>
+			  </where>
+	   </sql> 
+	   
+	   
+	   <select id="updateStuteForCancel"  	statementType="CALLABLE"    parameterType="com.cxdai.console.transfer.vo.TransferVo"   resultType="java.lang.String" >
+	      <![CDATA[   { call transferCancel(#{bTransfer.id},#{bTransfer.cancelUser},#{bTransfer.cancelIp},#{bTransfer.cancelRemark},#{bTransfer.status},#{bTransfer.remark,mode=OUT,jdbcType=VARCHAR}) }   ]]>
+	    </select>
+	   
+	   <select id="queryPageTransferCheckListByCnd"   resultMap="transferVoResultMap"  parameterType="com.cxdai.console.transfer.vo.TransferListCnd" >
+	    SELECT bt.*,   m.username  
+		      from    rocky_b_transfer bt   
+		      inner join  rocky_member m  on bt.user_id=m.id
+		  <include refid="wheresql"/>
+		  order by   ADD_TIME  desc 
+	   </select>
+	   
+	   
+	   <select id="queryCountPageTransferCheckListByCnd"   resultType="java.lang.Integer"    parameterType="com.cxdai.console.transfer.vo.TransferListCnd"  >
+	    SELECT  count(1)  
+		      from    rocky_b_transfer bt   
+		      inner join  rocky_member m  on bt.user_id=m.id
+		  <include refid="wheresql"/>
+	   </select>
+	   
+	   <select id="selectByIdForUpdate" resultMap="transferVoResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rocky_b_transfer
+		where ID = #{id,jdbcType=INTEGER}
+	  	for update
+	  </select>
+	   
+	   <select id="querySubscribeTotalByTransferId" parameterType="java.lang.Integer" resultType="java.math.BigDecimal">
+		SELECT SUM(ACCOUNT) FROM rocky_b_subscribe WHERE TRANSFER_ID = #{transferId}
+		</select>
+		
+    <select id="saveApproveTransferRecheck" statementType="CALLABLE" parameterType="java.util.Map">  
+		<![CDATA[  
+		{call transfer_recheck(#{transferId,mode=IN,jdbcType=INTEGER}, #{addIp,mode=IN,jdbcType=VARCHAR}, #{checkUserId,mode=IN,jdbcType=INTEGER}, #{checkRemark,mode=IN,jdbcType=VARCHAR}, #{platForm,mode=IN,jdbcType=VARCHAR}, #{msg,mode=OUT,jdbcType=VARCHAR})}
+		]]>
+	</select>
+	   <select id="queryCancelTransfers" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+ 		select id   from  
+			 rocky_b_transfer  
+ 		where  BORROW_ID = #{borrowId} and STATUS in (1,2,3)
+	</select>
+	
+	<!-- 还款引发债权转让撤销-->
+	<select id="transferCancelByRepay"  	statementType="CALLABLE"   parameterType="java.util.Map"  resultType="java.lang.String" >
+      <![CDATA[   { call transferCancel(#{id},#{cancelUser},#{cancelIP},#{cancelRemark},#{transferStatus},#{msg,mode=OUT,jdbcType=VARCHAR}) }   ]]>
+    </select>
+    
+    
+    <select id="querySubscribeMemberListByTransferId"  parameterType="java.lang.Integer"   resultMap="subscribeVoResultMap"  >
+         SELECT  rm.USERNAME subscribeUsername ,rbs.ACCOUNT,ADD_TIME    FROM    rocky_b_subscribe rbs 
+		  LEFT JOIN rocky_member rm ON rbs.USER_ID =rm.ID 
+		  WHERE rbs.STATUS =3   AND rbs.TRANSFER_ID = #{transferId}
+    </select>
+	     
+</mapper>

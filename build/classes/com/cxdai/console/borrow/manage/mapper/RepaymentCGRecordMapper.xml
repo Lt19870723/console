@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.borrow.manage.mapper.RepaymentCGRecordMapper">
+	
+	<!-- 待还结果集 -->
+	<resultMap type="com.cxdai.console.borrow.manage.vo.BRepaymentRecordVo" id="bRepaymentRecordVoResultMap">
+	<id property="id" column="id" />
+	<result property="status" 					column="STATUS" />
+	<result property="webstatus" 				column="WEBSTATUS" />
+	<result property="order" 					column="ORDER" />
+	<result property="borrowId" 				column="BORROW_ID" />
+	<result property="repaymentTime"	    	column="REPAYMENT_TIME" />
+	<result property="repaymentYestime"  		column="REPAYMENT_YESTIME" />
+	<result property="repaymentAccount"			column="REPAYMENT_ACCOUNT"/>
+	<result property="repaymentYesaccount" 		column="REPAYMENT_YESACCOUNT"/>
+	<result property="lateDays" 				column="LATE_DAYS" />
+	<result property="lateInterest" 			column="LATE_INTEREST" />
+	<result property="interest" 				column="INTEREST" />
+	<result property="capital" 					column="CAPITAL" />
+	<result property="addtime" 					column="ADDTIME" />
+	<result property="addip" 					column="ADDIP" />
+	<result property="userId" 					column="USER_ID" />
+	<result property="advancetime" 				column="ADVANCETIME" />
+	<result property="advanceYesAmount" 		column="ADVANCE_YESACCOUNT" />
+	<result property="isRepairInterest" 		column="IS_REPAIR_INTEREST" />
+	<result property="repairInterestTime" 		column="REPAIR_INTEREST_TIME" />
+
+	<result property="borrowId" 				column="borrowId" />
+	<result property="name" 					column="name" />
+	<result property="style" 					column="style" />
+	<result property="borrowtype" 				column="borrowtype" />
+	<result property="timeLimit" 				column="timeLimit" />
+	<result property="apr" 						column="apr" />
+	<result property="username" 				column="username" />
+	<result property="contractNo" 				column="contractNo" />
+	<result property="dealUserName" 			column="dealUserName" />
+	<result property="readRepaymentTime" 		column="readRepaymentTime" />
+	<result property="eSuccess" 		        column="E_SUCCOUNT" />
+	<result property="eSucSun" 		            column="E_SUCSUM" />
+	<result property="eFailCount" 		        column="E_FAILCOUNT" />
+	<result property="eFailSum" 		        column="E_FAILSUM" />
+	<result property="isCustody" 		        column="IS_CUSTODY" />
+</resultMap>
+
+	<!--基本列 -->
+	<sql id="bRepaymentRecordBaseColumn">
+		r.ID,
+		r.STATUS,
+		r.WEBSTATUS,
+		r.ORDER,
+		r.BORROW_ID,
+		r.REPAYMENT_TIME,
+		r.REPAYMENT_YESTIME,
+		r.REPAYMENT_ACCOUNT,
+		r.REPAYMENT_YESACCOUNT,
+		r.LATE_DAYS,
+		r.LATE_INTEREST,
+		r.INTEREST,
+		r.CAPITAL,
+		r.ADDTIME,
+		r.ADDIP,
+		r.USER_ID,
+		r.ADVANCETIME,
+		r.ADVANCE_YESACCOUNT,
+		r.IS_REPAIR_INTEREST,
+		r.REPAIR_INTEREST_TIME,
+		r.E_SUCCOUNT,
+		r.E_SUCSUM,
+		r.E_FAILCOUNT,
+		r.E_FAILSUM,
+		r.IS_CUSTODY
+	</sql>
+
+	<!-- 查询还款中的借款标数量-->
+	<select id="selectRepayingBorrowCount"  parameterType="com.cxdai.console.borrow.manage.vo.BorrowCnd" resultType="java.lang.Integer" >
+		select count(r.id)
+		from rocky_b_repaymentrecord r,rocky_borrow b,rocky_member m
+		where r.BORROW_ID = b.ID AND m.ID = b.USER_ID
+		and r.`STATUS` IN(0,5)
+		<include refid="where_manager"/>
+		<if test="repaymentTimeBeginStr != null and repaymentTimeBeginStr != ''">
+			and r.REPAYMENT_TIME <![CDATA[ >= ]]> #{repaymentTimeBeginStr}
+		</if>
+		<if test="repaymentTimeEndStr != null and repaymentTimeEndStr != ''">
+			and r.REPAYMENT_TIME <![CDATA[ <= ]]> #{repaymentTimeEndStr}
+		</if>
+		<if test="isOfficial != null and isOfficial == 1">
+			and b.BORROWTYPE in(1,2,5)
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus !='' and repaymentStatus == 1">
+			and r.WEBSTATUS=0
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus !='' and repaymentStatus == 2">
+			and r.WEBSTATUS=1
+		</if>
+		<if test="isCustody!=null and isCustody!='' and isCustody==0">
+			and (b.is_custody=0 or b.is_custody is null)
+		</if>
+		<if test="isCustody!=null and isCustody!='' and isCustody==1">
+			and b.is_custody=1
+		</if>
+	</select>
+
+
+	<!--还款查询条件  -->
+	<sql id="where_manager">
+		<if test="name != null and name != ''">
+			and b.name = trim(#{name})
+		</if>
+		<if test="userName != null and userName != ''">
+			and m.username = trim(#{userName})
+		</if>
+		<if test="contractNo != null and contractNo != ''">
+			and b.CONTRACT_NO = trim(#{contractNo})
+		</if>
+		<if test="borrowtype != null and borrowtype != ''">
+			and b.BORROWTYPE = #{borrowtype}
+		</if>
+		<if test="isCustody!=null and isCustody!='' and isCustody==0">
+			and (r.is_custody=0 or r.is_custody is null)
+		</if>
+		<if test="isCustody!=null and isCustody!='' and isCustody==1">
+			and r.is_custody=1
+		</if>
+	</sql>
+
+
+	<select id="sumWaitRepayMoney" parameterType="com.cxdai.console.borrow.manage.vo.BorrowCnd"  resultType="java.math.BigDecimal">
+		select
+		IFNULL(SUM(r.REPAYMENT_ACCOUNT),0)
+		from rocky_b_repaymentrecord r,rocky_borrow b,rocky_member m
+		where r.BORROW_ID = b.ID AND m.ID = b.USER_ID
+		and 1=1
+		<include refid="where_manager"/>
+		<if test="status == null || status == ''">
+			and r.`STATUS` = 0
+		</if>
+		<if test="status != null and status != ''">
+			and r.`STATUS`= #{status}
+		</if>
+		<if test="repaymentTimeBeginStr != null and repaymentTimeBeginStr != ''">
+			and r.REPAYMENT_TIME <![CDATA[ >= ]]> #{repaymentTimeBeginStr}
+		</if>
+		<if test="repaymentTimeEndStr != null and repaymentTimeEndStr != ''">
+			and r.REPAYMENT_TIME <![CDATA[ <= ]]> #{repaymentTimeEndStr}
+		</if>
+		<if test="isOfficial != null and isOfficial == 1">
+			and b.BORROWTYPE in(1,2,5)
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus !='' and repaymentStatus == 1">
+			and r.WEBSTATUS=0
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus !='' and repaymentStatus == 2">
+			and r.WEBSTATUS=1
+		</if>
+		order by r.REPAYMENT_TIME asc
+	</select>
+
+
+	<!-- 查询还款中的借款标集合 -->
+	<select id="selectRepayingBorrow" parameterType="com.cxdai.console.borrow.manage.vo.BorrowCnd"  resultMap="bRepaymentRecordVoResultMap">
+		select m.USERNAME,
+		b.id borrowId,
+		b.name name,
+		b.style style,
+		b.BORROWTYPE borrowtype,
+		b.TIME_LIMIT timeLimit,
+		b.APR apr,
+		b.CONTRACT_NO as contractNo,
+		<include refid="bRepaymentRecordBaseColumn" />
+		from rocky_b_repaymentrecord r,rocky_borrow b,rocky_member m
+		where r.BORROW_ID = b.ID AND m.ID = b.USER_ID
+		and 1=1
+		<include refid="where_manager"/>
+		<if test="status == null || status == ''">
+			and r.`STATUS` = 0
+		</if>
+		<if test="status != null and status != ''">
+			and r.`STATUS`= #{status}
+		</if>
+		<if test="repaymentTimeBeginStr != null and repaymentTimeBeginStr != ''">
+			and r.REPAYMENT_TIME <![CDATA[ >= ]]> #{repaymentTimeBeginStr}
+		</if>
+		<if test="repaymentTimeEndStr != null and repaymentTimeEndStr != ''">
+			and r.REPAYMENT_TIME <![CDATA[ <= ]]> #{repaymentTimeEndStr}
+		</if>
+		<if test="repaymentTimeEndStr != null and repaymentTimeEndStr != ''">
+			and r.REPAYMENT_TIME <![CDATA[ <= ]]> #{repaymentTimeEndStr}
+		</if>
+		<if test="isOfficial != null and isOfficial == 1">
+			and b.BORROWTYPE in(1,2,5)
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus !='' and repaymentStatus == 1">
+			and r.WEBSTATUS=0
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus !='' and repaymentStatus == 2">
+			and r.WEBSTATUS=1
+		</if>
+		<if test="isCustody!=null and isCustody!='' and isCustody==0">
+			and (b.is_custody=0 or b.is_custody is null)
+		</if>
+		<if test="isCustody!=null and isCustody!='' and isCustody==1">
+			and b.is_custody=1
+		</if>
+		order by r.REPAYMENT_TIME asc
+	</select>
+
+</mapper>  

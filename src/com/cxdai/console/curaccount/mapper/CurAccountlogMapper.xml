@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.curaccount.mapper.CurAccountlogMapper">
+	<resultMap id="BaseResultMap" type="com.cxdai.console.curaccount.vo.CurAccountLogVo">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="USER_ID" property="userId" jdbcType="INTEGER" />
+		<result column="MONEY" property="money" jdbcType="DECIMAL" />
+		<result column="TYPE" property="type" jdbcType="INTEGER" />
+		<result column="TOTAL" property="total" jdbcType="DECIMAL" />
+		<result column="USE_MONEY" property="useMoney" jdbcType="DECIMAL" />
+		<result column="NO_USE_MONEY" property="noUseMoney" jdbcType="DECIMAL" />
+		<result column="INTEREST_TOTAL" property="interestTotal" jdbcType="DECIMAL" />
+		<result column="INTEREST_YESTERDAY" property="interestYesterday" jdbcType="DECIMAL" />
+		<result column="ADDUSER" property="adduser" jdbcType="INTEGER" />
+		<result column="ADDTIME" property="addtime" jdbcType="TIMESTAMP" />
+		<result column="ADDIP" property="addip" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="TYPE_Z" property="type_z" jdbcType="VARCHAR" />
+		<result column="sumMoneyIn" property="sumMoneyIn" jdbcType="VARCHAR" />
+		<result column="sumMoneyOut" property="sumMoneyOut" jdbcType="VARCHAR" />
+
+	</resultMap>
+    <resultMap type="com.cxdai.console.curaccount.vo.CurInOutAccountVo" id="CurInOutMap">
+	      <result column="total" property="total" jdbcType="DECIMAL" />
+	      <result column="account" property="account" jdbcType="DECIMAL" />
+	      <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+	      <result column="username" property="username" jdbcType="VARCHAR" />
+	      <result column="flag" property="flag" jdbcType="INTEGER" />
+	      <result column="type" property="type" jdbcType="INTEGER" />
+    </resultMap>
+	<sql id="Base_Column_List">
+		ID, USER_ID, MONEY, TYPE, TOTAL, USE_MONEY, NO_USE_MONEY, INTEREST_TOTAL, INTEREST_YESTERDAY,
+		ADDUSER, ADDTIME, ADDIP, REMARK
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_cur_accountlog
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from t_cur_accountlog
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.cxdai.console.curaccount.entity.CurAccountlog">
+		insert into t_cur_accountlog (ID, USER_ID, MONEY,
+		TYPE, TOTAL, USE_MONEY,
+		NO_USE_MONEY, INTEREST_TOTAL, INTEREST_YESTERDAY,
+		ADDUSER, ADDTIME, ADDIP,
+		REMARK)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL},
+		#{type,jdbcType=INTEGER}, #{total,jdbcType=DECIMAL}, #{useMoney,jdbcType=DECIMAL},
+		#{noUseMoney,jdbcType=DECIMAL}, #{interestTotal,jdbcType=DECIMAL}, #{interestYesterday,jdbcType=DECIMAL},
+		#{adduser,jdbcType=INTEGER}, #{addtime,jdbcType=TIMESTAMP}, #{addip,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.cxdai.console.curaccount.entity.CurAccountlog">
+		insert into t_cur_accountlog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="userId != null">
+				USER_ID,
+			</if>
+			<if test="money != null">
+				MONEY,
+			</if>
+			<if test="type != null">
+				TYPE,
+			</if>
+			<if test="total != null">
+				TOTAL,
+			</if>
+			<if test="useMoney != null">
+				USE_MONEY,
+			</if>
+			<if test="noUseMoney != null">
+				NO_USE_MONEY,
+			</if>
+			<if test="interestTotal != null">
+				INTEREST_TOTAL,
+			</if>
+			<if test="interestYesterday != null">
+				INTEREST_YESTERDAY,
+			</if>
+			<if test="adduser != null">
+				ADDUSER,
+			</if>
+			<if test="addtime != null">
+				ADDTIME,
+			</if>
+			<if test="addip != null">
+				ADDIP,
+			</if>
+			<if test="remark != null">
+				REMARK,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="money != null">
+				#{money,jdbcType=DECIMAL},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="total != null">
+				#{total,jdbcType=DECIMAL},
+			</if>
+			<if test="useMoney != null">
+				#{useMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="noUseMoney != null">
+				#{noUseMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="interestTotal != null">
+				#{interestTotal,jdbcType=DECIMAL},
+			</if>
+			<if test="interestYesterday != null">
+				#{interestYesterday,jdbcType=DECIMAL},
+			</if>
+			<if test="adduser != null">
+				#{adduser,jdbcType=INTEGER},
+			</if>
+			<if test="addtime != null">
+				#{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="addip != null">
+				#{addip,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.curaccount.entity.CurAccountlog">
+		update t_cur_accountlog
+		<set>
+			<if test="userId != null">
+				USER_ID = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="money != null">
+				MONEY = #{money,jdbcType=DECIMAL},
+			</if>
+			<if test="type != null">
+				TYPE = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="total != null">
+				TOTAL = #{total,jdbcType=DECIMAL},
+			</if>
+			<if test="useMoney != null">
+				USE_MONEY = #{useMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="noUseMoney != null">
+				NO_USE_MONEY = #{noUseMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="interestTotal != null">
+				INTEREST_TOTAL = #{interestTotal,jdbcType=DECIMAL},
+			</if>
+			<if test="interestYesterday != null">
+				INTEREST_YESTERDAY = #{interestYesterday,jdbcType=DECIMAL},
+			</if>
+			<if test="adduser != null">
+				ADDUSER = #{adduser,jdbcType=INTEGER},
+			</if>
+			<if test="addtime != null">
+				ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="addip != null">
+				ADDIP = #{addip,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.cxdai.console.curaccount.entity.CurAccountlog">
+		update t_cur_accountlog
+		set USER_ID = #{userId,jdbcType=INTEGER},
+		MONEY = #{money,jdbcType=DECIMAL},
+		TYPE = #{type,jdbcType=INTEGER},
+		TOTAL = #{total,jdbcType=DECIMAL},
+		USE_MONEY = #{useMoney,jdbcType=DECIMAL},
+		NO_USE_MONEY = #{noUseMoney,jdbcType=DECIMAL},
+		INTEREST_TOTAL = #{interestTotal,jdbcType=DECIMAL},
+		INTEREST_YESTERDAY = #{interestYesterday,jdbcType=DECIMAL},
+		ADDUSER = #{adduser,jdbcType=INTEGER},
+		ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+		ADDIP = #{addip,jdbcType=VARCHAR},
+		REMARK = #{remark,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+
+
+	<!-- 1.1 活期宝转入转出 count (和1.2 条件保持一致) 
+	<select id="queryCurAccountLogCount" parameterType="com.cxdai.console.curaccount.vo.CurAccountLogCnd" resultType="java.lang.Integer">
+		select
+		count(1)
+		from t_cur_accountlog c INNER JOIN rocky_member m
+		on c.USER_ID = m.id
+		where 1=1
+		<if test="userName!=null and userName!=''  ">
+			and m.USERNAME like '%${userName}%'
+		</if>
+		<if test="saddtime !=null and saddtime !='' ">
+			and    c.addtime  &gt;  DATE_FORMAT(#{saddtime},'%y-%m-%d %H:%i:%s')    
+		</if>
+		<if test="eaddtime !=null and eaddtime !='' ">
+			and  c.addtime  &lt;   DATE_FORMAT(DATE_ADD( #{eaddtime} , INTERVAL 1  DAY ) ,'%y-%m-%d %H:%i:%s')  
+		</if>
+		<if test="type_zj!=null and type_zj!='' and type_zj=='1'.toString()  ">
+			and ( c.type = 101 or c.type = 102 or c.type =103 or c.type =104 or c.type = 105 or c.type = 106)
+		</if>
+		<if test="type_zj!=null and type_zj!='' and type_zj=='2'.toString()  ">
+			and ( c.type = 201 or c.type =202 or c.type =203 or c.type =204 or c.type =205 or c.type =206)
+		</if>
+		<if test="type!=null and type!='' ">
+			and c.type=#{type}
+		</if>
+		order by c.addtime desc ,c.id desc
+
+	</select>
+-->
+
+	<!-- 1.2 活期宝转入转出 list (和1.1条件保持一致) 
+	<select id="queryCurAccountLogList" parameterType="com.cxdai.console.curaccount.vo.CurAccountLogCnd" resultMap="BaseResultMap">
+		select
+		m.USERNAME as userName,
+		case
+		when c.type=101 then '未产生收益转可产生收益'
+		when c.type=102 then '可用余额转入'
+		when c.type=103 then '投标资金退回'
+		when c.type=104 then '购买债权资金退回'
+		when c.type=105 then '活期生息'
+		when c.type=106 then '购买定期宝退回'
+		when c.type=201 then '转出到可用余额'
+		when c.type=202 then '投标转出'
+		when c.type=203 then '开通直通车转出'
+		when c.type=204 then '购买债权转出'
+		when c.type=205 then '购买直通车转让转出'
+		when c.type=206 then '购买定期宝转出'
+		end
+		as type_z,
+		c.*
+		from t_cur_accountlog c INNER JOIN rocky_member m
+		on c.USER_ID = m.id
+		where 1=1
+		<if test="userName!=null and userName!=''  ">
+			and m.USERNAME like '%${userName}%'
+		</if>
+		<if test="saddtime !=null and saddtime !='' ">
+			and    c.addtime  &gt;  DATE_FORMAT(#{saddtime},'%y-%m-%d %H:%i:%s')    
+		</if>
+		<if test="eaddtime !=null and eaddtime !='' ">
+			and  c.addtime  &lt;   DATE_FORMAT(DATE_ADD( #{eaddtime} , INTERVAL 1  DAY ) ,'%y-%m-%d %H:%i:%s')  
+		</if>
+		<if test="type_zj!=null and type_zj!='' and type_zj=='1'.toString()  ">
+			and ( c.type = 101 or c.type = 102 or c.type =103 or c.type =104 or c.type = 105 or c.type = 106)
+		</if>
+		<if test="type_zj!=null and type_zj!='' and type_zj=='2'.toString()  ">
+			and ( c.type = 201 or c.type =202 or c.type =203 or c.type =204 or c.type =205 or c.type =206)
+		</if>
+		<if test="type!=null and type!='' ">
+			and c.type=#{type}
+		</if>
+		order by c.addtime desc ,c.id desc
+
+	</select>
+    -->
+	<!-- 转入，转出累计金额 (与1.2 条件一致 ) -->
+	<select id="queryCurAccountLogSum" parameterType="com.cxdai.console.curaccount.vo.CurAccountLogCnd" resultMap="BaseResultMap">
+		select
+		c.*
+		from t_cur_accountlog c INNER JOIN rocky_member m
+		on c.USER_ID = m.id
+		where 1=1
+		<if test="userName!=null and userName!=''  ">
+			and m.USERNAME like '%${userName}%'
+		</if>
+		<if test="saddtime !=null and saddtime !='' ">
+			and    c.addtime  &gt;  DATE_FORMAT(#{saddtime},'%y-%m-%d %H:%i:%s')    
+		</if>
+		<if test="eaddtime !=null and eaddtime !='' ">
+			and  c.addtime  &lt;   DATE_FORMAT(DATE_ADD( #{eaddtime} , INTERVAL 1  DAY ) ,'%y-%m-%d %H:%i:%s')  
+		</if>
+		<if test="type_zj!=null and type_zj!='' and type_zj=='1'.toString()  ">
+			and ( c.type = 101 or c.type = 102 or c.type =103 or c.type =104 or c.type = 105 or c.type = 106)
+		</if>
+		<if test="type_zj!=null and type_zj!='' and type_zj=='2'.toString()  ">
+			and ( c.type = 201 or c.type =202 or c.type =203 or c.type =204 or c.type =205 or c.type =206)
+		</if>
+		<if test="type!=null and type!='' ">
+			and c.type=#{type}
+		</if>
+		order by c.addtime desc ,c.id desc
+
+	</select>
+	 
+	<!-- 累计转入金额  -->
+	<select id="queryCurAccountLogSumForIn" resultType="java.math.BigDecimal">
+		SELECT IFNULL(SUM(ci.ACCOUNT),0) FROM t_cur_account ca, t_cur_in ci WHERE ca.`STATUS` = 0 AND ca.USER_ID = ci.USER_ID
+	</select>
+	
+	<!-- 累计转出金额 -->
+	<select id="queryCurAccountLogSumForOut" resultType="java.math.BigDecimal">
+		SELECT IFNULL(SUM(co.ACCOUNT),0) FROM t_cur_account ca, t_cur_out co WHERE ca.`STATUS` = 0 AND ca.USER_ID = co.USER_ID
+	</select>
+    
+
+	<!-- 统计 - 转入累计金额 -->
+	<select id="querySumMoneyIn" parameterType="com.cxdai.console.curaccount.vo.CurAccountLogCnd" resultType="java.math.BigDecimal">
+		
+		select IFNULL(sum(money),0) as sumMoneyIn
+		from t_cur_accountlog c
+		where 1=1
+		<if test= "eaddtime!=null and eaddtime!=''">  
+			 <![CDATA[  and  c.addtime < DATE_FORMAT(DATE_ADD(#{eaddtime},INTERVAL 1  DAY), '%Y-%m-%d %H:%i:%S')  ]]>
+		</if>
+		<![CDATA[ 
+		and ( c.type = 102 or c.type =103 or c.type =104 or c.type = 105 or c.type = 106)
+		 ]]>
+	</select>
+
+
+	<!-- 统计 - 转出累计金额 -->
+	<select id="querySumMoneyOut" parameterType="com.cxdai.console.curaccount.vo.CurAccountLogCnd" resultType="java.math.BigDecimal">
+		select IFNULL(sum(money),0) as sumMoneyOut
+		from t_cur_accountlog c
+		where 1=1
+		<if test= "eaddtime!=null and eaddtime!=''">  
+			 <![CDATA[  and  c.addtime < DATE_FORMAT(DATE_ADD(#{eaddtime},INTERVAL 1  DAY), '%Y-%m-%d %H:%i:%S')  ]]>
+		</if>
+		<![CDATA[ 
+		and ( c.type = 201 or c.type =202 or c.type =203 or c.type =204 or c.type =205 or c.type =206)
+		]]>
+	</select>
+	<!-- start yubin -->
+	<select id="queryCurAccountLogList" parameterType="com.cxdai.console.curaccount.vo.CurInOutAccountCnd" resultMap="CurInOutMap">
+	     
+			select * from ( 
+				SELECT ca.total,ci.account,m.username,ci.addtime,ci.TENDER_TYPE as type,1 flag FROM 
+				t_cur_account ca, t_cur_in ci,rocky_member m 
+				WHERE ca.`STATUS` = 0 AND ca.USER_ID = ci.USER_ID and ci.USER_ID=m.id
+				UNION all
+				SELECT ca.total,co.account,m.username,co.addtime ,co.type,2 flag
+				FROM t_cur_account ca, t_cur_out co,rocky_member m 
+				WHERE ca.`STATUS` = 0 AND ca.USER_ID = co.USER_ID and co.USER_ID=m.id
+				) a
+			<include refid="curAccountCnd"/>
+			order by a.addtime  desc
+	     
+	    
+    </select>
+    <select id="queryCurAccountLogCount" parameterType="com.cxdai.console.curaccount.vo.CurInOutAccountCnd" resultType="java.lang.Integer">
+	    
+		 select count(*) from ( 
+			SELECT ca.total,ci.ACCOUNT,m.USERNAME,ci.ADDTIME,ci.TENDER_TYPE as type,1 flag FROM 
+			t_cur_account ca, t_cur_in ci,rocky_member m 
+			WHERE ca.`STATUS` = 0 AND ca.USER_ID = ci.USER_ID and ci.USER_ID=m.id
+			UNION all
+			SELECT ca.total,co.ACCOUNT,m.USERNAME,co.ADDTIME ,co.type,2 flag
+			FROM t_cur_account ca, t_cur_out co,rocky_member m 
+			WHERE ca.`STATUS` = 0 AND ca.USER_ID = co.USER_ID and co.USER_ID=m.id
+			) a
+	     <include refid="curAccountCnd"/>
+    </select>
+    <!-- 合计转入金额  -->
+	<select id="queryCurAccountSumForIn" resultType="java.math.BigDecimal"  parameterType="com.cxdai.console.curaccount.vo.CurInOutAccountCnd">
+		
+         select IFNULL(SUM(a.ACCOUNT),0) from (
+			SELECT ci.ACCOUNT,m.USERNAME,ci.ADDTIME,ci.TENDER_TYPE as type,1 flag FROM 
+			t_cur_account ca, t_cur_in ci,rocky_member m 
+			WHERE ca.`STATUS` = 0 AND ca.USER_ID = ci.USER_ID and ci.USER_ID=m.id
+			) a
+			<include refid="curAccountCnd"/>
+	</select>
+	
+	<!-- 合计转出金额 -->
+	<select id="queryCurAccountSumForOut" resultType="java.math.BigDecimal"  parameterType="com.cxdai.console.curaccount.vo.CurInOutAccountCnd">
+		select IFNULL(SUM(a.ACCOUNT),0) from (
+           SELECT co.ACCOUNT,m.USERNAME,co.ADDTIME ,co.type,2 flag
+			FROM t_cur_account ca, t_cur_out co,rocky_member m 
+			WHERE ca.`STATUS` = 0 AND ca.USER_ID = co.USER_ID and co.USER_ID=m.id
+        )a
+        <include refid="curAccountCnd"/>
+	</select>
+	
+	<sql id="curAccountCnd">
+	  <where>
+	    <if test="userName!=null and userName!=''  ">
+			and a.USERNAME = '${userName}'
+		</if>
+		<if test="saddtime !=null and saddtime !='' ">
+			and  a.addtime  &gt;  DATE_FORMAT(#{saddtime},'%y-%m-%d %H:%i:%s')    
+		</if>
+		<if test="eaddtime !=null and eaddtime !='' ">
+			and  a.addtime  &lt;   DATE_FORMAT(DATE_ADD( #{eaddtime} , INTERVAL 1  DAY ) ,'%y-%m-%d %H:%i:%s')  
+		</if>
+		<if test="type_zj!=null and type_zj!='' ">
+			and  a.flag=#{type_zj}
+		</if>
+		<if test="type!=null and type!='' ">
+			and  a.type=#{type}
+		</if>
+		<if test="flag!=null and flag!=''  ">
+			and  a.flag=#{flag}
+		</if>
+	  </where>
+	</sql>
+    <!-- end yubin -->
+</mapper>

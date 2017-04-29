@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.borrow.approve.mapper.BorrowApprovedMapper" >
+  
+  <!-- 基本返回结果集 -->
+  <resultMap id="borrowApprovedResultMap" type="com.cxdai.console.borrow.approve.vo.BorrowApprovedVo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="BORROW_ID" 				property="borrowId" />
+    <result column="STATUS" 				property="status"  />
+    <result column="VERIFY_USER"			property="verifyUser" />
+    <result column="VERIFY_TIME" 			property="verifyTime"  />
+    <result column="VERIFY_REMARK" 			property="verifyRemark"  />
+    <result column="VERIFY_USER2" 			property="verifyUser2" />
+    <result column="VERIFY_TIME2" 			property="verifyTime2"  />
+    <result column="VERIFY_REMARK2" 		property="verifyRemark2"  />
+    <result column="VERIFY_USER3" 			property="verifyUser3"  />
+    <result column="VERIFY_TIME3" 			property="verifyTime3" />
+    <result column="VERIFY_REMARK3" 		property="verifyRemark3" />
+    <result column="VERIFY_USER4" 			property="verifyUser4"  />
+    <result column="VERIFY_TIME4" 			property="verifyTime4"  />
+    <result column="VERIFY_REMARK4"			property="verifyRemark4"  />
+  </resultMap>
+	
+  <!-- 借款标审核基本列 -->
+  <sql id="BorrowApproved_Base_Column" >
+    a.ID, 
+    a.BORROW_ID, 
+    a.STATUS, 
+    a.VERIFY_USER, 
+    a.VERIFY_TIME, 
+    a.VERIFY_REMARK, 
+    a.VERIFY_USER2, 
+    a.VERIFY_TIME2, 
+    a.VERIFY_REMARK2, 
+    a.VERIFY_USER3, 
+    a.VERIFY_TIME3, 
+    a.VERIFY_REMARK3, 
+    a.VERIFY_USER4, 
+    a.VERIFY_TIME4, 
+    a.VERIFY_REMARK4
+  </sql>
+
+  <!-- 根据借款标id找到审核记录并锁定 -->
+  <select id="selectByBorrowIdForUpdate" resultMap="borrowApprovedResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="BorrowApproved_Base_Column" />
+    from rocky_borrow_approved a
+    where a.borrow_id = #{borrowId}
+    FOR UPDATE
+  </select>
+</mapper>

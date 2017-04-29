@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.borrow.approve.mapper.BTransferMapper" >
+	<resultMap id="bTransferVoResultMap" type="com.cxdai.console.borrow.approve.vo.BTransferVo">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="BORROW_ID" property="borrowId" jdbcType="INTEGER" />
+		<result column="BORROW_NAME" property="borrowName" jdbcType="VARCHAR" />
+		<result column="BORROW_CREDIT_RATING" property="borrowCreditRating" jdbcType="VARCHAR" />
+		<result column="BORROW_APR" property="borrowApr" jdbcType="DECIMAL" />
+		<result column="BORROW_STYLE" property="borrowStyle" jdbcType="TINYINT" />
+		<result column="BORROW_TYPE" property="borrowType" jdbcType="TINYINT" />
+		<result column="BORROW_TIME_LIMIT" property="borrowTimeLimit" jdbcType="TINYINT" />
+		<result column="BORROW_ORDER" property="borrowOrder" jdbcType="TINYINT" />
+		<result column="TENDER_ID" property="tenderId" jdbcType="INTEGER" />
+		<result column="TENDER_CAPITAL" property="tenderCapital" jdbcType="DECIMAL" />
+		<result column="TRANSFER_NAME" property="transferName" jdbcType="VARCHAR" />
+		<result column="TRANSFER_CONTENT" property="transferContent" jdbcType="VARCHAR" />
+		<result column="TRANSFER_CREDIT_RATING" property="transferCreditRating" jdbcType="VARCHAR" />
+		<result column="CAPITAL" property="capital" jdbcType="DECIMAL" />
+		<result column="INTEREST" property="interest" jdbcType="DECIMAL" />
+		<result column="ACCOUNT" property="account" jdbcType="DECIMAL" />
+		<result column="COEF" property="coef" jdbcType="DECIMAL" />
+		<result column="ACCOUNT_REAL" property="accountReal" jdbcType="DECIMAL" />
+		<result column="MANAGE_FEE" property="manageFee" jdbcType="DECIMAL" />
+		<result column="INTEREST_MANAGE_FEE" property="interestManageFee" jdbcType="DECIMAL" />
+		<result column="INTEREST_DIFF" property="interestDiff" jdbcType="DECIMAL" />
+		<result column="GAIN_LOSS" property="gainLoss" jdbcType="DECIMAL" />
+		<result column="MOST_ACCOUNT" property="mostAccount" jdbcType="DECIMAL" />
+		<result column="LOWEST_ACCOUNT" property="lowestAccount" jdbcType="DECIMAL" />
+		<result column="VALID_TIME" property="validTime" jdbcType="TINYINT" />
+		<result column="BID_PASSWORD" property="bidPassword" jdbcType="VARCHAR" />
+		<result column="USER_ID" property="userId" jdbcType="INTEGER" />
+		<result column="IS_AUTOTRANSFER" property="isAutotransfer" jdbcType="TINYINT" />
+		<result column="TIMING_TIME" property="timingTime" jdbcType="TIMESTAMP" />
+		<result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+		<result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+		<result column="ADD_MAC" property="addMac" jdbcType="VARCHAR" />
+		<result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="SUCCESS_TIME" property="successTime" jdbcType="TIMESTAMP" />
+		<result column="TENDER_TIMES" property="tenderTimes" jdbcType="TINYINT" />
+		<result column="ACCOUNT_YES" property="accountYes" jdbcType="DECIMAL" />
+		<result column="CANCEL_USER" property="cancelUser" jdbcType="INTEGER" />
+		<result column="CANCEL_TIME" property="cancelTime" jdbcType="TIMESTAMP" />
+		<result column="CANCEL_IP" property="cancelIp" jdbcType="VARCHAR" />
+		<result column="CANCEL_MAC" property="cancelMac" jdbcType="VARCHAR" />
+		<result column="CANCEL_REMARK" property="cancelRemark" jdbcType="VARCHAR" />
+		<result column="CONTRACT_NO" property="contractNo" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="TINYINT" />
+		<result column="SENDMESSAGE" property="sendmessage" jdbcType="TINYINT" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="PLATFORM" property="platForm" jdbcType="TINYINT" />
+		<result column="TRANSFER_BEGIN_ORDER" property="transferBeginOrder" jdbcType="TINYINT" />
+		<result column="time_Limit" property="timeLimit" jdbcType="INTEGER" />
+		<result column="time_Limit_Real" property="timeLimitReal" jdbcType="TINYINT" />
+		<result column="REPAYMENT_TIME" property="repaymentTime" jdbcType="TIMESTAMP" />
+		<result column="subscribe_ACCOUNT" property="repaymentAccount" jdbcType="DECIMAL" />
+        <result column="REPAYMENT_CAPITAL" property="repaymentCapital" jdbcType="DECIMAL" />
+        <result column="userName" property="userName" jdbcType="VARCHAR" />
+        <result column="parentId" property="parentId" jdbcType="INTEGER" />
+        <result column="nextRepaymentDate" property="nextRepaymentDate" jdbcType="TIMESTAMP" />
+        <result column="ACCOUNT_SURPLUS" property="accountSurplus" jdbcType="DECIMAL" />
+        <result column="CUR_APR" property="currApr" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		ID, BORROW_ID, BORROW_NAME, BORROW_CREDIT_RATING, BORROW_APR,
+		BORROW_STYLE, BORROW_TIME_LIMIT,
+		BORROW_ORDER, TENDER_ID, TENDER_CAPITAL, TRANSFER_NAME, TRANSFER_CONTENT,
+		TRANSFER_CREDIT_RATING,
+		CAPITAL, INTEREST, ACCOUNT, COEF, ACCOUNT_REAL, MANAGE_FEE,
+		INTEREST_MANAGE_FEE,TIME_LIMIT,TIME_LIMIT_REAL,
+		INTEREST_DIFF, GAIN_LOSS, MOST_ACCOUNT, LOWEST_ACCOUNT, VALID_TIME, BID_PASSWORD,
+		USER_ID, IS_AUTOTRANSFER, TIMING_TIME, ADD_TIME, ADD_IP, ADD_MAC, PLATFORM,
+		END_TIME, SUCCESS_TIME,
+		TENDER_TIMES, ACCOUNT_YES, CANCEL_USER, CANCEL_TIME, CANCEL_IP, CANCEL_MAC,
+		CANCEL_REMARK,ACCOUNT_SURPLUS,
+		CONTRACT_NO, STATUS, SENDMESSAGE, REMARK
+	</sql>
+	
+	<select id="selectById" resultMap="bTransferVoResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rocky_b_transfer
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="selectByIdForUpdate" resultMap="bTransferVoResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rocky_b_transfer
+		where ID = #{id,jdbcType=INTEGER}
+		for update
+	</select>
+	
+	<insert id="insert" parameterType="com.cxdai.console.borrow.approve.entity.BTransfer">
+		insert into rocky_b_transfer ( BORROW_ID, BORROW_NAME,
+		BORROW_CREDIT_RATING, BORROW_APR, BORROW_STYLE,BORROW_TYPE,
+		BORROW_TIME_LIMIT, BORROW_ORDER, TENDER_ID,
+		TENDER_CAPITAL, TRANSFER_NAME, TRANSFER_CONTENT,
+		TRANSFER_CREDIT_RATING, CAPITAL, INTEREST,
+		ACCOUNT, COEF, ACCOUNT_REAL,
+		MANAGE_FEE, INTEREST_MANAGE_FEE, INTEREST_DIFF,
+		GAIN_LOSS, MOST_ACCOUNT, LOWEST_ACCOUNT,
+		VALID_TIME, BID_PASSWORD, USER_ID,
+		IS_AUTOTRANSFER, TIMING_TIME, ADD_TIME,
+		ADD_IP, ADD_MAC, END_TIME,
+		SUCCESS_TIME, TENDER_TIMES, ACCOUNT_YES,
+		CANCEL_USER, CANCEL_TIME, CANCEL_IP,
+		CANCEL_MAC, CANCEL_REMARK, CONTRACT_NO,
+		STATUS, SENDMESSAGE, REMARK,`TRANSFER_BEGIN_ORDER`,PLATFORM,TIME_LIMIT,TIME_LIMIT_REAL,ACCOUNT_SURPLUS,CUR_APR
+		)
+		values (#{borrowId,jdbcType=INTEGER},
+		#{borrowName,jdbcType=VARCHAR},
+		#{borrowCreditRating,jdbcType=VARCHAR}, #{borrowApr,jdbcType=DECIMAL},
+		#{borrowStyle,jdbcType=TINYINT},#{borrowType,jdbcType=TINYINT},
+		#{borrowTimeLimit,jdbcType=TINYINT}, #{borrowOrder,jdbcType=TINYINT}, #{tenderId,jdbcType=INTEGER},
+		#{tenderCapital,jdbcType=DECIMAL}, #{transferName,jdbcType=VARCHAR},
+		#{transferContent,jdbcType=VARCHAR},
+		#{transferCreditRating,jdbcType=VARCHAR}, #{capital,jdbcType=DECIMAL},
+		#{interest,jdbcType=DECIMAL},
+		#{account,jdbcType=DECIMAL}, #{coef,jdbcType=DECIMAL}, #{accountReal,jdbcType=DECIMAL},
+		#{manageFee,jdbcType=DECIMAL}, #{interestManageFee,jdbcType=DECIMAL},
+		#{interestDiff,jdbcType=DECIMAL},
+		#{gainLoss,jdbcType=DECIMAL}, #{mostAccount,jdbcType=DECIMAL}, #{lowestAccount,jdbcType=DECIMAL},
+		#{validTime,jdbcType=TINYINT}, #{bidPassword,jdbcType=VARCHAR},
+		#{userId,jdbcType=INTEGER},
+		#{isAutotransfer,jdbcType=TINYINT}, #{timingTime,jdbcType=TIMESTAMP}, #{addTime,jdbcType=TIMESTAMP},
+		#{addIp,jdbcType=VARCHAR}, #{addMac,jdbcType=VARCHAR},
+		#{endTime,jdbcType=TIMESTAMP},
+		#{successTime,jdbcType=TIMESTAMP}, #{tenderTimes,jdbcType=TINYINT}, #{accountYes,jdbcType=DECIMAL},
+		#{cancelUser,jdbcType=INTEGER}, #{cancelTime,jdbcType=TIMESTAMP},
+		#{cancelIp,jdbcType=VARCHAR},
+		#{cancelMac,jdbcType=VARCHAR}, #{cancelRemark,jdbcType=VARCHAR}, #{contractNo,jdbcType=VARCHAR},
+		#{status,jdbcType=TINYINT}, #{sendmessage,jdbcType=TINYINT},
+		#{remark,jdbcType=VARCHAR},#{transferBeginOrder},#{platForm},#{timeLimit},#{timeLimitReal},#{accountSurplus},#{currApr}
+		)
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+		  SELECT LAST_INSERT_ID() AS ID    
+	    </selectKey>
+	</insert>
+	
+
+	<!-- 调用手动认购存储过程 -->
+	<select id="saveManualSubscribe" statementType="CALLABLE" parameterType="java.util.Map">  
+		<![CDATA[  
+		    {call subscribe(#{transferid,mode=IN,jdbcType=INTEGER}, #{tenderMoney,mode=IN,jdbcType=DECIMAL}, #{memberId,mode=IN,jdbcType=INTEGER}, #{addip,mode=IN,jdbcType=VARCHAR}, #{tenderType,mode=IN,jdbcType=VARCHAR},#{platform,mode=IN,jdbcType=INTEGER}, #{msg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>
+	</select>
+
+	<select id="saveApproveTransferRecheck" statementType="CALLABLE" parameterType="java.util.Map">  
+		<![CDATA[  
+		{call transfer_recheck(#{transferId,mode=IN,jdbcType=INTEGER}, #{addIp,mode=IN,jdbcType=VARCHAR}, #{checkUserId,mode=IN,jdbcType=INTEGER}, #{checkRemark,mode=IN,jdbcType=VARCHAR}, #{platForm,mode=IN,jdbcType=VARCHAR}, #{msg,mode=OUT,jdbcType=VARCHAR})}
+		]]>
+	</select>
+	
+	<select id="querySubscribeTotalByTransferId" parameterType="java.lang.Integer" resultType="java.math.BigDecimal">
+	SELECT SUM(ACCOUNT) FROM rocky_b_subscribe WHERE TRANSFER_ID = #{transferId} and `STATUS` = 1
+	</select>
+	
+	 <select id="queryTransferClaim"   parameterType="com.cxdai.console.transfer.vo.TransferCnd"  resultType="com.cxdai.console.borrow.approve.vo.BTransferVo"  >
+			 select  parentId, borrowOrder,`transferBeginOrder`,tenderId,borrowId,borrowName,borrowApr,borrowStyle,borrowTimeLimit,nextRepaymentDate,borrowType,capital,  truncate(shouldHaveInterest,8) interest ,  ROUND(truncate(shouldHaveInterest,8)*profitLossRate,2)  gainLoss, ROUND(capital+truncate(shouldHaveInterest,8),2)  account from  (
+				<!-- 我的债权转让中 --> 
+			     SELECT  t.parent_id parentId ,  max(c.order)  borrowOrder, min(c.order)  `transferBeginOrder`,  c.TENDER_ID as tenderId,     b.ID AS borrowId,  b.NAME AS borrowName, b.APR AS borrowApr, b.style  borrowStyle,  b.TIME_LIMIT AS borrowTimeLimit,  FROM_UNIXTIME(c.REPAY_TIME,'%Y-%m-%d %H:%i:%S')   nextRepaymentDate, b.BORROWTYPE  borrowType, 
+	                        <!-- 待收本金 计算 -->
+									  	 CASE   
+											   WHEN  b.style=1  <!-- 等额本息  （代收记录未还款本金之和=原始投标本金-每期还的本金） --> 
+												    THEN  
+													    (SELECT IFNULL((SELECT  SUM(tc.CAPITAL)  from  rocky_b_collectionrecord  tc where tc.`STATUS` = 0   AND tc.TENDER_ID=c.TENDER_ID  and USER_ID=#{transferCnd.userId}),0) )
+													ELSE    
+													    (  SELECT account from  rocky_b_tenderrecord bt WHERE  bt.ID= c.TENDER_ID  and bt.USER_ID=#{transferCnd.userId})   
+										  END     as capital , 
+						   <!-- 应得利息 计算 -->    
+						                  CASE     
+						                        WHEN (b.style=1 or b.style=2)     <!-- 等额本息 （按月算利息）  当月的总利息/当月天数 *  当月资金占用时间-->
+						                            THEN   
+						                                CASE 
+						                                  WHEN (datediff(NOW(),(SELECT FROM_UNIXTIME(IFNULL(MAX(rbc.REPAY_TIME),b.SUCCESS_TIME)) FROM  rocky_b_collectionrecord rbc  WHERE   rbc.BORROW_ID  = b.id     AND rbc.STATUS =1 )) &lt;= 0)   <!-- 等额本息 （按月算利息） 针对提前还款资金暂用时间负数或0 -->
+						                                      THEN 0   <!-- 利息为 0  -->
+								                              else
+											                        ( ( SELECT  SUM(tc.INTEREST)  from  rocky_b_collectionrecord  tc where tc.`STATUS`=0  AND tc.TENDER_ID= c.TENDER_ID  and USER_ID=#{transferCnd.userId}  GROUP BY tc.order   order by tc.order asc limit 1  )   <!-- 当月代收利息--> 
+											                         /  datediff(FROM_UNIXTIME(min(c.REPAY_TIME)),(SELECT FROM_UNIXTIME(IFNULL(MAX(rbc.REPAY_TIME),b.SUCCESS_TIME)) FROM  rocky_b_collectionrecord rbc  WHERE rbc.BORROW_ID  = b.id     AND rbc.STATUS =1 )  )    <!-- 当月天数--> )  
+											                         * datediff(NOW(),(SELECT FROM_UNIXTIME(IFNULL(MAX(rbc.REPAY_TIME),b.SUCCESS_TIME)) FROM  rocky_b_collectionrecord rbc  WHERE  rbc.BORROW_ID  = b.id  AND rbc.STATUS =1 )   )  <!-- 当月资金占用时间--> 
+                                                              end								                             
+						                        ELSE   <!-- （按天算利息）   总利息/总天数 * 资金占用时间-->
+						                               ( SUM(c.INTEREST) /  
+						                                
+						                                (CASE   WHEN  b.style=3    <!-- 天数是 按月数存放需要计算 -->
+		                                                 THEN   datediff(FROM_UNIXTIME(min(c.REPAY_TIME)),FROM_UNIXTIME(b.SUCCESS_TIME))   
+		                                                 ELSE b.TIME_LIMIT   END )
+						                               
+						                                ) * datediff(NOW(),FROM_UNIXTIME(b.SUCCESS_TIME))       
+						                  END    as shouldHaveInterest ,
+						   <!--  转让盈亏(未乘以应得利息)-->
+						                  CASE    WHEN b.BORROWTYPE=3  <!-- 净值 没有 利息管理费-->
+						                       THEN 
+						                          (b.apr/100/${transferCnd.yearDay}) * datediff(min(FROM_UNIXTIME(c.REPAY_TIME)), NOW() ) <!-- 未占用时间-->
+						                     ELSE 
+						                           (t.RATIO+(b.apr/100/${transferCnd.yearDay})*datediff(FROM_UNIXTIME(min(c.REPAY_TIME)),NOW())) 
+						                  END   as  profitLossRate
+							                     FROM rocky_b_collectionrecord c
+							                      LEFT JOIN rocky_b_tenderrecord t
+							                        ON t.id = c.TENDER_ID
+							                      LEFT JOIN rocky_borrow b
+							                        ON b.id = t.borrow_id
+							                      LEFT JOIN rocky_member rm 
+							                        ON b.USER_ID = rm.id 
+							                      LEFT JOIN t_first_borrow f
+							                        ON f.id = c.FIRST_BORROW_ID
+							                      LEFT JOIN rocky_b_repaymentrecord r
+							                        ON r.borrow_id = b.id 
+							                      WHERE   t.user_id = #{transferCnd.userId} 
+												    <include refid="myeabletransferlistWhere"/>
+									           		AND ((c.STATUS =0)) 
+									           		and  not exists (select 1 from  rocky_b_transfer btt  where btt.TENDER_ID=c.TENDER_ID  and btt.STATUS not in (5,6,7)   limit 0,1)
+									           		AND (c.FIRST_BORROW_ID IS NULL or (c.FIRST_BORROW_ID IS NOT NULL and IS_FIRST_BORROW = 2))
+													AND c.ORDER = r.ORDER 
+									            group by  c.TENDER_ID HAVING      ( CONCAT(DATE_ADD(FROM_UNIXTIME(min(c.REPAY_TIME),'%Y-%m-%d'),INTERVAL -1 DAY),' 22:55:00') > STR_TO_DATE(NOW(),'%Y-%m-%d %H:%i:%S')=1)
+									             ORDER BY c.REPAY_YESTIME ASC,c.REPAY_TIME ASC 
+						) tt  where  capital >=50  order by nextRepaymentDate desc 
+
+	 </select>
+	
+    <select id="queryCountTransferClaim"   parameterType="com.cxdai.console.transfer.vo.TransferCnd"  resultType="java.lang.Integer"  >
+			<!-- 我的债权转让中 --> 
+		    select COUNT(1)  from (  SELECT    CASE   
+											   WHEN  b.style=1  <!-- 等额本息  （代收记录未还款本金之和=原始投标本金-每期还的本金） --> 
+												    THEN  
+													    (SELECT IFNULL((SELECT  SUM(tc.CAPITAL)  from  rocky_b_collectionrecord  tc where tc.`STATUS` = 0   AND tc.TENDER_ID=c.TENDER_ID  and USER_ID=#{transferCnd.userId}),0) )
+													ELSE    
+													    (  SELECT account from  rocky_b_tenderrecord bt WHERE  bt.ID= c.TENDER_ID  and bt.USER_ID=#{transferCnd.userId})   
+										  END   as capital  FROM rocky_b_collectionrecord c
+					                      LEFT JOIN rocky_b_tenderrecord t
+					                        ON t.id = c.TENDER_ID
+					                      LEFT JOIN rocky_borrow b
+					                        ON b.id = t.borrow_id
+					                      LEFT JOIN rocky_member rm 
+					                        ON b.USER_ID = rm.id 
+					                      LEFT JOIN t_first_borrow f
+					                        ON f.id = c.FIRST_BORROW_ID
+					                      LEFT JOIN rocky_b_repaymentrecord r
+					                        ON r.borrow_id = b.id 
+					                      WHERE   t.user_id = #{transferCnd.userId}  
+											     <include refid="myeabletransferlistWhere"/>
+					           		AND ((c.STATUS =0)) 
+					           	    and  not exists (select 1 from  rocky_b_transfer btt  where btt.TENDER_ID=c.TENDER_ID and btt.STATUS not in (5,6,7)  limit 0,1)
+					           		AND (c.FIRST_BORROW_ID IS NULL or (c.FIRST_BORROW_ID IS NOT NULL and IS_FIRST_BORROW = 2))
+										  AND c.ORDER = r.ORDER 
+					            group by   c.TENDER_ID    HAVING  ( CONCAT(DATE_ADD(FROM_UNIXTIME(min(c.REPAY_TIME),'%Y-%m-%d'),INTERVAL -1 DAY),' 22:55:00') > STR_TO_DATE(NOW(),'%Y-%m-%d %H:%i:%S')=1)    
+					          )  tt 
+					             where  capital >=50
+    </select>
+	
+	
+	
+    <select id="queryTransferByTenderIdAndUserId"   parameterType="java.util.Map"  resultMap="bTransferVoResultMap"  >
+	      select   parentId,  residueInvestPrincipal  capital ,truncate(shouldHaveInterest,8) interest,    residueInvestPrincipal+truncate(shouldHaveInterest,8)  account, (ROUND(truncate(shouldHaveInterest,8)*diffRate,2)+ROUND(truncate(shouldHaveInterest,8)*interestManageFeeRate,2))  gainLoss,borrowId,borrowName,borrowOrder,borrowStyle,borrowApr,borrowCreditRating,borrowTimeLimit,tenderCapital,ROUND(truncate(shouldHaveInterest,8)*interestManageFeeRate,2)  interestManageFee,`transferBeginOrder`,borrowType , timeLimit  , timeLimitReal ,(residueInvestPrincipal+collectionInterest) accountSurplus  from  (
+			 SELECT   t.parent_id parentId,  b.id borrowId,b.NAME borrowName, b.BORROWTYPE  borrowType,  max(c.order)  borrowOrder, min(c.order)  `transferBeginOrder`,  b.STYLE borrowStyle,b.APR borrowApr,b.credit_rating borrowCreditRating,b.TIME_LIMIT  borrowTimeLimit ,t.ACCOUNT tenderCapital, 
+				     CASE    
+				      WHEN  b.style=1  <!-- 等额本息 （代收记录未还款本金之和=原始投标本金-每期还的本金） --> 
+						   THEN    (SELECT IFNULL((SELECT  SUM(tc.CAPITAL)  from  rocky_b_collectionrecord  tc where tc.`STATUS` = 0   AND tc.TENDER_ID=#{tenderId}  and USER_ID=#{userId}),0) )
+							ELSE    (  SELECT account from  rocky_b_tenderrecord bt WHERE  bt.ID= #{tenderId}  and bt.USER_ID=#{userId})   END     as residueInvestPrincipal , 
+						   <!-- 应得利息 计算 -->    
+	                  CASE     
+	                        WHEN (b.style=1 or b.style=2)    <!-- 等额本息 （按月算利息）  当月的总利息/当月天数 *  当月资金占用时间-->
+	                               THEN   
+	                               
+	                                CASE 
+						                   WHEN (datediff(NOW(),(SELECT FROM_UNIXTIME(IFNULL(MAX(rbc.REPAY_TIME),b.SUCCESS_TIME)) FROM  rocky_b_collectionrecord rbc  WHERE   rbc.BORROW_ID  = b.id   AND rbc.STATUS =1 )) &lt;= 0)   <!-- 等额本息 （按月算利息） 针对提前还款资金暂用时间负数或0 -->
+                                     THEN  0   <!-- 利息为 0  -->
+			                          else
+						                      ( ( SELECT  SUM(tc.INTEREST)  from  rocky_b_collectionrecord  tc where tc.`STATUS`=0  AND tc.TENDER_ID= #{tenderId}  and USER_ID=#{userId}  GROUP BY tc.order   order by tc.order asc limit 1  )   <!-- 当月代收利息-->
+						                          / datediff(FROM_UNIXTIME(min(c.REPAY_TIME)),(SELECT FROM_UNIXTIME(IFNULL(MAX(rbc.REPAY_TIME),b.SUCCESS_TIME)) FROM  rocky_b_collectionrecord rbc  WHERE   rbc.BORROW_ID  = b.id  AND rbc.STATUS =1 )  )    <!-- 当月天数-->)
+						                           * datediff(NOW(),(SELECT FROM_UNIXTIME(IFNULL(MAX(rbc.REPAY_TIME),b.SUCCESS_TIME)) FROM  rocky_b_collectionrecord rbc  WHERE  rbc.BORROW_ID  = b.id  AND rbc.STATUS =1 )   )  <!-- 当月资金占用时间--> 
+		                               end	
+	                        ELSE   <!-- （按天算利息）   总利息/总天数 * 资金占用时间-->
+	                          ( SUM(c.INTEREST) /     (CASE   WHEN  b.style=3    <!-- 天数是 按月数存放需要计算 -->
+                                             THEN   datediff(FROM_UNIXTIME(min(c.REPAY_TIME)),FROM_UNIXTIME(b.SUCCESS_TIME))   
+                                             ELSE b.TIME_LIMIT   END
+                                           )
+	                           
+	                               ) * datediff(NOW(),FROM_UNIXTIME(b.SUCCESS_TIME))       
+	                         END    as shouldHaveInterest ,
+						   <!--   未占用时间利息(未乘以   应得利息)-->
+	                   (b.apr/100/${yearDay}) * datediff(min(FROM_UNIXTIME(c.REPAY_TIME)), NOW() )  as  diffRate,
+						     <!--利息管理费(未乘以   应得利息)   -->                
+                     CASE    WHEN b.BORROWTYPE=3 
+	                     THEN 
+	                         0  <!-- 净值 没有 利息管理费  -->  
+                     ELSE 
+                         t.RATIO  END   as  interestManageFeeRate,
+						     <!-- 剩余期限 --> 
+				                 CASE   WHEN (b.style=1 or b.style=2)   THEN  (count(REPAY_TIME)*30)  <!--剩余月数 * 30天  -->
+				                        ELSE    datediff(FROM_UNIXTIME(min(c.REPAY_TIME)),NOW())  <!-- 剩余天数 -->
+                                 END  as   timeLimit
+						          ,       
+						     <!-- 实际剩余期限 -->                   
+						                CASE   WHEN (b.style=1 or b.style=2)   THEN  count(REPAY_TIME)   <!--剩余月数  -->
+						                        ELSE    datediff(FROM_UNIXTIME(min(c.REPAY_TIME)),NOW())  <!-- 剩余天数 -->
+		                                 END  as   timeLimitReal,
+		                    <!--FSTASK   代收利息  -->
+		              IFNULL( SUM(c.INTEREST) ,0)   collectionInterest
+						                     FROM rocky_b_collectionrecord c
+						                      LEFT JOIN rocky_b_tenderrecord t
+						                        ON t.id = c.TENDER_ID
+						                      LEFT JOIN rocky_borrow b
+						                        ON b.id = t.borrow_id
+						                      LEFT JOIN rocky_member rm 
+						                        ON b.USER_ID = rm.id 
+						                      LEFT JOIN t_first_borrow f
+						                        ON f.id = c.FIRST_BORROW_ID
+						                      LEFT JOIN rocky_b_repaymentrecord r
+						                        ON r.borrow_id = b.id 
+						                      WHERE   t.user_id = #{userId} and  t.id= #{tenderId}
+						           		      AND ((c.STATUS =0)) 
+						           		      and  not exists (select 1 from  rocky_b_transfer btt  where btt.TENDER_ID=#{tenderId}  and btt.STATUS not in (5,6,7)   limit 0,1)
+						           		      AND (c.FIRST_BORROW_ID IS NULL or (c.FIRST_BORROW_ID IS NOT NULL and IS_FIRST_BORROW = 2))
+											  AND c.ORDER = r.ORDER 
+						            group by  c.TENDER_ID HAVING    ( CONCAT(DATE_ADD(FROM_UNIXTIME(min(c.REPAY_TIME),'%Y-%m-%d'),INTERVAL -1 DAY),' 22:55:00') > STR_TO_DATE(NOW(),'%Y-%m-%d %H:%i:%S')=1)
+						) tt where  residueInvestPrincipal >=50
+    </select>	
+	
+	
+
+		<!-- 查询债权转让列表-总记录数 -->
+	<select id="querytransferRecordCount" parameterType="com.cxdai.console.borrow.approve.vo.SearchTransferVo" resultType="java.lang.Integer">
+		select count(bt.ID),
+		DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date) intervalDay
+		from rocky_b_transfer  bt
+		LEFT JOIN ROCKY_BORROW rb on bt.BORROW_ID = rb.ID
+		<include refid="queryTransferRecord_where" />
+		
+		and bt.STATUS in (2,4)
+		
+		order by bt.id
+	</select>
+
+	<!-- 查询债权转让列表 -->
+	<select id="querytransferRecordList" parameterType="com.cxdai.console.borrow.approve.vo.SearchTransferVo" resultMap="bTransferVoResultMap">
+		select
+		
+		bt.ID, bt.BORROW_ID, bt.BORROW_NAME, bt.BORROW_CREDIT_RATING, bt.BORROW_APR,
+		bt.BORROW_STYLE, bt.BORROW_TIME_LIMIT, bt.TIME_LIMIT_REAL,
+		bt.BORROW_ORDER, bt.BID_PASSWORD,bt.ADD_TIME,
+		bt.ACCOUNT, bt.COEF, bt.ACCOUNT_REAL,bt.ADD_TIME,bt.ACCOUNT_YES,
+		bt.CAPITAL,bt.INTEREST,bt.STATUS, bt.TIME_LIMIT,bt.ACCOUNT_SURPLUS,
+		ROUND(bt.ACCOUNT_YES/bt.ACCOUNT_REAL,8) SCHEDULE,
+		bt.BORROW_TYPE,bt.CUR_APR,
+		rb.END_TIME ENDTIME,
+		DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date) intervalDay,
+		rm.USERNAME BORROWUSERNAME,rm2.USERNAME userName,
+		CASE WHEN bt.BID_PASSWORD ='' THEN 0 ELSE 1 END as BIDPASSWORD
+
+		from rocky_b_transfer bt
+		LEFT JOIN ROCKY_BORROW rb on bt.BORROW_ID = rb.ID
+		LEFT JOIN ROCKY_MEMBER rm ON rb.USER_ID = rm.ID
+		LEFT JOIN ROCKY_MEMBER rm2 ON bt.USER_ID = rm2.ID
+		
+		<include refid="queryTransferRecord_where" />
+		
+		ORDER BY
+		
+		<!-- 判断排序方式  | 条件的为优先，后面的为默认和其次；-->
+		<if test="orderBy == 'apr'">
+			bt.CUR_APR ${orderType},
+		</if>
+		<if test="orderBy == 'pro'">
+			SCHEDULE ${orderType},
+		</if>
+
+		<if test="orderBy == 'coef'">
+			bt.coef ${orderType},
+		</if>
+
+		<if test="orderBy == 'accountReal'">
+			bt.ACCOUNT_REAL ${orderType},
+		</if>
+		<if test="orderBy == 'addTime'">
+			bt.ADD_TIME ${orderType},
+		</if>
+		<if test="orderBy == 'timeLimit'">
+			bt.TIME_LIMIT ${orderType},
+		</if>
+		
+		<if test=" transferStatus == 4">
+			bt.ADD_TIME desc
+		</if>
+		<if test=" transferStatus != 4">
+			bt.status asc,
+			BIDPASSWORD asc,
+			bt.coef asc,
+			bt.ADD_TIME desc
+		</if>
+		
+	
+	</select>
+	
+	<sql id="queryTransferRecord_where">
+		where rb.status in (1,2,4,5,42)
+		  and rb.is_autoTender = 0
+		<!-- 借款类型 -->
+		<choose>
+			<when test="borrowType != null and borrowType != ''">
+				and rb.BORROWTYPE = #{borrowType}
+			</when>
+			<otherwise>
+				<!-- 去掉秒标 -->
+				<!-- and rb.BORROWTYPE != 4 -->
+			</otherwise>
+		</choose>
+		<!--当标是抵保信是需要通过审核 -->
+		<if test="borrowType != '3'">
+			and (
+			 	
+				(rb.APPRSTATUS > 2)
+				or
+				<!-- (rb.APPRSTATUS = 2 and CONCAT(SUBSTR(FROM_UNIXTIME(timing_borrow_time) FROM 1 FOR 16),':00') >= NOW()) -->
+				(rb.APPRSTATUS = 2 and FROM_UNIXTIME(timing_borrow_time, '%Y-%m-%d %H:%i:00') >= NOW())
+			)
+		</if>
+		<!-- 转让状态 -->
+		<if test=" transferStatus == null or transferStatus == ''">
+			and bt.STATUS in (2,4)
+		</if>
+		<if test=" transferStatus != null and transferStatus != ''">
+			and bt.status = #{transferStatus}
+		</if>
+		<!-- 剩余期限 -->
+		<if test=" remainingTerm != null and remainingTerm != ''">
+			<if test=" remainingTerm ==1">
+				and DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date) > 0  and DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date)&lt;=30
+			</if>
+			<if test=" remainingTerm ==2">
+				and DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date)>30 and DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date)&lt;=90
+			</if>
+			<if test=" remainingTerm ==3">
+				and DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date)>90 and DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date)&lt;=180
+			</if>
+			<if test=" remainingTerm ==4">
+				and DATEDIFF(FROM_UNIXTIME(rb.END_TIME,'%Y-%m-%d'),current_date)>180
+			</if>
+		</if>
+		<!-- 还款方式 -->
+		<if test=" repayType != null and repayType != ''">
+			and rb.style = #{repayType}
+		</if>
+		
+	</sql>
+	 
+	
+	<select id="getTransferCountBytenderId"   parameterType="java.lang.Integer" resultType="java.lang.Integer"  >
+		SELECT count(1) from rocky_b_transfer b where  b.tender_Id=#{tenderId}  and b.STATUS not in (5,6,7) limit 0,1
+	</select>
+	
+	
+	
+	<select id="queryMyTransfer"   parameterType="com.cxdai.console.transfer.vo.TransferCnd"  resultMap="bTransferVoResultMap"   >
+		  <!--  查询我转让中 或者 转出的  -->
+			<if test="transferCnd.type==2 or  transferCnd.type==3  "   >
+			      SELECT t.*   from  rocky_b_transfer  t WHERE t.`STATUS` =  #{transferCnd.status}  and user_id= #{transferCnd.userId} 
+			</if>
+			
+		  <if test="transferCnd.type==4 or  transferCnd.type==5  ">
+				SELECT t.*,s.ADD_TIME REPAYMENT_TIME  ,s.ACCOUNT subscribe_ACCOUNT ,s.REPAYMENT_CAPITAL   from    rocky_b_transfer t inner join  rocky_b_subscribe s on t.id=s.TRANSFER_ID and t.BORROW_ID=s.BORROW_ID
+				where t.status =#{transferCnd.status} 
+	               <if test="transferCnd.type==4 ">
+					 and s.STATUS=3
+					</if>
+					<if test="transferCnd.type==5 ">
+					 and s.STATUS=1
+					</if>
+				 and s.USER_ID=#{transferCnd.userId}
+		  </if>
+		  
+		 
+		  
+            <include refid="myothertransferlistWhere"/>
+            
+             <if test="transferCnd.type==2"   >  
+				      order by t.ADD_TIME desc 
+			 </if>
+		     <if test="transferCnd.type==3"   >  
+		      order by t.SUCCESS_TIME desc 
+		     </if>
+             <if test="transferCnd.type==4 or  transferCnd.type==5  ">
+				  order by s.ADD_TIME desc 
+		     </if>
+            
+            
+	</select>
+	
+	 
+	<select id="queryCountMyTransfer"    parameterType="com.cxdai.console.transfer.vo.TransferCnd"  resultType="java.lang.Integer"  >
+	       <if test="transferCnd.type==2 or  transferCnd.type==3 "   >
+			      SELECT  count(1)  from  rocky_b_transfer  t WHERE t.`STATUS` =  #{transferCnd.status} and user_id= #{transferCnd.userId}  
+		   </if>
+			
+			<if test="transferCnd.type==4 or  transferCnd.type==5  ">
+     			SELECT  count(1)  from    rocky_b_transfer t inner join  rocky_b_subscribe s on t.id=s.TRANSFER_ID  and t.BORROW_ID=s.BORROW_ID
+				where t.status =#{transferCnd.status}  
+				<if test="transferCnd.type==4 ">
+					 and s.STATUS=3
+					</if>
+					<if test="transferCnd.type==5 ">
+					 and s.STATUS=1
+				 </if>
+				 and s.USER_ID=#{transferCnd.userId}
+			</if>
+			
+			 <include refid="myothertransferlistWhere"/>
+			
+	</select>
+	 
+	
+	<select id="getTransferCountByVo"   parameterType="com.cxdai.console.borrow.approve.entity.BTransfer" resultType="java.lang.Integer"  >
+		SELECT count(1) from rocky_b_transfer b  where   b.id = #{bTransfer.id} and b.user_Id = #{bTransfer.userId}  and b.status = #{bTransfer.status}  limit 0,1 
+	</select>
+	
+	
+	<update id="updateStute"     parameterType="java.util.Map"  >
+	  update  rocky_b_transfer  set `STATUS` =#{status}   where ID=  #{id}
+	</update>
+	
+	
+	<sql id="myeabletransferlistWhere">
+		<if test="transferCnd.subjectType!=null and transferCnd.subjectType !=''">
+		      and	 b.BORROWTYPE = #{transferCnd.subjectType}
+		  	</if>
+		  	<if test="transferCnd.title!=null and transferCnd.title !='' ">
+		     	and  b.NAME like concat('%',#{transferCnd.title},'%')   
+		 </if>
+	</sql>
+	
+	
+	<sql id="myothertransferlistWhere">
+		<if test="transferCnd.subjectType!=null and transferCnd.subjectType !=''">
+		      and	 t.BORROW_TYPE = #{transferCnd.subjectType}
+		  	</if>
+		  	<if test="transferCnd.title!=null and transferCnd.title !='' ">
+		     	and  t.BORROW_NAME like concat('%',#{transferCnd.title},'%')   
+		 </if>
+	</sql>
+	
+	
+	<select id="updateStuteForCancel"  	statementType="CALLABLE"    parameterType="com.cxdai.console.borrow.approve.entity.BTransfer"   resultType="java.lang.String" >
+      <![CDATA[   { call transferCancel(#{bTransfer.id},#{bTransfer.cancelUser},#{bTransfer.cancelIp},#{bTransfer.cancelRemark},#{bTransfer.status},#{bTransfer.remark,mode=OUT,jdbcType=VARCHAR}) }   ]]>
+    </select>
+    
+    <select id="getTransferDetailById"  	   parameterType="java.lang.Integer"   resultMap="bTransferVoResultMap"    >
+         select b.*,m.username ,
+         FROM_UNIXTIME((SELECT MIN(rbc.REPAY_TIME) FROM rocky_b_collectionrecord rbc WHERE rbc.BORROW_ID=b.BORROW_ID AND 
+                  rbc.STATUS = 0  ORDER BY rbc.`ORDER`    DESC  LIMIT  0,1))  nextRepaymentDate  
+                   from rocky_b_transfer b left join rocky_member m  on b.user_id=m.id    where b.id = #{id}
+    </select>
+    
+      
+       <select id="lockTransferRecordByTransferId"  	   parameterType="java.lang.Integer"   resultMap="bTransferVoResultMap"  >
+         select *  FROM rocky_b_transfer where id =#{bTransferId}  for update
+      </select>
+     
+       <select id="queryCancelTransfers" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+ 		select id   from  
+			 rocky_b_transfer  
+ 		where  BORROW_ID = #{borrowId} and STATUS in (1,2,3)
+	</select> 
+	 
+	 <select id="querytransferRecordAllList"  resultMap="bTransferVoResultMap">
+		select * from rocky_b_transfer
+	 </select>
+	 
+	 <update id="saveTransfer"     parameterType="com.cxdai.console.borrow.approve.vo.BTransferVo"  >
+	  update  rocky_b_transfer  set `CUR_APR` =#{currApr}   where ID=  #{id}
+	</update>
+	
+	
+	<sql id="BTransefrVo_Column_List">
+		bt.ID, bt.BORROW_ID, bt.BORROW_NAME, bt.BORROW_CREDIT_RATING, bt.BORROW_APR,
+		bt.BORROW_STYLE, bt.BORROW_TIME_LIMIT,
+		bt.BORROW_ORDER, bt.TENDER_ID, bt.TENDER_CAPITAL, bt.TRANSFER_NAME, bt.TRANSFER_CONTENT,
+		bt.TRANSFER_CREDIT_RATING,
+		bt.CAPITAL, bt.INTEREST, bt.ACCOUNT, bt.COEF, bt.ACCOUNT_REAL, bt.MANAGE_FEE,
+		bt.INTEREST_MANAGE_FEE,bt.TIME_LIMIT,bt.TIME_LIMIT_REAL,
+		bt.INTEREST_DIFF, bt.GAIN_LOSS, bt.MOST_ACCOUNT, bt.LOWEST_ACCOUNT, bt.VALID_TIME, bt.BID_PASSWORD,
+		bt.USER_ID, bt.IS_AUTOTRANSFER, bt.TIMING_TIME, bt.ADD_TIME, bt.ADD_IP, bt.ADD_MAC, bt.PLATFORM,
+		bt.END_TIME, bt.SUCCESS_TIME,
+		bt.TENDER_TIMES, bt.ACCOUNT_YES, bt.CANCEL_USER, bt.CANCEL_TIME, bt.CANCEL_IP, bt.CANCEL_MAC,
+		bt.CANCEL_REMARK,bt.ACCOUNT_SURPLUS,
+		bt.CONTRACT_NO, bt.STATUS, bt.SENDMESSAGE, bt.REMARK
+	</sql>
+	
+	<select id="selectByCollectionId" resultMap="bTransferVoResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="BTransefrVo_Column_List" />,
+		b.ACCOUNT as borrowAccount,
+		(bt.BORROW_ORDER - bt.TRANSFER_BEGIN_ORDER + 1) as remainPeriod,
+		m1.USERNAME userName, m2.USERNAME as borrowUserName, b.BORROWTYPE as borrowType
+		FROM rocky_b_collectionrecord c,rocky_b_tenderrecord t,rocky_b_subscribe bs,rocky_b_transfer bt
+		LEFT JOIN rocky_member m1 on(bt.USER_ID = m1.ID), rocky_borrow b LEFT JOIN rocky_member m2 on(b.USER_ID = m2.id)
+		where c.TENDER_ID = t.id AND c.id = #{collectionId} AND bs.TENDER_ID = t.id AND bs.TRANSFER_ID = bt.id and bt.borrow_id = b.ID
+	</select>
+ 
+    <select id="getCountTransfering"     resultType="java.lang.Integer"  >
+		SELECT COUNT(1)  from rocky_b_transfer b  WHERE     b.status =2     
+	</select>
+	
+	
+	
+	
+</mapper>

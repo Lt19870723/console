@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.stock.mapper.StockEntrustMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.stock.entity.StockEntrust" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_real_name" property="userRealName" jdbcType="VARCHAR" />
+    <result column="entrust_code" property="entrustCode" jdbcType="VARCHAR" />
+    <result column="stock_code" property="stockCode" jdbcType="VARCHAR" />
+    <result column="stock_name" property="stockName" jdbcType="VARCHAR" />
+    <result column="entrust_type" property="entrustType" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="amount" property="amount" jdbcType="INTEGER" />
+    <result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+    <result column="expect_fee" property="expectFee" jdbcType="DECIMAL" />
+    <result column="entrust_total_price" property="entrustTotalPrice" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="deal_amount" property="dealAmount" jdbcType="INTEGER" />
+    <result column="deal_total_price" property="dealTotalPrice" jdbcType="DECIMAL" />
+    <result column="deal_rate" property="dealRate" jdbcType="DECIMAL" />
+    <result column="deal_fee" property="dealFee" jdbcType="DECIMAL" />
+    
+    <result column="draw_money" property="drawMoney" jdbcType="DECIMAL" />
+    <result column="no_draw_money" property="noDrawMoney" jdbcType="DECIMAL" />
+    
+    <result column="residue_amount" property="residueAmount" jdbcType="INTEGER" />
+    <result column="expiry_date" property="expiryDate" jdbcType="DATE" />
+    <result column="deal_time" property="dealTime" jdbcType="TIMESTAMP" />
+    <result column="platform" property="platform" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="addip" property="addip" jdbcType="VARCHAR" />
+    <result column="updateuser" property="updateuser" jdbcType="INTEGER" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="updateip" property="updateip" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, user_name, user_real_name,entrust_code, stock_code, stock_name, entrust_type, price, 
+    amount, total_price, expect_fee, entrust_total_price, status, deal_amount, deal_total_price, 
+    deal_rate, deal_fee,draw_money,no_draw_money, residue_amount, expiry_date, deal_time, platform, remark, addtime, 
+    addip, updateuser, updatetime, updateip
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    gq.id, gq.user_id, member.USERNAME as userName, gq.user_real_name,gq.entrust_code, gq.stock_code, gq.stock_name, gq.entrust_type, gq.price, 
+    gq.amount, gq.total_price, gq.expect_fee, gq.entrust_total_price, gq.`status`, gq.deal_amount, gq.deal_total_price, 
+    gq.deal_rate, gq.deal_fee,gq.draw_money,gq.no_draw_money, gq.residue_amount, gq.expiry_date, gq.deal_time, gq.platform, gq.remark, gq.addtime, 
+    gq.addip, gq.updateuser, gq.updatetime, gq.updateip
+    from gq_stock_entrust gq LEFT JOIN rocky_member member
+ON gq.user_id = member.ID
+    where gq.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByPrimaryCnd" resultMap="BaseResultMap" parameterType="com.cxdai.console.stock.vo.StockEntrustCnd" >
+    select 
+    <include refid="Base_Column_List" />
+    from gq_stock_entrust
+    where 1=1 
+    <if test="id != null and id != ''">
+    	and id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="userId != null and userId != ''">
+    	and user_id = #{userId,jdbcType=INTEGER}
+    </if>
+    <if test="isLocked != null and isLocked != ''">
+    	for update
+    </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from gq_stock_entrust
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.stock.entity.StockEntrust" >
+    insert into gq_stock_entrust (id, user_id, user_name, 
+      user_real_name,entrust_code, stock_code, stock_name, 
+      entrust_type, price, amount, 
+      total_price, expect_fee, entrust_total_price, 
+      status, deal_amount, deal_total_price, 
+      deal_rate, deal_fee,drawMoney,noDrawMoney, residue_amount, 
+      expiry_date, deal_time, platform, 
+      remark, addtime, addip, 
+      updateuser, updatetime, updateip
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, 
+      #{userRealName,jdbcType=VARCHAR},#{entrustCode,jdbcType=VARCHAR}, #{stockCode,jdbcType=VARCHAR}, #{stockName,jdbcType=VARCHAR}, 
+      #{entrustType,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{amount,jdbcType=INTEGER}, 
+      #{totalPrice,jdbcType=DECIMAL}, #{expectFee,jdbcType=DECIMAL}, #{entrustTotalPrice,jdbcType=DECIMAL}, 
+      #{status,jdbcType=INTEGER}, #{dealAmount,jdbcType=INTEGER}, #{dealTotalPrice,jdbcType=DECIMAL}, 
+      #{dealRate,jdbcType=DECIMAL}, #{dealFee,jdbcType=DECIMAL}, #{drawMoney,jdbcType=DECIMAL},#{noDrawMoney,jdbcType=DECIMAL},
+      #{residueAmount,jdbcType=INTEGER}, 
+      #{expiryDate,jdbcType=DATE}, #{dealTime,jdbcType=TIMESTAMP}, #{platform,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP}, #{addip,jdbcType=VARCHAR}, 
+      #{updateuser,jdbcType=INTEGER}, #{updatetime,jdbcType=TIMESTAMP}, #{updateip,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.stock.entity.StockEntrust" >
+    insert into gq_stock_entrust
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="userRealName != null" >
+        user_real_name,
+      </if>
+      <if test="stockCode != null" >
+        stock_code,
+      </if>
+      <if test="entrustCode != null" >
+        entrust_code,
+      </if>
+      <if test="stockName != null" >
+        stock_name,
+      </if>
+      <if test="entrustType != null" >
+        entrust_type,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="totalPrice != null" >
+        total_price,
+      </if>
+      <if test="expectFee != null" >
+        expect_fee,
+      </if>
+      <if test="entrustTotalPrice != null" >
+        entrust_total_price,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="dealAmount != null" >
+        deal_amount,
+      </if>
+      <if test="dealTotalPrice != null" >
+        deal_total_price,
+      </if>
+      <if test="dealRate != null" >
+        deal_rate,
+      </if>
+      <if test="dealFee != null" >
+        deal_fee,
+      </if>
+      <if test="drawMoney != null" >
+        draw_money,
+      </if>
+      <if test="noDrawMoney != null" >
+        no_draw_money,
+      </if>
+      <if test="residueAmount != null" >
+        residue_amount,
+      </if>
+      <if test="expiryDate != null" >
+        expiry_date,
+      </if>
+      <if test="dealTime != null" >
+        deal_time,
+      </if>
+      <if test="platform != null" >
+        platform,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="addip != null" >
+        addip,
+      </if>
+      <if test="updateuser != null" >
+        updateuser,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+      <if test="updateip != null" >
+        updateip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userRealName != null" >
+        #{userRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustCode != null" >
+         #{entrustCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stockCode != null" >
+        #{stockCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stockName != null" >
+        #{stockName,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustType != null" >
+        #{entrustType,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="totalPrice != null" >
+        #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="expectFee != null" >
+        #{expectFee,jdbcType=DECIMAL},
+      </if>
+      <if test="entrustTotalPrice != null" >
+        #{entrustTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="dealAmount != null" >
+        #{dealAmount,jdbcType=INTEGER},
+      </if>
+      <if test="dealTotalPrice != null" >
+        #{dealTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealRate != null" >
+        #{dealRate,jdbcType=DECIMAL},
+      </if>
+      <if test="dealFee != null" >
+        #{dealFee,jdbcType=DECIMAL},
+      </if>
+      <if test="drawMoney != null" >
+        #{drawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="noDrawMoney != null" >
+         #{noDrawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="residueAmount != null" >
+        #{residueAmount,jdbcType=INTEGER},
+      </if>
+      <if test="expiryDate != null" >
+        #{expiryDate,jdbcType=DATE},
+      </if>
+      <if test="dealTime != null" >
+        #{dealTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="platform != null" >
+        #{platform,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        #{addip,jdbcType=VARCHAR},
+      </if>
+      <if test="updateuser != null" >
+        #{updateuser,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateip != null" >
+        #{updateip,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.stock.entity.StockEntrust" >
+    update gq_stock_entrust
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userRealName != null" >
+        user_real_name = #{userRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustCode != null" >
+       entrust_code = #{entrustCode,jdbcType=VARCHAR}, 
+      </if>
+      <if test="stockCode != null" >
+        stock_code = #{stockCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stockName != null" >
+        stock_name = #{stockName,jdbcType=VARCHAR},
+      </if>
+      <if test="entrustType != null" >
+        entrust_type = #{entrustType,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="totalPrice != null" >
+        total_price = #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="expectFee != null" >
+        expect_fee = #{expectFee,jdbcType=DECIMAL},
+      </if>
+      <if test="entrustTotalPrice != null" >
+        entrust_total_price = #{entrustTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="dealAmount != null" >
+        deal_amount = #{dealAmount,jdbcType=INTEGER},
+      </if>
+      <if test="dealTotalPrice != null" >
+        deal_total_price = #{dealTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealRate != null" >
+        deal_rate = #{dealRate,jdbcType=DECIMAL},
+      </if>
+      <if test="dealFee != null" >
+        deal_fee = #{dealFee,jdbcType=DECIMAL},
+      </if>
+      <if test="residueAmount != null" >
+        residue_amount = #{residueAmount,jdbcType=INTEGER},
+      </if>
+      <if test="drawMoney != null" >
+        draw_money = #{drawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="noDrawMoney != null" >
+        no_draw_money = #{noDrawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="expiryDate != null" >
+        expiry_date = #{expiryDate,jdbcType=DATE},
+      </if>
+      <if test="residueAmount == 0" >
+        deal_time = now(),
+      </if>
+      <if test="platform != null" >
+        platform = #{platform,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        addip = #{addip,jdbcType=VARCHAR},
+      </if>
+      <if test="updateuser != null" >
+        updateuser = #{updateuser,jdbcType=INTEGER},
+      </if>
+      <if test="updateip != null" >
+        updateip = #{updateip,jdbcType=VARCHAR},
+      </if>
+       updatetime = now(),
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.stock.entity.StockEntrust" >
+    update gq_stock_entrust
+    set user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_real_name = #{userRealName,jdbcType=VARCHAR},
+      entrust_code = #{entrustCode,jdbcType=VARCHAR},
+      stock_code = #{stockCode,jdbcType=VARCHAR},
+     
+      stock_name = #{stockName,jdbcType=VARCHAR},
+      entrust_type = #{entrustType,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      amount = #{amount,jdbcType=INTEGER},
+      total_price = #{totalPrice,jdbcType=DECIMAL},
+      expect_fee = #{expectFee,jdbcType=DECIMAL},
+      entrust_total_price = #{entrustTotalPrice,jdbcType=DECIMAL},
+      status = #{status,jdbcType=INTEGER},
+      deal_amount = #{dealAmount,jdbcType=INTEGER},
+      deal_total_price = #{dealTotalPrice,jdbcType=DECIMAL},
+      deal_rate = #{dealRate,jdbcType=DECIMAL},
+      deal_fee = #{dealFee,jdbcType=DECIMAL},
+      draw_money = #{drawMoney,jdbcType=DECIMAL},
+       no_draw_money = #{noDrawMoney,jdbcType=DECIMAL},
+      residue_amount = #{residueAmount,jdbcType=INTEGER},
+      expiry_date = #{expiryDate,jdbcType=DATE},
+      deal_time = #{dealTime,jdbcType=TIMESTAMP},
+      platform = #{platform,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      addip = #{addip,jdbcType=VARCHAR},
+      updateuser = #{updateuser,jdbcType=INTEGER},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      updateip = #{updateip,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="queryList" resultMap="BaseResultMap" parameterType="com.cxdai.console.stock.vo.StockEntrustRequest">
+  	select gq.id,gq.user_id, member.USERNAME as userName ,gq.entrust_type, gq.price, 
+    gq.amount,gq.`status`, gq.deal_amount, gq.addtime,gq.residue_amount
+	from gq_stock_entrust gq LEFT JOIN rocky_member member
+	ON gq.user_id = member.ID
+  	where 1=1 
+  	<if test="entrustType != null and entrustType !=''">
+  		AND gq.entrust_type = #{entrustType,jdbcType=INTEGER}
+  	</if>
+  	<if test="status != null and status !=''">
+  		AND gq.status = #{status,jdbcType=INTEGER}
+  	</if>
+  	<if test="startDate != null and startDate !=''">
+  		AND  date_format(gq.addtime ,'%Y-%m-%d') <![CDATA[>=]]>  #{startDate}
+  	</if>
+  	<if test="endDate != null and endDate !='' ">
+  		AND date_format(gq.addtime ,'%Y-%m-%d') <![CDATA[<=]]>  #{endDate}
+  	</if>
+  	ORDER BY gq.addtime DESC
+  	</select>
+  	
+  	<select id="queryListCount" resultType="java.lang.Integer" parameterType="com.cxdai.console.stock.vo.StockEntrustRequest">
+  	select count(1)
+		 from gq_stock_entrust gq LEFT JOIN rocky_member member
+		ON gq.user_id = member.ID
+  	where 1=1 
+  	<if test="entrustType != null and entrustType !=''">
+  		AND gq.entrust_type = #{entrustType,jdbcType=INTEGER}
+  	</if>
+  	<if test="status != null and status !=''">
+  		AND gq.status = #{status,jdbcType=INTEGER}
+  	</if>
+  	<if test="startDate != null and startDate !=''">
+  		AND  date_format(gq.addtime ,'%Y-%m-%d') <![CDATA[>=]]>  #{startDate}
+  	</if>
+  	<if test="endDate != null and endDate != ''">
+		AND date_format(gq.addtime ,'%Y-%m-%d') <![CDATA[<=]]>  #{endDate}
+	</if>
+  </select>
+  
+</mapper>

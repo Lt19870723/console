@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.cg.mapper.MessageRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.cg.entity.MessageRecord" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="MODE" property="mode" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="TINYINT" />
+    <result column="MSG_TYPE" property="msgType" jdbcType="INTEGER" />
+    <result column="ORDER_NO" property="orderNo" jdbcType="VARCHAR" />
+    <result column="BIND_NO" property="bindNo" jdbcType="VARCHAR" />
+    <result column="OPT_USERID" property="optUserid" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="PLATFORM" property="platform" jdbcType="INTEGER" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="RELATE_NO" property="relateNo" jdbcType="VARCHAR" />
+    <result column="ADDTIME" property="addtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, MODE, TYPE, MSG_TYPE, ORDER_NO, BIND_NO, OPT_USERID, STATUS, PLATFORM, REMARK, 
+    RELATE_NO, ADDTIME
+  </sql>
+ 
+  <insert id="insert" parameterType="com.cxdai.console.cg.entity.MessageRecord" >
+    insert into e_message_record (ID, MODE, TYPE, 
+      MSG_TYPE, ORDER_NO, BIND_NO, 
+      OPT_USERID, STATUS, PLATFORM, 
+      REMARK, RELATE_NO, ADDTIME, 
+      MSG)
+    values (#{id,jdbcType=INTEGER}, #{mode,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, 
+      #{msgType,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR}, #{bindNo,jdbcType=VARCHAR}, 
+      #{optUserid,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{platform,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{relateNo,jdbcType=VARCHAR}, now(), 
+      #{msg,jdbcType=LONGVARCHAR})
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cxdai.console.cg.entity.MessageRecord" >
+    update e_message_record
+    set MODE = #{mode,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=TINYINT},
+      MSG_TYPE = #{msgType,jdbcType=INTEGER},
+      ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      BIND_NO = #{bindNo,jdbcType=VARCHAR},
+      OPT_USERID = #{optUserid,jdbcType=INTEGER},
+      STATUS = #{status,jdbcType=INTEGER},
+      PLATFORM = #{platform,jdbcType=INTEGER},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      RELATE_NO = #{relateNo,jdbcType=VARCHAR},
+      ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+      MSG = #{msg,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.cg.entity.MessageRecord" >
+    update e_message_record
+    set MODE = #{mode,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=TINYINT},
+      MSG_TYPE = #{msgType,jdbcType=INTEGER},
+      ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+      BIND_NO = #{bindNo,jdbcType=VARCHAR},
+      OPT_USERID = #{optUserid,jdbcType=INTEGER},
+      STATUS = #{status,jdbcType=INTEGER},
+      PLATFORM = #{platform,jdbcType=INTEGER},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      RELATE_NO = #{relateNo,jdbcType=VARCHAR},
+      ADDTIME = #{addtime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="queryLastMessage" resultType="java.lang.String">
+      SELECT MSG FROM e_message_record WHERE 1=1
+        <if test="filename != null">
+            AND BIND_NO = #{filename}
+        </if>
+        ORDER BY ADDTIME DESC LIMIT 1
+    </select>
+</mapper>

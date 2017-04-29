@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.fix.mapper.FixRepaymentrecordMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.fix.entity.FixRepaymentrecord" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="TINYINT" />
+    <result column="FIX_BORROW_ID" property="fixBorrowId" jdbcType="INTEGER" />
+    <result column="REPAYMENT_TIME" property="repaymentTime" jdbcType="DATE" />
+    <result column="REPAYMENT_YESTIME" property="repaymentYestime" jdbcType="TIMESTAMP" />
+    <result column="REPAYMENT_ACCOUNT" property="repaymentAccount" jdbcType="DECIMAL" />
+    <result column="REPAYMENT_YESACCOUNT" property="repaymentYesaccount" jdbcType="DECIMAL" />
+    <result column="INTEREST" property="interest" jdbcType="DECIMAL" />
+    <result column="CAPITAL" property="capital" jdbcType="DECIMAL" />
+    <result column="LATE_DAYS" property="lateDays" jdbcType="INTEGER" />
+    <result column="LATE_INTEREST" property="lateInterest" jdbcType="DECIMAL" />
+    <result column="ADVANCETIME" property="advancetime" jdbcType="TIMESTAMP" />
+    <result column="ADVANCE_YESACCOUNT" property="advanceYesaccount" jdbcType="DECIMAL" />
+    <result column="AFTERWEBPAY_LATE_DAY" property="afterwebpayLateDay" jdbcType="INTEGER" />
+    <result column="IS_REPAIR_INTEREST" property="isRepairInterest" jdbcType="TINYINT" />
+    <result column="REPAIR_INTEREST_TIME" property="repairInterestTime" jdbcType="TIMESTAMP" />
+    <result column="ADDTIME" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="ADDIP" property="addip" jdbcType="VARCHAR" />
+    <result column="PLATFORM" property="platform" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, STATUS, FIX_BORROW_ID, REPAYMENT_TIME, REPAYMENT_YESTIME, REPAYMENT_ACCOUNT, 
+    REPAYMENT_YESACCOUNT, INTEREST, CAPITAL, LATE_DAYS, LATE_INTEREST, ADVANCETIME, ADVANCE_YESACCOUNT, 
+    AFTERWEBPAY_LATE_DAY, IS_REPAIR_INTEREST, REPAIR_INTEREST_TIME, ADDTIME, ADDIP, PLATFORM
+  </sql>
+  
+  
+  <!-- 获取还款总额，还款可用余额，还款实际收益 -->
+  <select id="queryFixRepayByConn" resultMap="BaseResultMap" parameterType="com.cxdai.console.fix.entity.FixRepaymentrecord" >
+  	select REPAYMENT_ACCOUNT,CAPITAL,INTEREST from t_fix_repaymentrecord 
+	where  FIX_BORROW_ID = #{fixBorrowId} FOR UPDATE
+  </select>
+  
+  
+  <!-- 根据定期宝id更新定期宝待还=1(已还)  -->
+  <update id="updateRepaymentById" parameterType="com.cxdai.console.fix.entity.FixRepaymentrecord" >
+    update t_fix_repaymentrecord set STATUS =${status} ,REPAYMENT_YESACCOUNT = #{repaymentYesaccount}, REPAYMENT_YESTIME =NOW()
+	where  FIX_BORROW_ID = ${fixBorrowId}
+  </update>
+  
+  <!-- 判断:还款日期<=now() -->
+  <select id="queryRepaymentByFixBorrowId" parameterType="com.cxdai.console.fix.entity.FixRepaymentrecord" resultType="java.lang.Integer" >
+  	select count(1) from t_fix_repaymentrecord 
+  	where 1=1 
+  	and  REPAYMENT_TIME <![CDATA[ <= ]]> now() and FIX_BORROW_ID = ${fixBorrowId}  
+  </select>
+  
+</mapper>

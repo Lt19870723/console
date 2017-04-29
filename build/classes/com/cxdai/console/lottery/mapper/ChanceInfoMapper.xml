@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.lottery.mapper.ChanceInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.lottery.vo.ChanceInfo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="LOTTERY_CHANCE_RULE_INFO_ID" property="lotteryChanceRuleInfoId" jdbcType="INTEGER" />
+    <result column="LOTTERY_NUM" property="lotteryNum" jdbcType="INTEGER" />
+    <result column="USE_NUM" property="useNum" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+    <result column="chanceRuleName" property="chanceRuleName" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, LOTTERY_CHANCE_RULE_INFO_ID, LOTTERY_NUM, USE_NUM, USER_ID, USERNAME, ADD_TIME, 
+    REMARK, ADD_IP
+  </sql>
+  
+  <!-- 根据机会来源类型和userId查询记录数量 -->
+  <select id="selectCountByCodeAndUserId" resultType="java.lang.Integer">
+    SELECT count(lci.ID) 
+    FROM t_lottery_chance_info lci, t_lottery_chance_rule_info lcri 
+    WHERE lci.LOTTERY_CHANCE_RULE_INFO_ID = lcri.ID 
+    AND lcri.`CODE` = #{code} AND lcri.`STATUS` = 0 
+    AND lci.USER_ID = #{userId} AND lcri.ADD_TIME <![CDATA[ <= ]]> CURDATE() AND CURDATE() <![CDATA[ <= ]]> lcri.END_TIME
+  </select>
+  
+  
+   <select id="queryChanceInfoList"  parameterType="java.lang.String" resultMap="BaseResultMap">
+       select ci.*,cri.NAME chanceRuleName   from   t_lottery_chance_info ci  LEFT JOIN  t_lottery_chance_rule_info  cri 
+       ON  ci.LOTTERY_CHANCE_RULE_INFO_ID = cri.ID    where  1=1 
+	       <if test="userName != null">
+	       and ci.USERNAME like  concat('%',#{userName},'%')
+	       </if>
+	        ORDER  BY  ci.ADD_TIME DESC 
+   </select>
+  
+   <select id="queryCountChanceInfoList"    resultType="java.lang.Integer">
+     select count(1)  from   t_lottery_chance_info ci  LEFT JOIN  t_lottery_chance_rule_info  cri 
+       ON  ci.LOTTERY_CHANCE_RULE_INFO_ID = cri.ID 
+         where  1=1 
+		     <if test="userName != null">
+		       and ci.USERNAME like  concat('%',#{userName},'%')
+		    </if>
+   </select>
+  
+   
+   
+   <select id="querySumLotteryNum" resultType="java.lang.Integer">
+    	select ifnull(sum(USE_NUM),0)  from   t_lottery_chance_info ci where  1=1 
+    	<if test="userId != null">
+		       and ci.USER_ID = #{userId}
+		</if>
+  </select>
+  
+</mapper>

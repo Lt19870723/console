@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.bankcard.mapper.BankcardTimesMapper">
+
+<!-- 结果集 -->
+<resultMap type="com.cxdai.console.customer.bankcard.entity.BankcardTimes" id="bankcardTimesMap">
+	<result property="userId"			column="user_id" />
+	<result property="changeTimes"		column="change_times" />
+	<result property="applyTimes"		column="apply_times" />
+	<result property="clickTimes"		column="click_times" />
+</resultMap>
+
+<!-- 查询条件 -->
+<sql id="whereClause">
+	<if test="userName != null and userName != ''">
+		and m.USERNAME like '%' #{userName} '%' 
+	</if>
+	<if test="realName != null and realName != ''">
+		and b.REALNAME like '%' #{realName} '%'
+	</if>
+</sql>
+
+<!-- 分页查询 -->
+<select id="pageQuery" parameterType="com.cxdai.console.customer.bankcard.entity.BankcardTimesCnd" resultMap="bankcardTimesMap">
+select m.id,m.USERNAME as userName,b.REALNAME as realName,b.BANKNAME as bank,b.CARDNUM as bankcard,
+IFNULL(t.change_times,0)changeTimes,IFNULL(t.apply_times,0)applyTimes,IFNULL(t.click_times,0)clickTimes
+from rocky_member m 
+LEFT JOIN t_bankcard_times t on m.id=t.user_id 
+LEFT JOIN rocky_bankinfo b on m.ID=b.USER_ID
+where m.`STATUS`=0 and b.`STATUS`!=-1 
+<include refid="whereClause"/>
+ORDER BY userName 
+</select>
+
+<!-- 分页查询记录数 -->
+<select id="pageQueryCount" parameterType="com.cxdai.console.customer.bankcard.entity.BankcardChangeCnd" resultType="Integer">
+select count(1) from rocky_member m 
+LEFT JOIN t_bankcard_times t on m.id=t.user_id 
+LEFT JOIN rocky_bankinfo b on m.ID=b.USER_ID
+where m.`STATUS`=0 and b.`STATUS`!=-1 
+<include refid="whereClause"/>
+</select>
+
+<!-- 增加次数：换卡，申请，点击申请 -->
+<update id="addTimes">
+update t_bankcard_times set 
+change_times=change_times+#{changeTimes},apply_times=apply_times+#{applyTimes},click_times=click_times+#{clickTimes}
+where user_id=#{userId} 
+</update>
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseIntegralMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.customer.information.entity.Integral" id="integralResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="creditLevel" 				column="CREDITLEVEL" />
+		<result property="creditIntegral" 			column="CREDITINTEGRAL" />
+		<result property="investLevel" 				column="INVESTLEVEL" />
+		<result property="investIntegral"	    	column="INVESTINTEGRAL" />
+		<result property="integral"  				column="INTEGRAL" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="integralBaseColumn">
+		i.ID, 
+		i.USER_ID, 
+		i.CREDITLEVEL, 
+		i.CREDITINTEGRAL, 
+		i.INVESTLEVEL, 
+		i.INVESTINTEGRAL, 
+		i.INTEGRAL
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.customer.information.entity.Integral">
+		INSERT INTO ROCKY_INTEGRAL
+		(USER_ID,	CREDITLEVEL,	CREDITINTEGRAL,	INVESTLEVEL,	INVESTINTEGRAL,	INTEGRAL)
+		VALUES
+		(#{userId},#{creditLevel},#{creditIntegral},#{investLevel},	#{investIntegral},#{integral})
+		
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="integralResultMap" >
+		select 	
+		   <include refid="integralBaseColumn"/>
+		from
+			ROCKY_INTEGRAL i
+		where 1=1
+		and i.id=#{id}
+  	</select>
+	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.customer.information.entity.Integral" >
+    update ROCKY_INTEGRAL
+    <set >
+      <if test="creditLevel != null" >
+        CREDITLEVEL = #{creditLevel},
+      </if>
+      <if test="creditIntegral != null" >
+        CREDITINTEGRAL = #{creditIntegral},
+      </if>
+      <if test="investLevel != null" >
+        INVESTLEVEL = #{investLevel},
+      </if>
+      <if test="investIntegral != null" >
+        INVESTINTEGRAL = #{investIntegral},
+      </if>
+      <if test="integral != null" >
+        INTEGRAL = #{integral},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  	
+</mapper>  

@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.account.verify.mapper.AccountValidateMapper">
+
+	<!-- add by chenpeng  2验证账户总额 -->
+	<select id="queryPageAccountValidateListByCnd" resultType="com.cxdai.console.statistics.account.vo.AccountVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT a.id,a.total,a.use_money as useMoney,a.no_use_money as
+		noUseMoney,a.collection,a.FIRST_BORROW_USE_MONEY as
+		firstBorrowUseMoney,a.netvalue,a.DRAW_MONEY as
+		drawMoney,a.NO_DRAW_MONEY as noDrawMoney, m.USERNAME,
+		a.e_use_money as eUseMoney,a.e_freeze_money as eFreezeMoney,a.e_collection as eCollection 
+		FROM rocky_account a
+		INNER JOIN rocky_member m on a.USER_ID = m.id
+		WHERE
+		a.total!=a.use_money+a.no_use_money+a.collection+a.FIRST_BORROW_USE_MONEY+a.e_use_money+a.e_freeze_money+a.e_collection
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		order by a.total desc
+	</select>
+	<select id="queryCountAccountValidateListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1) FROM rocky_account a
+		INNER JOIN rocky_member m on a.USER_ID = m.id
+		WHERE
+		a.total!=a.use_money+a.no_use_money+a.collection+a.FIRST_BORROW_USE_MONEY+a.e_use_money+a.e_freeze_money+a.e_collection
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+	</select>
+
+	<!-- add by chenpeng  3待收表应收总额 -->
+	<select id="queryPageCollectionValidateListByCnd" resultType="com.cxdai.console.statistics.account.vo.CollectionVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT c.id,c.REPAY_ACCOUNT as repayAccount,c.CAPITAL,c.INTEREST,
+		m.USERNAME FROM rocky_b_collectionrecord c
+		INNER JOIN rocky_member m on c.USER_ID = m.id
+		WHERE c.REPAY_ACCOUNT!=c.CAPITAL+c.INTEREST
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		AND c.status IN (0,1,2,3)
+		order by c.REPAY_ACCOUNT desc
+	</select>
+	<select id="queryCountCollectionValidateListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1) FROM rocky_b_collectionrecord c
+		INNER JOIN rocky_member m on c.USER_ID = m.id
+		WHERE c.REPAY_ACCOUNT!=c.CAPITAL+c.INTEREST
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		AND c.status IN (0,1,2,3)
+	</select>
+
+	<!-- add by chenpeng 4待还表应还总额 -->
+	<select id="queryPageRepaymentValidateListByCnd" resultType="com.cxdai.console.borrow.manage.vo.BRepaymentRecordVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT r.id,r.REPAYMENT_ACCOUNT as repaymentAccount,r.CAPITAL,r.INTEREST,
+		m.USERNAME FROM rocky_b_repaymentrecord r
+		INNER JOIN rocky_member m on
+		r.USER_ID = m.id
+		WHERE r.REPAYMENT_ACCOUNT!=r.INTEREST+r.CAPITAL
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		AND r.status IN (0,1)
+		order by r.REPAYMENT_ACCOUNT desc
+	</select>
+	<select id="queryCountRepaymentValidateListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1) FROM rocky_b_repaymentrecord r
+		INNER JOIN rocky_member m on r.USER_ID = m.id
+		WHERE
+		r.REPAYMENT_ACCOUNT!=r.INTEREST+r.CAPITAL
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		AND r.status IN (0,1)
+	</select>
+
+	<!-- add by chenpeng 5投标表应收总额 -->
+	<select id="queryPageTenderRepaymentAccountListByCnd"
+		resultType="com.cxdai.console.borrow.manage.vo.TenderRecordVo" parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT t.id,t.REPAYMENT_ACCOUNT as repaymentAccount,t.ACCOUNT,t.INTEREST,
+		m.USERNAME FROM rocky_b_tenderrecord t
+		INNER JOIN rocky_member m on
+		t.USER_ID = m.id
+		WHERE t.REPAYMENT_ACCOUNT!=t.ACCOUNT+t.INTEREST
+		AND t.status IN (0,1,2)
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		order by t.REPAYMENT_ACCOUNT desc
+	</select>
+	<select id="queryCountTenderRepaymentAccountListByCnd"
+		resultType="java.lang.Integer" parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1) FROM rocky_b_tenderrecord t
+		INNER JOIN rocky_member m
+		on t.USER_ID = m.id
+		WHERE t.REPAYMENT_ACCOUNT!=t.ACCOUNT+t.INTEREST
+		AND t.status IN (0,1,2)
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+	</select>
+
+	<!-- add by chenpeng 7待收表垫付金额 -->
+	<select id="queryPageCollectionAdvanceYAListByCnd" resultType="com.cxdai.console.statistics.account.vo.CollectionVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT c.id,c.ADVANCE_YESACCOUNT as advanceYesaccount,c.CAPITAL, m.USERNAME
+		FROM rocky_b_collectionrecord c
+		INNER JOIN rocky_member m on c.USER_ID
+		= m.id
+		WHERE c.ADVANCE_YESACCOUNT &lt; c.CAPITAL
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		order by c.ADVANCE_YESACCOUNT desc
+	</select>
+	<select id="queryCountCollectionAdvanceYAListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1) FROM rocky_b_collectionrecord c
+		INNER JOIN rocky_member m on c.USER_ID = m.id
+		WHERE c.ADVANCE_YESACCOUNT
+		&lt; c.CAPITAL
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+	</select>
+
+	<!-- add by chenpeng 1账户和账户日志 -->
+	<select id="queryPageAccountAndLogListByCnd" resultType="com.cxdai.console.statistics.account.vo.AccountVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT a.id,a.total,a.use_money as useMoney,a.no_use_money as
+		noUseMoney,a.collection,a.FIRST_BORROW_USE_MONEY as
+		firstBorrowUseMoney,a.DRAW_MONEY as drawMoney,a.NO_DRAW_MONEY as
+		noDrawMoney
+		,m.USERNAME
+		FROM rocky_account a,(
+		SELECT al.* FROM rocky_accountlog al,(
+		SELECT MAX(l.id) AS id FROM rocky_accountlog l
+		GROUP BY l.user_id
+		) temp
+		WHERE al.id=temp.id
+		) t,
+		rocky_member m
+		WHERE a.user_id=t.user_id
+		and a.USER_ID = m.id
+		AND (
+		a.total!=t.total OR a.use_money!=t.use_money OR a.no_use_money!=t.no_use_money
+		OR a.collection!=t.collection OR
+		a.FIRST_BORROW_USE_MONEY!=t.FIRST_BORROW_USE_MONEY
+		OR a.DRAW_MONEY!=t.DRAW_MONEY OR a.NO_DRAW_MONEY!=t.NO_DRAW_MONEY
+		)
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+		order by a.total desc
+	</select>
+	<select id="queryCountAccountAndLogListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1)
+		FROM rocky_account a,(
+		SELECT al.* FROM rocky_accountlog al,(
+		SELECT MAX(l.id) AS id FROM rocky_accountlog l
+		GROUP BY l.user_id
+		) temp
+		WHERE al.id=temp.id
+		) t,
+		rocky_member m
+		WHERE a.user_id=t.user_id
+		and a.USER_ID = m.id
+		AND (
+		a.total!=t.total OR a.use_money!=t.use_money OR a.no_use_money!=t.no_use_money
+		OR a.collection!=t.collection OR
+		a.FIRST_BORROW_USE_MONEY!=t.FIRST_BORROW_USE_MONEY
+		OR a.DRAW_MONEY!=t.DRAW_MONEY OR a.NO_DRAW_MONEY!=t.NO_DRAW_MONEY
+		)
+		<if
+			test="accountValidateCnd.username != null and accountValidateCnd.username != ''">
+			and m.USERNAME = #{accountValidateCnd.username}
+		</if>
+	</select>
+
+	<!-- add by chenpeng 6待收表和投标表的应收总额 -->
+	<select id="queryPageTenderCollectionRepayAListByCnd"
+		resultType="com.cxdai.console.borrow.manage.vo.TenderCollectionVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT t.BORROW_ID as
+		borrowId,b.NAME,t.sumRepaymentAccount,c.sumRepayAccount,t.sumRepaymentAccount-c.sumRepayAccount
+		AS diff FROM (
+		SELECT t.BORROW_ID,SUM(REPAYMENT_ACCOUNT) AS sumRepaymentAccount FROM
+		rocky_b_tenderrecord t
+		WHERE t.status IN(1,2)
+		GROUP BY t.BORROW_ID
+		) t
+		,(
+		SELECT c.BORROW_ID,SUM(REPAY_ACCOUNT) AS sumRepayAccount
+		FROM rocky_b_collectionrecord c
+		WHERE c.status IN(0,1,2,3)
+		GROUP BY c.BORROW_ID
+		) c,rocky_borrow b
+		WHERE t.BORROW_ID = c.BORROW_ID
+		AND b.id = t.BORROW_ID
+		AND t.sumRepaymentAccount!=c.sumRepayAccount
+		<if
+			test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+			and b.NAME like "%" #{accountValidateCnd.bname} "%"
+		</if>
+		order by t.BORROW_ID
+	</select>
+	<select id="queryCountTenderCollectionRepayAListByCnd"
+		resultType="java.lang.Integer" parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1) FROM (
+		SELECT t.BORROW_ID,SUM(REPAYMENT_ACCOUNT) AS sumRepaymentAccount FROM
+		rocky_b_tenderrecord t
+		WHERE t.status IN(1,2)
+		GROUP BY t.BORROW_ID
+		) t
+		,(
+		SELECT c.BORROW_ID,SUM(REPAY_ACCOUNT) AS sumRepayAccount
+		FROM rocky_b_collectionrecord c
+		WHERE c.status IN(0,1,2,3)
+		GROUP BY c.BORROW_ID
+		) c,rocky_borrow b
+		WHERE t.BORROW_ID = c.BORROW_ID
+		AND b.id = t.BORROW_ID
+		AND t.sumRepaymentAccount!=c.sumRepayAccount
+		<if
+			test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+			and b.NAME like "%" #{accountValidateCnd.bname} "%"
+		</if>
+	</select>
+
+
+	<!-- add by chenpeng 8待收、待还表中本金之和 -->
+	<select id="queryPageCRSumCapitalToOtherListByCnd" resultType="com.cxdai.console.borrow.manage.vo.CRSumCapitalToOtherVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+	      select t3.* from (  
+            SELECT b.id,b.NAME,b.status,b.style,b.TIME_LIMIT as timeLimit,b.is_custody as isCustody,
+			FROM_UNIXTIME(b.success_time) AS successTime,
+			b.ACCOUNT,c.sumCapital AS collectionCapital,r.sumCapital AS
+			repaymentCapital,t.sumCapital+IFNULL(t2.sumCapital,0) AS tenderCapital
+			FROM rocky_borrow b
+			left join 
+			(
+			SELECT c.BORROW_ID,SUM(CAPITAL) AS sumCapital
+			FROM rocky_b_collectionrecord c
+			WHERE c.status IN(0,1,2,3)
+			GROUP BY c.BORROW_ID
+			)c on b.id=c.BORROW_ID
+			left join 
+			(
+			SELECT r.BORROW_ID,SUM(r.CAPITAL) AS sumCapital
+			FROM rocky_b_repaymentrecord r
+			WHERE r.STATUS IN (0,1)
+			GROUP BY r.BORROW_ID
+			) r on b.id=r.BORROW_ID	
+			left join 
+			(
+			SELECT t.BORROW_ID,SUM(ACCOUNT) AS sumCapital
+			FROM rocky_b_tenderrecord t
+			WHERE t.STATUS IN (0,1,2)
+			GROUP BY t.BORROW_ID
+			) t on b.id=t.BORROW_ID
+			left join 
+			(
+			SELECT t2.BORROW_ID,SUM(REPAYMENT_YESACCOUNT-REPAYMENT_YESINTEREST) AS sumCapital
+			FROM rocky_b_tenderrecord t2
+			WHERE t2.STATUS =-2
+			GROUP BY t2.BORROW_ID
+			)t2 on b.id=t2.BORROW_ID
+			WHERE 1=1
+			AND b.STATUS IN (4)
+             <if
+				test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+				and b.NAME  like "%" #{accountValidateCnd.bname} "%"
+			</if>
+			<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==0">
+				and (b.is_custody=0 or b.is_custody is null)
+			</if>
+			<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==1">
+				and b.is_custody=1
+			</if>
+             ) t3 where 1=1
+			AND (
+			t3.ACCOUNT!=t3.collectionCapital OR t3.ACCOUNT!=t3.repaymentCapital OR t3.ACCOUNT!=t3.tenderCapital
+			)
+		order by t3.ACCOUNT desc
+	</select>
+	<select id="queryCountCRSumCapitalToOtherListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		  select count(1) from (  
+            SELECT b.id,b.NAME,b.status,b.style,b.TIME_LIMIT as timeLimit,b.is_custody as isCustody,
+			FROM_UNIXTIME(b.success_time) AS successTime,
+			b.ACCOUNT,c.sumCapital AS collectionCapital,r.sumCapital AS
+			repaymentCapital,t.sumCapital+IFNULL(t2.sumCapital,0) AS tenderCapital
+			FROM rocky_borrow b
+			left join 
+			(
+			SELECT c.BORROW_ID,SUM(CAPITAL) AS sumCapital
+			FROM rocky_b_collectionrecord c
+			WHERE c.status IN(0,1,2,3)
+			GROUP BY c.BORROW_ID
+			)c on b.id=c.BORROW_ID
+			left join 
+			(
+			SELECT r.BORROW_ID,SUM(r.CAPITAL) AS sumCapital
+			FROM rocky_b_repaymentrecord r
+			WHERE r.STATUS IN (0,1)
+			GROUP BY r.BORROW_ID
+			) r on b.id=r.BORROW_ID	
+			left join 
+			(
+			SELECT t.BORROW_ID,SUM(ACCOUNT) AS sumCapital
+			FROM rocky_b_tenderrecord t
+			WHERE t.STATUS IN (0,1,2)
+			GROUP BY t.BORROW_ID
+			) t on b.id=t.BORROW_ID
+			left join 
+			(
+			SELECT t2.BORROW_ID,SUM(REPAYMENT_YESACCOUNT-REPAYMENT_YESINTEREST) AS sumCapital
+			FROM rocky_b_tenderrecord t2
+			WHERE t2.STATUS =-2
+			GROUP BY t2.BORROW_ID
+			)t2 on b.id=t2.BORROW_ID
+			WHERE 1=1
+			AND b.STATUS IN (4)
+            <if
+				test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+				and b.NAME  like "%" #{accountValidateCnd.bname} "%"
+			</if>
+			<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==0">
+				and (b.is_custody=0 or b.is_custody is null)
+			</if>
+			<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==1">
+				and b.is_custody=1
+			</if>
+             ) t3 where 1=1
+			AND (
+			t3.ACCOUNT!=t3.collectionCapital OR t3.ACCOUNT!=t3.repaymentCapital OR t3.ACCOUNT!=t3.tenderCapital
+			)
+	</select>
+
+	<!-- add by chenpeng 9待收、待还表中每期本金之和 -->
+	<select id="queryPageCRSumCapitalListByCnd" resultType="com.cxdai.console.borrow.manage.vo.CRSumCapitalVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT b.id,b.NAME,b.status,FROM_UNIXTIME(b.success_time) successTime,b.is_custody as isCustody,r.id
+		rid,r.BORROW_ID rBorrowId,r.ORDER,r.CAPITAL,c.sumCapital
+		FROM rocky_b_repaymentrecord r,rocky_borrow b,(
+		SELECT c.borrow_id,c.order,SUM(CAPITAL) AS sumCapital
+		FROM rocky_b_collectionrecord c
+		WHERE c.status IN(0,1,2,3)
+		GROUP BY c.borrow_id,c.order
+		) c
+		WHERE r.BORROW_ID = c.BORROW_ID
+		AND r.borrow_id = b.id
+		AND b.status NOT IN(42,5)
+		AND r.ORDER = c.ORDER
+		AND r.CAPITAL!=c.sumCapital
+		<if
+			test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+			and b.NAME like  "%" #{accountValidateCnd.bname} "%"
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==0">
+				and (b.is_custody=0 or b.is_custody is null)
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==1">
+				and b.is_custody=1
+		</if>
+		order by r.CAPITAL desc
+	</select>
+	<select id="queryCountCRSumCapitalListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1)
+		FROM rocky_b_repaymentrecord r,rocky_borrow b,(
+		SELECT c.borrow_id,c.order,SUM(CAPITAL) AS sumCapital
+		FROM rocky_b_collectionrecord c
+		WHERE c.status IN(0,1,2,3)
+		GROUP BY c.borrow_id,c.order
+		) c
+		WHERE r.BORROW_ID = c.BORROW_ID
+		AND r.borrow_id = b.id
+		AND b.status NOT IN(42,5)
+		AND r.ORDER = c.ORDER
+		AND r.CAPITAL!=c.sumCapital
+		<if
+			test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+			and b.NAME like  "%" #{accountValidateCnd.bname} "%"
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==0">
+				and (b.is_custody=0 or b.is_custody is null)
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==1">
+				and b.is_custody=1
+		</if>
+	</select>
+
+	<!-- add by chenpeng 10待收表的每投标记录 -->
+	<select id="queryPageCSumCapitalToTenderListByCnd" resultType="com.cxdai.console.borrow.manage.vo.CSumCapitalToTenderVo"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT b.STATUS as bStatus,b.NAME,b.is_custody as isCustody,FROM_UNIXTIME(t.addtime) as
+		tAddtime,t.id,t.ACCOUNT,temp.sumCapital,t.interest,temp.sumInterest,t.REPAYMENT_ACCOUNT repaymentAccount,temp.sumRepayAccount
+		FROM rocky_b_tenderrecord t,rocky_borrow b,( 
+		SELECT c.tender_id,SUM(CAPITAL) AS sumCapital,SUM(interest) AS
+		sumInterest,SUM(REPAY_ACCOUNT) AS sumRepayAccount
+		FROM rocky_b_collectionrecord c
+		WHERE c.status IN(0,1,2,3)
+		GROUP BY c.tender_id
+		) temp
+		WHERE t.id = temp.tender_id
+		AND t.borrow_id = b.id
+		#AND b.status NOT IN(42,5)
+		AND (t.REPAYMENT_ACCOUNT!=temp.sumRepayAccount
+		OR t.ACCOUNT != temp.sumCapital OR t.INTEREST != temp.sumInterest)
+		<if
+			test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+			and b.NAME like  "%" #{accountValidateCnd.bname} "%"
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==0">
+				and (b.is_custody=0 or b.is_custody is null)
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==1">
+				and b.is_custody=1
+		</if>
+		order by t.ACCOUNT desc
+
+	</select>
+	<select id="queryCountCSumCapitalToTenderListByCnd" resultType="java.lang.Integer"
+		parameterType="com.cxdai.console.statistics.account.vo.AccountValidateCnd">
+		SELECT count(1)
+		FROM rocky_b_tenderrecord t,rocky_borrow b,(
+		SELECT c.tender_id,SUM(CAPITAL) AS sumCapital,SUM(interest) AS
+		sumInterest,SUM(REPAY_ACCOUNT) AS sumRepayAccount
+		FROM rocky_b_collectionrecord c
+		WHERE c.status IN(0,1,2,3)
+		GROUP BY c.tender_id
+		) temp
+		WHERE t.id = temp.tender_id
+		AND t.borrow_id = b.id
+		#AND b.status NOT IN(42,5)
+		AND (t.REPAYMENT_ACCOUNT!=temp.sumRepayAccount
+		OR t.ACCOUNT != temp.sumCapital OR t.INTEREST != temp.sumInterest)
+		<if
+			test="accountValidateCnd.bname != null and accountValidateCnd.bname != ''">
+			and b.NAME like  "%" #{accountValidateCnd.bname} "%"
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==0">
+				and (b.is_custody=0 or b.is_custody is null)
+		</if>
+		<if test="accountValidateCnd.isCustody!=null and accountValidateCnd.isCustody!='' and accountValidateCnd.isCustody==1">
+				and b.is_custody=1
+		</if>
+	</select>
+</mapper>

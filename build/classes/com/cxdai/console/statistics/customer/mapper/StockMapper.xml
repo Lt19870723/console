@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.statistics.customer.mapper.StockMapper">
+
+<!-- 结果集 -->
+<resultMap type="com.cxdai.console.base.entity.Stock" id="stockMap">
+	<result property="userId" 			column="user_id" />
+	<result property="totalRank"		column="total_rank" />
+	<result property="stockNum"			column="stock_num" />
+	<result property="stockMoney"		column="stock_money" />
+	<result property="exerciseTime"		column="exercise_time" />
+	<result property="exerciseIp"		column="exercise_ip" />
+	<result property="addTime"			column="add_time" />
+	<result property="addIp"			column="add_ip" />
+	<result property="isAdminExercise"	column="is_admin_exercise" />
+	<result property="adminId"			column="admin_id" />
+	<result property="maxTotal"			column="max_total" />
+	<result property="maxTime"			column="max_time" />
+	<result property="isReduce"			column="is_reduce" />
+	<result property="curTotal"			column="cur_total" />
+	<result property="fixTotal"			column="fix_total" />
+</resultMap>
+
+<!-- 查询条件 -->
+<sql id="whereClause">
+	<if test="status != null and status != ''">
+		and t.status = #{status} 
+	</if>
+	<if test="username != null and username != ''">
+		and t.username like '%' #{username} '%' 
+	</if>
+	<if test="realname != null and realname != ''">
+		and t.realname like '%' #{realname} '%'
+	</if>
+	<if test="isReduce != null and isReduce != ''">
+		and t.is_reduce = #{isReduce} 
+	</if>
+	
+</sql>
+	
+<!-- 分页查询 -->
+<select id="pageQuery" parameterType="com.cxdai.console.statistics.customer.vo.StockCnd" resultMap="stockMap">
+select *,fix_c+fix_t as fix_total from (select *,(total+cur_total+fix_c+fix_t-max_total*0.1) &lt; 0 as is_reduce from (
+	select n.*,m.username,a.realname,
+	(select total from rocky_account where user_id=n.user_id)as total,
+  	IFNULL((select total from t_cur_account where user_id=n.user_id),0)as cur_total,
+  	IFNULL((select sum(INTEREST) from t_fix_collectionrecord where `status`=0 and user_id=n.user_id),0)as fix_c,
+	IFNULL((select sum(account) from t_fix_tender_detail where `status`in(0,1) and user_id=n.user_id),0)as fix_t,
+	(select max(total) from rocky_accountlog where user_id=n.user_id and ADDTIME BETWEEN 1380124800 and 1411747199 )as max_total,
+	(SELECT addtime FROM rocky_accountlog WHERE USER_ID = n.user_id and ADDTIME BETWEEN 1380124800 and 1411747199 ORDER BY TOTAL DESC LIMIT 1)as max_time
+	from t_stock n 
+	left join rocky_member m on n.user_id=m.id  
+	left join rocky_realname_appro a on a.user_id=m.id 
+)as b)as t 
+where 1=1
+<include refid="whereClause"/>
+ORDER BY rank asc 
+</select>
+
+<!-- 分页查询记录数 -->
+<select id="pageQueryCount" parameterType="com.cxdai.console.statistics.customer.vo.StockCnd" resultType="Integer">
+select count(1) from (select *,(total+IFNULL(cur_total,0)-max_total*0.1) &lt; 0 as is_reduce from  (
+	select n.*,m.username,a.realname,
+	(select total from rocky_account where user_id=n.user_id)as total,
+	(select total from t_cur_account where user_id=n.user_id)as cur_total,
+	(select max(total) from rocky_accountlog where user_id=n.user_id and ADDTIME BETWEEN 1380124800 and 1411747199)as max_total,
+	(SELECT addtime FROM rocky_accountlog WHERE USER_ID = n.user_id and ADDTIME BETWEEN 1380124800 and 1411747199 ORDER BY TOTAL DESC LIMIT 1)as max_time
+	from t_stock n 
+	left join rocky_member m on n.user_id=m.id  
+	left join rocky_realname_appro a on a.user_id=m.id 
+)as b ) as t
+where 1=1
+<include refid="whereClause"/>
+</select>
+	
+<!-- 修改ById-管理员现金行权 -->
+<update id="updateStockMoney" parameterType="com.cxdai.console.base.entity.Stock">
+	update t_stock 
+	set stock_money=#{stockMoney},status=2,exercise_time=#{exerciseTime},exercise_ip=#{exerciseIp},is_admin_exercise=1,stock_num=0,admin_id=#{adminId}
+	where id=#{id} and status=1
+</update>
+
+<select id="getByIdForUpdate" parameterType="Integer" resultMap="stockMap">
+	select * from t_stock where id=#{id} for update
+</select>
+</mapper>

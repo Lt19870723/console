@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.customer.information.mapper.BusinessMapper">
+
+	<resultMap id="businessVoResultMap" type="com.cxdai.console.customer.information.vo.BusinessVo">
+		<id column="ID" 						property="id"/>		
+		<result column="USER_ID" 				property="userId" />
+		<result column="USERNAME" 				property="username" />
+		<result column="STATUS" 				property="status" />
+		<result column="ADDTIME"				property="addtime" />
+		<result column="ADDIP" 				    property="addip" />
+		<result column="ADDUSER" 				property="adduser" />
+	</resultMap>
+	
+	<!-- 字段 -->
+	<sql id="businessVoColumn">
+		b.ID,		
+		b.USER_ID,
+		b.USERNAME,
+		b.STATUS,
+		b.ADDTIME,
+		b.ADDIP,
+		b.ADDUSER
+	</sql>
+	
+	<!-- 增加业务员 -->
+	<insert id="addBusiness" useGeneratedKeys="true" keyProperty="id" parameterType="com.cxdai.console.customer.information.vo.BusinessVo">		
+		insert into t_business (USER_ID, USERNAME, STATUS, ADDTIME, ADDIP, ADDUSER)
+		values (#{userId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, now(), #{addip,jdbcType=VARCHAR}, #{adduser,jdbcType=INTEGER})		
+	</insert>
+	
+	<!-- 修改业务员 -->
+	<update id="updateBusiness" parameterType="com.cxdai.console.customer.information.vo.BusinessVo">
+		update t_business
+		<set >	
+			ADDTIME = now(),		
+	      	<if test="userId != null" >
+	        	USER_ID = #{userId},
+	      	</if>
+	      	<if test="username != null and username != ''" >
+	        	USERNAME = #{username},
+	      	</if>
+	      	<if test="status != null" >
+	        	STATUS = #{status},
+	      	</if>	      	
+	      	<if test="addip != null and addip != ''" >
+	        	ADDIP = #{addip},
+	      	</if>
+	      	<if test="adduser != null" >
+	        	ADDUSER = #{adduser},
+	      	</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 根据ID查询业务员 -->
+	<select id="getBusinessById" resultMap="businessVoResultMap" parameterType="java.lang.Integer">
+		select <include refid="businessVoColumn" />		
+		from t_business b
+		where b.ID = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 查询条件 -->
+	<sql id="sql_where">
+		<where>			 
+			<if test="username != null and username != ''">
+				AND USERNAME like concat('%', #{username},'%') 
+			</if>					
+			<if test="status != null and status != ''">
+				AND STATUS=#{status}
+			</if>			
+		</where>
+	</sql>
+	
+	<!-- 根据查询条件获取业务员个数 -->
+	<select id="getBusinessCountByCnd" parameterType="com.cxdai.console.customer.information.vo.BusinessCnd" resultType="java.lang.Integer">
+		select count(*) from t_business b <include refid="sql_where" />
+	</select>
+
+	<!-- 根据查询条件分页获取业务员列表 -->
+	<select id="getBusinessListByCnd" parameterType="com.cxdai.console.customer.information.vo.BusinessCnd" resultMap="businessVoResultMap">		
+		SELECT <include refid="businessVoColumn"/> FROM t_business b 
+		<include refid="sql_where" /> order by b.ID DESC
+	</select>
+	
+	<!-- 根据查询条件获取业务员列表 -->
+	<select id="searchBusinessListByCnd" parameterType="com.cxdai.console.customer.information.vo.BusinessCnd" resultMap="businessVoResultMap">		
+		SELECT <include refid="businessVoColumn"/> FROM t_business b 
+		<include refid="sql_where" /> order by b.ID DESC
+	</select>	
+	
+	<!-- 根据用户ID获取业务员个数 -->
+	<select id="getBusinessCountByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select count(*) from t_business b where b.USER_ID=#{userId,jdbcType=INTEGER}
+	</select>
+	
+</mapper>

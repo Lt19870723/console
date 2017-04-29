@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseIPWhileListMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.base.entity.IPWhileList" id="ipWhileListResultMap">
+		<id property="id" column="id" />
+		<result property="ip" 						column="ip" />
+		<result property="status" 					column="status" />
+		<result property="accessType" 				column="access_type" />
+		<result property="company" 					column="company" />
+		<result property="addtime" 					column="addtime" />
+		<result property="addStaffId"	    		column="add_staff_id" />
+		<result property="updateTime"  				column="update_time" />
+		<result property="updateStaffId" 			column="update_staff_id" />
+		<result property="remark"					column="remark"/>
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="ipWhileListBaseColumn">
+		i.ID, 
+		i.IP, 
+		i.STATUS, 
+		i.ACCESS_TYPE,
+		i.COMPANY, 
+		i.ADDTIME, 
+		i.ADD_STAFF_ID, 
+		i.UPDATE_TIME, 
+		i.UPDATE_STAFF_ID,
+		i.REMARK
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.base.entity.IPWhileList">
+		INSERT INTO rocky_ip_while_list 
+		(IP, STATUS,ACCESS_TYPE,	company, addtime, add_staff_id, update_time, update_staff_id, remark)
+		VALUES
+		(#{ip}, #{status}, #{accessType}, #{company}, #{addtime},	#{addStaffId}, #{updateTime}, #{updateStaffId}, #{remark})
+		
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="ipWhileListResultMap" >
+		select 	
+		   <include refid="ipWhileListBaseColumn"/>
+		from
+			rocky_ip_while_list i
+		where 1=1
+		and i.id=#{id}
+  	</select>
+  	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.base.entity.IPWhileList" >
+    update rocky_ip_while_list
+    <set >
+      <if test="ip != null" >
+        ip = #{ip},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+      <if test="accessType != null" >
+        access_type = #{accessType},
+      </if>
+      <if test="company != null" >
+        company = #{company},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime},
+      </if>
+      <if test="addStaffId != null" >
+        add_staff_id = #{addStaffId},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+       <if test="updateStaffId != null" >
+        update_staff_id = #{updateStaffId},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark},
+      </if>                                                       
+    </set>
+    where ID = #{id}
+  </update>
+  	
+</mapper>  

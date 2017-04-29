@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.stock.mapper.ApplyInfoMapper" >
+  <resultMap id="ApplyInfoMap" type="com.cxdai.console.stock.entity.ApplyInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_real_name" property="userRealName" jdbcType="VARCHAR" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="collection" property="collection" jdbcType="DECIMAL" />
+    <result column="stock_total" property="stockTotal" jdbcType="INTEGER" />
+    <result column="is_protocol" property="isProtocol" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="adduser" property="adduser" jdbcType="INTEGER" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="addip" property="addip" jdbcType="VARCHAR" />
+    <result column="updateuser" property="updateuser" jdbcType="INTEGER" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="updateip" property="updateip" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, user_name, user_real_name, id_card, mobile, sex, status, type, collection,stock_total, is_protocol, remark, adduser, addtime, addip, updateuser, 
+    updatetime, updateip
+  </sql>
+  
+  
+  <!-- 查询提交审核信息 -->
+  	<select id="queryApplyForPage" parameterType="com.cxdai.console.stock.vo.ApplyInfoCnd" resultMap="ApplyInfoMap" >
+		SELECT
+		    b.id as id,
+			b.user_id as userId,
+			m.USERNAME as userName,
+			b.user_real_name as userRealName,
+			b.id_card as idCard,
+			b.mobile as mobile,
+			b.sex as sex,
+			b.STATUS as status,
+			b.type as type,
+			b.collection as collection,
+			b.stock_total as stockTotal,
+			b.is_protocol as isProtocol,
+			b.remark as remark,
+			b.adduser as adduser,
+			b.addtime as addtime,
+			b.addip as addip,
+			b.updateuser as updateuser,
+			b.updatetime as updatetime,
+			b.updateip as updateip
+	FROM
+		gq_apply_info b
+		LEFT JOIN rocky_member m on b.user_id=m.id and m.`STATUS`=0
+	WHERE
+	1 = 1
+		<if test="type != null and type != ''">
+	      and b.type = ${type}
+	    </if>
+		<if test="status != null and status != 0">
+	      and b.status=${status}
+	    </if>
+	 	<if test="beginTime != null and beginTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+	    </if>
+	    <if test="endinTime != null and endinTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')<=  DATE_FORMAT(#{endinTime}, '%Y-%m-%d')   ]]>
+	    </if>
+  	</select>
+  	
+  	<!-- 统计提交审核信息 -->
+  	<select id="queryApplyForCounts" parameterType="com.cxdai.console.stock.vo.ApplyInfoCnd" resultType="java.lang.Integer" >
+		SELECT
+		    count(*)
+	FROM
+		gq_apply_info b
+		LEFT JOIN rocky_member m on b.user_id=m.id and m.`STATUS`=0
+	WHERE
+	1 = 1
+		<if test="type != null and type != ''">
+	      and b.type = ${type}
+	    </if>
+		<if test="status != null and status != 0">
+	      and b.status=${status}
+	    </if>
+	 	<if test="beginTime != null and beginTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+	    </if>
+	    <if test="endinTime != null and endinTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')<=  DATE_FORMAT(#{endinTime}, '%Y-%m-%d')   ]]>
+	    </if>
+		
+  	</select>
+  	
+  	<!-- 查询散标待收 -->
+  	<select id="queryCollectionrecord" parameterType="java.lang.Integer" resultType="java.math.BigDecimal" >
+		select IFNULL(sum(repay_account),0) from rocky_b_collectionrecord where `STATUS` = 0
+	      and user_id = #{userId}
+  	</select>
+  	<!-- 查询定期宝待收 -->
+  	<select id="queryFixCollectionrecord" parameterType="java.lang.Integer" resultType="java.math.BigDecimal" >
+		select IFNULL(sum(repay_account),0) from t_fix_collectionrecord where  `STATUS`=0
+	      and user_id = #{userId}
+  	</select>
+  	
+  	<!-- 存管待收 -->
+  	<select id="queryCunGuanCollectionrecord" parameterType="java.lang.Integer" resultType="java.math.BigDecimal" >
+		select IFNULL(sum(e_collection),0) from rocky_account where  user_id = #{userId}
+  	</select>
+  	
+  	<!-- 根据ID修改状态 -->
+<update id="updateStatus">
+	update gq_apply_info set status=#{status},updateuser=#{updateuser},updatetime=now(),updateip=#{updateIp} where id=#{id}
+</update>
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="ApplyInfoMap" parameterType="java.lang.Integer" >
+    SELECT
+		    b.id as id,
+			b.user_id as userId,
+			m.USERNAME as userName,
+			b.user_real_name as userRealName,
+			b.id_card as idCard,
+			b.mobile as mobile,
+			b.sex as sex,
+			b.STATUS as status,
+			b.type as type,
+			b.collection as collection,
+			b.stock_total as stockTotal,
+			b.is_protocol as isProtocol,
+			b.remark as remark,
+			b.adduser as adduser,
+			b.addtime as addtime,
+			b.addip as addip,
+			b.updateuser as updateuser,
+			b.updatetime as updatetime,
+			b.updateip as updateip
+	FROM
+		gq_apply_info b
+		LEFT JOIN rocky_member m on b.user_id=m.id and m.`STATUS`=0
+    where b.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from gq_apply_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.stock.entity.ApplyInfo" >
+    insert into gq_apply_info (id, user_id, user_name, 
+      user_real_name, id_card, mobile, 
+      sex, status, type,  collection, stock_total,
+      is_protocol, remark, adduser, 
+      addtime, addip, updateuser, 
+      updatetime, updateip)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, 
+      #{userRealName,jdbcType=VARCHAR}, #{idCard,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+       #{collection,jdbcType=DECIMAL},  #{stockTotal,jdbcType=INTEGER},
+      #{isProtocol,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{adduser,jdbcType=INTEGER}, 
+      #{addtime,jdbcType=TIMESTAMP}, #{addip,jdbcType=VARCHAR}, #{updateuser,jdbcType=INTEGER}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{updateip,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.stock.entity.ApplyInfo" >
+    insert into gq_apply_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="userRealName != null" >
+        user_real_name,
+      </if>
+      <if test="idCard != null" >
+        id_card,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      
+      <if test="collection != null" >
+        collection,
+      </if>
+      <if test="stockTotal != null" >
+        stock_total,
+      </if>
+      
+      <if test="isProtocol != null" >
+        is_protocol,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="adduser != null" >
+        adduser,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="addip != null" >
+        addip,
+      </if>
+      <if test="updateuser != null" >
+        updateuser,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+      <if test="updateip != null" >
+        updateip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userRealName != null" >
+        #{userRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null" >
+        #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      
+      <if test="collection != null" >
+        #{collection,jdbcType=DECIMAL},
+      </if>
+       <if test="stockTotal != null" >
+        #{stockTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="isProtocol != null" >
+        #{isProtocol,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="adduser != null" >
+        #{adduser,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        #{addip,jdbcType=VARCHAR},
+      </if>
+      <if test="updateuser != null" >
+        #{updateuser,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateip != null" >
+        #{updateip,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.stock.entity.ApplyInfo" >
+    update gq_apply_info
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userRealName != null" >
+        user_real_name = #{userRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null" >
+        id_card = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      
+      <if test="collection != null" >
+        collection = #{collection,jdbcType=DECIMAL},
+      </if>
+       <if test="stockTotal != null" >
+        stock_total = #{stockTotal,jdbcType=INTEGER},
+      </if>
+      <if test="isProtocol != null" >
+        is_protocol = #{isProtocol,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="adduser != null" >
+        adduser = #{adduser,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        addip = #{addip,jdbcType=VARCHAR},
+      </if>
+      <if test="updateuser != null" >
+        updateuser = #{updateuser,jdbcType=INTEGER},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateip != null" >
+        updateip = #{updateip,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.stock.entity.ApplyInfo" >
+    update gq_apply_info
+    set user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_real_name = #{userRealName,jdbcType=VARCHAR},
+      id_card = #{idCard,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      collection = #{collection,jdbcType=DECIMAL},
+      stock_total = #{stockTotal,jdbcType=INTEGER},
+      is_protocol = #{isProtocol,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      adduser = #{adduser,jdbcType=INTEGER},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      addip = #{addip,jdbcType=VARCHAR},
+      updateuser = #{updateuser,jdbcType=INTEGER},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      updateip = #{updateip,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 作废退出股东申请 -->
+  <update id="toVoidApply">
+  UPDATE gq_apply_info 
+	SET `status` = -1
+	where type = 2 and
+	 `status` = 2
+  </update>
+</mapper>

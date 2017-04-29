@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseBorrowApprovedMapper">
+	
+  <!-- 基本返回结果集 -->
+  <resultMap id="borrowApprovedResultMap" type="com.cxdai.console.base.entity.BorrowApproved" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="BORROW_ID" 				property="borrowId" />
+    <result column="STATUS" 				property="status"  />
+    <result column="VERIFY_USER"			property="verifyUser" />
+    <result column="VERIFY_TIME" 			property="verifyTime"  />
+    <result column="VERIFY_REMARK" 			property="verifyRemark"  />
+    <result column="VERIFY_USER2" 			property="verifyUser2" />
+    <result column="VERIFY_TIME2" 			property="verifyTime2"  />
+    <result column="VERIFY_REMARK2" 		property="verifyRemark2"  />
+    <result column="VERIFY_USER3" 			property="verifyUser3"  />
+    <result column="VERIFY_TIME3" 			property="verifyTime3" />
+    <result column="VERIFY_REMARK3" 		property="verifyRemark3" />
+    <result column="VERIFY_USER4" 			property="verifyUser4"  />
+    <result column="VERIFY_TIME4" 			property="verifyTime4"  />
+    <result column="VERIFY_REMARK4"			property="verifyRemark4"  />
+  </resultMap>
+	
+  <!-- 借款标审核基本列 -->
+  <sql id="BorrowApproved_Base_Column" >
+    a.ID, 
+    a.BORROW_ID, 
+    a.STATUS, 
+    a.VERIFY_USER, 
+    a.VERIFY_TIME, 
+    a.VERIFY_REMARK, 
+    a.VERIFY_USER2, 
+    a.VERIFY_TIME2, 
+    a.VERIFY_REMARK2, 
+    a.VERIFY_USER3, 
+    a.VERIFY_TIME3, 
+    a.VERIFY_REMARK3, 
+    a.VERIFY_USER4, 
+    a.VERIFY_TIME4, 
+    a.VERIFY_REMARK4
+  </sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.base.entity.BorrowApproved">
+	    insert into rocky_borrow_approved (BORROW_ID, STATUS, 
+	      VERIFY_USER, VERIFY_TIME, VERIFY_REMARK, 
+	      VERIFY_USER2, VERIFY_TIME2, VERIFY_REMARK2, 
+	      VERIFY_USER3, VERIFY_TIME3, VERIFY_REMARK3, 
+	      VERIFY_USER4, VERIFY_TIME4, VERIFY_REMARK4
+	      )
+	    values (#{borrowId}, #{status}, 
+	      #{verifyUser}, #{verifyTime}, #{verifyRemark,jdbcType=VARCHAR}, 
+	      #{verifyUser2}, #{verifyTime2}, #{verifyRemark2}, 
+	      #{verifyUser3}, #{verifyTime3}, #{verifyRemark3}, 
+	      #{verifyUser4}, #{verifyTime4}, #{verifyRemark4}
+	      )
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="borrowApprovedResultMap" >
+		select 	
+		   <include refid="BorrowApproved_Base_Column"/>
+		from
+			rocky_borrow_approved a
+		where 1=1
+		and a.id=#{id}
+  	</select>
+  	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.base.entity.BorrowApproved" >
+    update rocky_borrow_approved
+    <set >
+      <if test="status != null" >
+        STATUS = #{status},
+      </if>
+      <if test="verifyUser != null" >
+        VERIFY_USER = #{verifyUser},
+      </if>
+      <if test="verifyTime != null" >
+        VERIFY_TIME = #{verifyTime},
+      </if>
+      <if test="verifyRemark != null" >
+        VERIFY_REMARK = #{verifyRemark},
+      </if>
+      <if test="verifyUser2 != null" >
+        VERIFY_USER2 = #{verifyUser2},
+      </if>
+      <if test="verifyTime2 != null" >
+        VERIFY_TIME2 = #{verifyTime2},
+      </if>
+       <if test="verifyRemark2 != null" >
+        VERIFY_REMARK2 = #{verifyRemark2},
+      </if>
+      <if test="verifyUser3 != null" >
+        VERIFY_USER3 = #{verifyUser3},
+      </if>  
+      <if test="verifyTime3 != null" >
+        VERIFY_TIME3 = #{verifyTime3},
+      </if>                
+      <if test="verifyRemark3 != null" >
+        VERIFY_REMARK3 = #{verifyRemark3},
+      </if>        
+      <if test="verifyUser4 != null" >
+        VERIFY_USER4 = #{verifyUser4},
+      </if> 
+      <if test="verifyTime4 != null" >
+        VERIFY_TIME4 = #{verifyTime4},
+      </if> 
+      <if test="verifyRemark4 != null" >
+        VERIFY_REMARK4 = #{verifyRemark4},
+      </if> 
+    </set>
+    where ID = #{id}
+  </update>
+  
+  <update id="updateBorrowApprovedRecheck" parameterType="com.cxdai.console.base.entity.BorrowApproved">
+   UPDATE rocky_borrow_approved set STATUS = 4,VERIFY_USER4 = #{verifyUser4},VERIFY_TIME4=UNIX_TIMESTAMP(),VERIFY_REMARK4=#{verifyRemark4} WHERE BORROW_ID =#{borrowId}
+  </update>
+  	
+</mapper>  

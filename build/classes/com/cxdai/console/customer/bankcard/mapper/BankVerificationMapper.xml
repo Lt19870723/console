@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.customer.bankcard.mapper.BankVerificationMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.customer.bankcard.entity.BankcardVerification" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="verif_time" property="verifyTime" jdbcType="TIMESTAMP" />
+    <result column="add_time" property="add_time" jdbcType="TIMESTAMP" />
+    <result column="auResultCode" property="auResultCode" jdbcType="VARCHAR" />
+    <result column="auResultInfo" property="auResultInfo" jdbcType="VARCHAR" />
+    <result column="errorCode" property="errorCode" jdbcType="VARCHAR" />
+    <result column="errorMsg" property="errorMsg" jdbcType="VARCHAR" />
+    <result column="bankCardNum" property="bankCardNum" jdbcType="VARCHAR" />
+    <result column="RealName" property="realName" jdbcType="VARCHAR" />
+    <result column="IdCardNo" property="idCardNo" jdbcType="VARCHAR" />
+    <result column="bankPhone" property="bankPhone" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
+  </resultMap>
+	<!-- 根据条件查询记录集合 -->
+	<select id="pageQueryVerifyInfo" parameterType="com.cxdai.console.customer.bankcard.entity.BankcardTimesCnd" resultMap="BaseResultMap" >
+		SELECT bv.*,m.USERNAME as userName FROM t_bankcard_verify bv 
+		left join rocky_member m on bv.user_id=m.id
+		WHERE 1=1 
+		   <if test="userName !=null and userName !=''  ">
+			and m.USERNAME like CONCAT('%',#{userName},'%') 
+		   </if>
+		    order by bv.id desc
+   	</select>
+  	<!-- 根据条件查询记录数量-->
+	<select id="pageQueryVerifyInfoCount" parameterType="com.cxdai.console.customer.bankcard.entity.BankcardTimesCnd"  resultType="java.lang.Integer" >
+		SELECT COUNT(1) FROM t_bankcard_verify bv 
+		left join rocky_member m on bv.user_id=m.id
+		WHERE 1=1
+		   <if test="userName !=null and userName !=''  ">
+			and m.USERNAME like CONCAT('%',#{userName},'%') 
+		   </if>
+  	</select>
+  	
+  	<insert id="insert" parameterType="com.cxdai.console.customer.bankcard.entity.BankcardVerification" >
+    insert into t_bankcard_verify (user_id, verif_time, 
+      add_time, auResultCode, auResultInfo, errorCode, 
+      errorMsg, bankCardNum, RealName, IdCardNo, 
+      bankPhone,type)
+       values (#{userId,jdbcType=INTEGER}, #{verifyTime,jdbcType=TIMESTAMP}, 
+      #{add_time,jdbcType=TIMESTAMP}, #{auResultCode,jdbcType=VARCHAR}, #{auResultInfo,jdbcType=VARCHAR}, #{errorCode,jdbcType=VARCHAR}, 
+      #{errorMsg,jdbcType=VARCHAR}, #{bankCardNum,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, #{idCardNo,jdbcType=VARCHAR}, #{bankPhone,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}) 
+  </insert>
+  
+  	<!-- 根据用户ID查询今天请求次数 -->    
+	<select id="queryTodayRequestNumByUid" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+		SELECT COUNT(*) from t_bankcard_verify where user_id=#{userId} and DATE_FORMAT(add_time,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
+  	</select>
+  	
+  	<!-- 根据用户ID查询所有请求次数 -->    
+	<select id="queryAllRequestNumByUid" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+		SELECT COUNT(1) from t_bankcard_verify where user_id=#{userId} and delete_flag!=-1
+  	</select>
+</mapper>

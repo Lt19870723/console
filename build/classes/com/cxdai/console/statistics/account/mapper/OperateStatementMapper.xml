@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.statistics.account.mapper.OperateStatementMapper">
+	<resultMap type="com.cxdai.console.statistics.account.vo.OperateStatementVo" id="operateStatementResultMap">
+		    <result property="totalRegMembers" 			column="totalRegMembers"/>
+		    <result property="totalRealNameMembers" 	column="totalRealNameMembers"/>
+		    <result property="totalVIPPassMembers" 		column="totalVIPPassMembers"/>
+		    <result property="totalTenders" 			column="totalTenders"/>
+		    <result property="totalRechargeMoney" 		column="totalRechargeMoney"/>
+		    <result property="totalCashMoney" 			column="totalCashMoney"/>
+		    <result property="totalTJMoney" 			column="totalTJMoney"/>
+		    <result property="totalDYMoney" 			column="totalDYMoney"/>
+		    <result property="totalJZMoney" 			column="totalJZMoney"/>
+		    <result property="totalMBMoney" 			column="totalMBMoney"/>
+		    <result property="totalDBMoney" 			column="totalDBMoney"/>
+	</resultMap>
+	<resultMap type="com.cxdai.console.statistics.account.entity.YunYingData" id="statisticsyunYingResultMap">
+	
+	</resultMap>
+<!-- 统计报表SQL -->
+<select id="queryOperateStatement" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultMap="operateStatementResultMap">
+SELECT 
+<!--  注册人数 -->
+ (SELECT COUNT(*)   FROM ROCKY_MEMBER where 1=1 AND `STATUS`=0 AND ADDTIME <![CDATA[>=]]> #{beginTimeSec}  AND ADDTIME <![CDATA[<]]> #{endTimeSec} ) as totalRegMembers
+  ,
+<!--   通过的实名认证人数 -->
+(SELECT  COUNT(*)  FROM ROCKY_REALNAME_APPRO where ISPASSED = 1 AND  APPROVETIME <![CDATA[>=]]> #{beginTimeSec}  AND APPROVETIME <![CDATA[<]]> #{endTimeSec})  AS totalRealNameMembers
+<!--    VIP认证人数 -->
+  , 
+ (SELECT  COUNT(*)   FROM ROCKY_VIP_APPRO where PASSED = 1 AND  ADDTIME <![CDATA[>=]]> #{beginTimeSec}  AND ADDTIME <![CDATA[<]]> #{endTimeSec}) AS totalVIPPassMembers
+  ,
+<!--   投资人数 -->
+  (select  COUNT(*)   from (SELECT t.* FROM ROCKY_B_TENDERRECORD t,rocky_borrow b where t.BORROW_ID = b.id and b.`STATUS` >= 0 AND  t.ADDTIME <![CDATA[>=]]> #{beginTimeSec}  AND t.ADDTIME <![CDATA[<]]> #{endTimeSec} group by t.USER_ID) AS a) as totalTenders
+,
+<!--  充值金额 -->
+ (SELECT  IFNULL(SUM(re.MONEY),0)     FROM rocky_rechargerecord re LEFT JOIN rocky_member me ON re.USER_ID=me.ID WHERE re.STATUS = 1 and me.IS_FINANCIAL_USER=1
+  and ( re.TYPE = 1 AND (re.VERIFY_TIME <![CDATA[>=]]> #{beginTimeSec} and re.VERIFY_TIME <![CDATA[<]]> #{endTimeSec}) or (re.TYPE = 2 and re.VERIFY_TIME2 <![CDATA[>=]]> #{beginTimeSec} and re.VERIFY_TIME2 <![CDATA[<]]> #{endTimeSec}))) as totalRechargeMoney
+  ,
+<!--    提现金额 -->
+  (SELECT  IFNULL(SUM(TOTAL),0)  FROM rocky_cashrecord  WHERE `STATUS` = '2'  and VERIFY_TIME2 <![CDATA[>=]]> #{beginTimeSec} and VERIFY_TIME2 <![CDATA[<]]> #{endTimeSec}) as totalCashMoney
+     , 
+<!--  推荐标金额 -->
+  (SELECT  IFNULL(SUM(ACCOUNT),0)   FROM ROCKY_BORROW  WHERE STATUS > 2  and BORROWTYPE =1 and UNIX_TIMESTAMP(ADDTIME) <![CDATA[>=]]> #{beginTimeSec} and UNIX_TIMESTAMP(ADDTIME) <![CDATA[<]]> #{endTimeSec}) AS totalTJMoney
+    , 
+<!--  抵押标金额 -->
+  (SELECT  IFNULL(SUM(ACCOUNT),0)   FROM ROCKY_BORROW  WHERE STATUS > 2  and BORROWTYPE =2 and UNIX_TIMESTAMP(ADDTIME) <![CDATA[>=]]> #{beginTimeSec} and UNIX_TIMESTAMP(ADDTIME) <![CDATA[<]]> #{endTimeSec}) AS totalDYMoney
+    , 
+<!--  净值标金额 -->
+ ( SELECT  IFNULL(SUM(ACCOUNT),0)   FROM ROCKY_BORROW  WHERE STATUS > 2  and BORROWTYPE =3 and UNIX_TIMESTAMP(ADDTIME) <![CDATA[>=]]> #{beginTimeSec} and UNIX_TIMESTAMP(ADDTIME) <![CDATA[<]]> #{endTimeSec}) AS totalJZMoney
+    , 
+ <!-- 秒标金额 -->
+ ( SELECT  IFNULL(SUM(ACCOUNT),0)  FROM ROCKY_BORROW  WHERE STATUS > 2  and BORROWTYPE =4 and UNIX_TIMESTAMP(ADDTIME) <![CDATA[>=]]> #{beginTimeSec} and UNIX_TIMESTAMP(ADDTIME) <![CDATA[<]]> #{endTimeSec}) AS totalMBMoney
+    , 
+ <!-- 担保标金额 -->
+  (SELECT  IFNULL(SUM(ACCOUNT),0)  FROM ROCKY_BORROW  WHERE STATUS > 2  and BORROWTYPE =5 and UNIX_TIMESTAMP(ADDTIME) <![CDATA[>=]]> #{beginTimeSec} and UNIX_TIMESTAMP(ADDTIME) <![CDATA[<]]> #{endTimeSec}) AS totalDBMoney
+    ,
+ <!-- 担保标金额 -->
+  (SELECT  IFNULL(SUM(TOTAL),0)  FROM rocky_cashrecord  WHERE `STATUS` = '1'  and VERIFY_TIME2 <![CDATA[>=]]> #{beginTimeSec} and VERIFY_TIME2 <![CDATA[<]]> #{endTimeSec}) AS totalCGMoney
+ 
+ FROM dual;
+
+</select>
+<!-- 每周运营数据SQL -->
+<select id="querystatisticsyunYingList" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultMap="statisticsyunYingResultMap">
+	select
+	(SELECT IFNULL(COUNT(*),0) FROM ROCKY_MEMBER where 1=1 and `STATUS`=0
+	and FROM_UNIXTIME(ADDTIME) &gt;= DATE(#{beginTime})
+	and FROM_UNIXTIME(ADDTIME) &lt; DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY)))
+	as registeredNumber,
+	(SELECT IFNULL(COUNT(DISTINCT(T1.USER_ID)),0) AS PERSONS FROM (
+	SELECT T.USER_ID FROM ROCKY_BORROW B,ROCKY_B_COLLECTIONRECORD T
+	WHERE 1=1
+	AND B.ID=T.BORROW_ID
+	AND (B.STATUS = 4 OR B.STATUS = 5 OR B.STATUS = 42)
+	AND FROM_UNIXTIME(T.ADDTIME) &gt;= DATE(#{beginTime})
+	AND FROM_UNIXTIME(T.ADDTIME) &lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY))
+	UNION ALL
+	SELECT T.USER_ID FROM t_fix_borrow B,t_fix_collectionrecord T
+	WHERE 1=1
+	AND B.ID=T.FIX_BORROW_ID
+	AND B.STATUS IN(5,7)
+	AND T.ADDTIME &gt;= DATE(#{beginTime})
+	AND T.ADDTIME &lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY))
+	) T1) as investmentNumber,
+	(select ifnull(SUM(tftr.ACCOUNT),0)/10000 from t_first_tender_real tftr
+	LEFT JOIN (
+	select * from (
+	select FIRST_TENDER_REAL_ID,SUCCESS_TIME from t_first_transfer
+	order by SUCCESS_TIME DESC) t
+	group by FIRST_TENDER_REAL_ID
+	) tft on tftr.id=tft.FIRST_TENDER_REAL_ID
+	LEFT JOIN (
+	select * from (
+	select FIRST_TENDER_REAL_ID,APPR_TIME from t_first_unlock_appr
+	where `STATUS`=1
+	order by APPR_TIME DESC) t
+	group by FIRST_TENDER_REAL_ID
+	) tfua on tftr.id=tfua.FIRST_TENDER_REAL_ID
+	WHERE (tftr.`STATUS` in(0,2,3,5) and
+	tftr.ADDTIME&lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY)))
+	OR (tftr.`STATUS` = 4 and
+	tft.SUCCESS_TIME&lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY)))
+	OR (tftr.`STATUS` = 1 and
+	tfua.APPR_TIME&gt;=DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY)))) as
+	trainStockTotal,
+	(select ifnull(SUM(ACCOUNT),0)/10000 from t_first_tender_real where id IN (
+	select ua.FIRST_TENDER_REAL_ID from t_first_unlock_appr ua where 1=1
+	and ua.status=1
+	and DATE_FORMAT(ua.APPR_TIME,'%Y-%m-%d') &lt;= DATE(#{endTime}))) as
+	trainOffTotal,
+	(SELECT IFNULL(ROUND(SUM(d.COLLECTION),2)/10000,0) AS account
+	FROM rocky_account_day_log d
+	WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE(#{endTime}) and user_id
+	&gt;=100000000) as fixStockTotal,
+	(SELECT IFNULL(COUNT(DISTINCT b.id),0) FROM  rocky_borrow b,(select * from (select * from rocky_b_repaymentrecord  order by `ORDER` desc ) t group by BORROW_ID) r where b.id=r.BORROW_ID
+	and b.status=5
+	AND FROM_UNIXTIME(REPAYMENT_YESTIME,'%Y-%m-%d') &lt; FROM_UNIXTIME(REPAYMENT_TIME, '%Y-%m-%d')
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&gt;=date(#{beginTime})
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&lt;DATE(DATE_ADD(#{endTime},INTERVAL
+	1 DAY))) as repaymentEarly,
+	(select IFNULL(SUM(t.account),0)/10000 from (SELECT DISTINCT b.id,b.account FROM  rocky_borrow b,(select * from (select * from rocky_b_repaymentrecord  order by `ORDER` desc ) t group by BORROW_ID) r where b.id=r.BORROW_ID
+	and b.status=5
+	AND FROM_UNIXTIME(REPAYMENT_YESTIME,'%Y-%m-%d') &lt;FROM_UNIXTIME(REPAYMENT_TIME, '%Y-%m-%d')
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&gt;=date(#{beginTime})
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&lt;DATE(DATE_ADD(#{endTime},INTERVAL
+	1 DAY))) t) as repaymentEarlyTotal,
+	<!-- (SELECT IFNULL(COUNT(DISTINCT b.id),0) FROM  rocky_borrow b,(select * from (select * from rocky_b_repaymentrecord  order by `ORDER` desc ) t group by BORROW_ID) r where b.id=r.BORROW_ID
+	and b.status=5 and b.PLEDGE_TYPE=1 
+	AND FROM_UNIXTIME(REPAYMENT_YESTIME,'%Y-%m-%d') =FROM_UNIXTIME(REPAYMENT_TIME, '%Y-%m-%d')
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&gt;=date(#{beginTime})
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&lt;DATE(DATE_ADD(#{endTime},INTERVAL
+	1 DAY))) as repaymentMaturity,
+	(select IFNULL(SUM(t.account),0)/10000 from (SELECT DISTINCT b.id,b.account FROM  rocky_borrow b,(select * from (select * from rocky_b_repaymentrecord  order by `ORDER` desc ) t group by BORROW_ID) r where b.id=r.BORROW_ID
+	and b.status=5 and b.PLEDGE_TYPE=1 
+	AND FROM_UNIXTIME(REPAYMENT_YESTIME,'%Y-%m-%d') =FROM_UNIXTIME(REPAYMENT_TIME, '%Y-%m-%d')
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&gt;=date(#{beginTime})
+	AND FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d')&lt;DATE(DATE_ADD(#{endTime},INTERVAL
+	1 DAY))) t) as repaymentMaturityTotal, -->
+	(SELECT IFNULL(COUNT(DISTINCT b.id),0) FROM  rocky_borrow b,(select * from (select * from rocky_b_repaymentrecord  order by `ORDER` desc ) t group by BORROW_ID) r where b.id=r.BORROW_ID
+	AND (b.status=5 or b.status=4 or b.status=42)
+	AND IF(r.status = 1,(FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d') &gt; FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')),(DATE_FORMAT(SYSDATE(),'%Y-%m-%d') &gt; FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')))
+	AND FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')&gt;=date(#{beginTime})
+	AND FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')&lt;DATE(DATE_ADD(#{endTime},INTERVAL
+	1 DAY))) as repaymentLate,
+	(select IFNULL(SUM(t.account),0)/10000 from (SELECT DISTINCT b.id,b.account FROM  rocky_borrow b,(select * from (select * from rocky_b_repaymentrecord  order by `ORDER` desc ) t group by BORROW_ID) r where b.id=r.BORROW_ID
+	AND (b.status=5 or b.status=4 or b.status=42)
+	AND IF(r.status = 1,(FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d') &gt; FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')),(DATE_FORMAT(SYSDATE(),'%Y-%m-%d') &gt; FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')))
+	AND FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')&gt;=date(#{beginTime})
+	AND FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d')&lt;DATE(DATE_ADD(#{endTime},INTERVAL
+	1 DAY))) t) as repaymentLateTotal,
+	(select IFNULL(COUNT(1),0) from rocky_borrow where status in (4,5,42) and
+	PLEDGE_TYPE=1
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d') &gt;=date(#{beginTime})
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d')
+	&lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY))) as repaymentAdd,
+	(select IFNULL(SUM(ACCOUNT),0)/10000 from rocky_borrow where status in (4,5,42) and
+	PLEDGE_TYPE=1
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d') &gt;=date(#{beginTime})
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d')
+	&lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY))) as repaymentAddTotal,
+	(select IFNULL(COUNT(1),0) from rocky_borrow where status in (4,5,42)
+	and PLEDGE_TYPE=2
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d') &gt;=date(#{beginTime})
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d')
+	&lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY))) as standardContinued,
+	(select IFNULL(SUM(ACCOUNT),0)/10000 from rocky_borrow where status in
+	(4,5,42) and PLEDGE_TYPE=2
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d') &gt;=date(#{beginTime})
+	and FROM_UNIXTIME(PUBLISH_TIME,'%Y-%m-%d')
+	&lt;DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY))) as
+	standardContinuedTotal
+	from dual;
+</select>
+	
+</mapper>  

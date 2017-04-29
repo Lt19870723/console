@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.borrow.emerg.mapper.TenderRecordMapper" >
+  
+  <resultMap id="BaseResultMap" type="com.cxdai.console.borrow.approve.entity.TenderRecord" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="BORROW_ID" property="borrowId" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="ACCOUNT" property="account" jdbcType="DECIMAL" />
+    <result column="INTEREST" property="interest" jdbcType="DECIMAL" />
+    <result column="REPAYMENT_ACCOUNT" property="repaymentAccount" jdbcType="DECIMAL" />
+    <result column="REPAYMENT_YESACCOUNT" property="repaymentYesaccount" jdbcType="DECIMAL" />
+    <result column="REPAYMENT_YESINTEREST" property="repaymentYesinterest" jdbcType="DECIMAL" />
+    <result column="ADDTIME" property="addtime" jdbcType="VARCHAR" />
+    <result column="ADDIP" property="addip" jdbcType="VARCHAR" />
+    <result column="TENDER_TYPE" property="tenderType" jdbcType="INTEGER" />
+    <result column="AUTOTENDER_ORDER" property="autotenderOrder" jdbcType="INTEGER" />
+    <result column="AUTOTENDER_ORDER_REMARK" property="autotenderOrderRemark" jdbcType="VARCHAR" />
+    <result column="FIRST_BORROW_ID" property="firstBorrowId" jdbcType="INTEGER" />
+    <result column="FIRST_BORROW_SCALE" property="firstBorrowScale" jdbcType="VARCHAR" />
+    <result column="USER_LEVEL" property="userLevel" jdbcType="VARCHAR" />
+    <result column="RATIO" property="ratio" jdbcType="VARCHAR" />
+    <result column="AUTO_TYPE" property="autoType" jdbcType="INTEGER" />
+    <result column="E_FREEZE_No" 			property="eFreezeNo"/>
+    <result column="E_BANKINFO_ID" 			property="eBankInfoId"/>
+    <result column="E_FREEZE_DATE" 			property="eFreezeDate"/>
+    <result column="IS_CUSTODY" 			property="isCustody"/>
+    <result column="BIZ_INVEST_NO" 			property="bizInvestNo"/>
+    <result column="E_INVEST_DATE"		 	property="eInvestDate"/>
+    <result column="E_INVEST_No" 			property="eInvestNo"/>
+    <result column="E_INVEST_STATUS" 		property="eInvestStatus"/>
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    ID, USER_ID, BORROW_ID, STATUS, ACCOUNT, INTEREST, REPAYMENT_ACCOUNT, REPAYMENT_YESACCOUNT, 
+    REPAYMENT_YESINTEREST, ADDTIME, ADDIP, TENDER_TYPE, AUTOTENDER_ORDER, AUTOTENDER_ORDER_REMARK, 
+    FIRST_BORROW_ID, FIRST_BORROW_SCALE, USER_LEVEL, RATIO,E_FREEZE_No,E_BANKINFO_ID,E_FREEZE_DATE,
+    IS_CUSTODY,BIZ_INVEST_NO,E_INVEST_DATE,E_INVEST_No,E_INVEST_STATUS
+  </sql>
+  
+  
+  <!-- 根据borrowId查询投标记录数 -->
+  <select id="queryTenderRecordByBorrowId" parameterType="java.lang.Integer" resultType="java.util.Map" >
+    	SELECT IFNULL(sum(account),0) total_account,count(*) total_count FROM ROCKY_B_TENDERRECORD WHERE BORROW_ID = #{borrowId}
+  </select>
+  
+  <select id="queryTenderRecordForExcelByBorrowId" parameterType="java.lang.Integer" resultType="com.cxdai.console.borrow.emerg.vo.TenderRecordCheck" >
+    	SELECT  
+    	b.`NAME` as borrowName,
+    	m.USERNAME as username,
+    	t.ACCOUNT as account,
+    	DATE_FORMAT(FROM_UNIXTIME(t.addtime),'%Y-%m-%d %H:%i:%s') as addtime,
+		case WHEN t.TENDER_TYPE = 0 THEN '手动投标'
+		when t.TENDER_TYPE = 1 THEN '自动投标'
+		when t.TENDER_TYPE  = 2 THEN '直通车投标'
+		END as tenderType
+		FROM rocky_b_tenderrecord t,rocky_member m,rocky_borrow b
+		WHERE t.USER_ID = m.ID and b.id = t.BORROW_ID AND t.BORROW_ID = #{borrowId}
+  </select>
+  
+  
+  <resultMap id="tenderRecordVoResultMap" type="com.cxdai.console.borrow.emerg.vo.TenderRecordVo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="BORROW_ID" property="borrowId" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="ACCOUNT" property="account" jdbcType="DOUBLE" />
+    <result column="INTEREST" property="interest" jdbcType="DOUBLE" />
+    <result column="REPAYMENT_ACCOUNT" property="repaymentAccount" jdbcType="DOUBLE" />
+    <result column="REPAYMENT_YESACCOUNT" property="repaymentYesaccount" jdbcType="DOUBLE" />
+    <result column="REPAYMENT_YESINTEREST" property="repaymentYesinterest" jdbcType="DOUBLE" />
+    <result column="ADDTIME" property="addtime" jdbcType="VARCHAR" />
+    <result column="ADDIP" property="addip" jdbcType="VARCHAR" />
+    <result column="TENDER_TYPE" property="tenderType" jdbcType="INTEGER" />
+    <result column="AUTOTENDER_ORDER" property="autotenderOrder" jdbcType="INTEGER" />
+    <result column="AUTOTENDER_ORDER_REMARK" property="autotenderOrderRemark" jdbcType="VARCHAR" />
+    <result column="FIRST_BORROW_ID" property="firstBorrowId" jdbcType="INTEGER" />
+    <result column="FIRST_BORROW_SCALE" property="firstBorrowScale" jdbcType="VARCHAR" />
+    <result column="USER_LEVEL" property="userLevel" jdbcType="VARCHAR" />
+    <result column="RATIO" property="ratio" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="firstBorrowName" property="firstBorrowName" jdbcType="VARCHAR" />
+    <result column="ADDTIME_Date" property="addtimeDate" />
+    <result column="AUTO_TYPE" property="autoType" />
+    <result column="IS_VIP" property="isVip" />
+    <result column="tenderCapital" property="tenderCapital" jdbcType="DECIMAL" />
+    <result column="tenderInterest" property="tenderInterest" jdbcType="DECIMAL" />
+    <result column="tenderRepayAccount" property="tenderRepayAccount" jdbcType="DECIMAL" />
+    <result column="borrowContractNo" property="borrowContractNo" jdbcType="VARCHAR" />
+    <result column="FIRST_TENDER_REAL_ID" property="firstTenderRealId" />
+    <result column="PARENT_ID" property="parentId" />
+    <result column="PLATFORM" property="platform" />
+    <result column="DRAW_MONEY" property="drawMoney" />
+    <result column="NO_DRAW_MONEY" property="noDrawMoney" />
+  </resultMap>
+  
+  <sql id="tender_record_column_List" >
+    t.ID, t.USER_ID, t.BORROW_ID, t.STATUS, t.ACCOUNT, t.INTEREST, t.REPAYMENT_ACCOUNT, t.REPAYMENT_YESACCOUNT, 
+    t.REPAYMENT_YESINTEREST, t.ADDTIME, t.ADDIP, t.TENDER_TYPE, t.AUTOTENDER_ORDER, t.AUTOTENDER_ORDER_REMARK, 
+    t.FIRST_BORROW_ID, t.FIRST_BORROW_SCALE, t.USER_LEVEL, t.RATIO,t.IS_VIP, t.AUTO_TYPE,t.FIRST_TENDER_REAL_ID,
+    t.PARENT_ID,t.PLATFORM,t.DRAW_MONEY,t.NO_DRAW_MONEY,t.E_FREEZE_No,t.E_FREEZE_DATE,t.E_BANKINFO_ID,t.BIZ_FREEZE_NO,t.E_INVEST_No,t.E_INVEST_STATUS,t.E_INVEST_DATE,t.BIZ_INVEST_NO,t.IS_CUSTODY
+  </sql>
+  
+  <!-- 根据borrowId查询投标记录 -->
+  <select id="queryListByBorrowId" parameterType="java.lang.Integer" resultMap="tenderRecordVoResultMap" >
+    SELECT 
+    	<include refid="tender_record_column_List" />,
+	    m.username username,
+	    m.email email,
+	    tb.`NAME` as firstBorrowName,
+	    from_unixtime(t.addtime) addtime_date
+	FROM 
+		ROCKY_B_TENDERRECORD t 
+	left join 
+		ROCKY_MEMBER m on m.id = t.user_id 
+	LEFT JOIN 
+		t_first_borrow tb ON t.FIRST_BORROW_ID = tb.ID 
+	WHERE 
+		t.BORROW_ID= #{borrowId} 
+	ORDER BY t.id desc
+  </select>
+  
+  <!-- 根据投标条件查询投标记录 --> 
+  <select id="queryListByTenderRecordCnd" parameterType="com.cxdai.console.borrow.emerg.vo.TenderRecordCnd" resultMap="tenderRecordVoResultMap" >
+    SELECT 
+    	<include refid="tender_record_column_List" />,
+	    m.username username,
+	    m.email email,
+	    tb.`NAME` as firstBorrowName,
+	    from_unixtime(t.addtime) addtime_date
+	FROM 
+		ROCKY_B_TENDERRECORD t 
+	left join 
+		ROCKY_MEMBER m on m.id = t.user_id 
+	LEFT JOIN 
+		t_first_borrow tb ON t.FIRST_BORROW_ID = tb.ID 
+	WHERE 1=1
+	<if test="borrowId!=null">
+	   and t.BORROW_ID= #{borrowId} 
+	</if>
+	<if test="recordType!=null">
+		<if test="recordType ==0">
+			and t.PARENT_ID is null
+			and t.STATUS !=-1 
+		</if>	
+		<if test="recordType ==1">
+			and t.status !=-2 
+		</if>		
+	</if>		
+	ORDER BY t.id desc
+  </select>
+  
+  <select id="queryTotalRepaymentAccount" parameterType="com.cxdai.console.borrow.emerg.vo.TenderRecordCnd" resultType="java.math.BigDecimal">
+	select sum(if(c.ADVANCETIME is not null, c.REPAY_YESACCOUNT, c.REPAY_ACCOUNT))
+	from rocky_borrow b
+	inner join rocky_b_tenderrecord t on t.BORROW_ID = b.ID
+	inner join rocky_b_collectionrecord c on t.ID = c.TENDER_ID and c.`STATUS` >= 0
+	where b.ID = #{borrowId}
+  </select>
+  
+    <select id="searchUserTenderRecord" parameterType="com.cxdai.console.borrow.emerg.vo.UserTenderRecordCnd" resultType="com.cxdai.console.borrow.emerg.vo.UserTenderRecordVo" >
+		   SELECT
+		          rb.id  borrowId,
+				  rb.name,
+				  rb.APR apr,
+				  rb.ACCOUNT  account,
+				  rbt.account tenderaccount,
+				  rb.BORROWTYPE borrowtype,
+				  rb.addtime  borrowDateTimeStr,
+				  rb.is_custody isCustody,
+				  case borrowtype  
+					  when  1 then   '信用标'
+					  when  2 then   '抵押标'
+					  when  3 then   '净值标'
+					  when  4 then   '秒标'
+					  when  5 then   '担保标'
+					  end  borrowtypeStr , 
+				  rbt.PARENT_ID,
+				  rb.user_id  userId ,
+				  (SELECT
+				      rm1.USERNAME
+				    FROM rocky_member rm1
+				    WHERE rm1.id = rb.user_id) borrowUserName,
+				  rb.contract_no contractNo,
+				  rm.USERNAME tenderUserName ,
+				  rbt.STATUS,
+				  FROM_UNIXTIME(rbt.addtime)   tenderDateTimeStr,
+				   case rbt.STATUS  
+					  when  -2 then   '已债权转让'
+					  when  -1 then   '所投标失败'
+					  when  0 then   '正在投标'
+					  when  1 then   '所投标还款中'
+					  when  2 then   '所投标完成结束'
+					  end  statusStr 
+				FROM rocky_b_tenderrecord rbt
+				  LEFT JOIN rocky_borrow rb
+				    ON BORROW_ID = rb.id
+				  LEFT JOIN rocky_member rm
+				    ON rbt.user_id
+				    = rm.id
+		  <include refid="searchUserTenderRecordWhere"/>
+		  <if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (rb.is_custody=0 or rb.is_custody is null)
+	  	</if>
+	  	<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and rb.is_custody=1
+	  	</if> 
+  </select>
+  
+  
+    <select id="searchCountUserTenderRecord" parameterType="com.cxdai.console.borrow.emerg.vo.UserTenderRecordCnd" resultType="java.lang.Integer" >
+		   SELECT
+				   count(1)  
+				FROM rocky_b_tenderrecord rbt
+				  LEFT JOIN rocky_borrow rb
+				    ON BORROW_ID = rb.id
+				  LEFT JOIN rocky_member rm
+				    ON rbt.user_id
+				    = rm.id
+		  <include refid="searchUserTenderRecordWhere"/>
+		   <if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (rb.is_custody=0 or rb.is_custody is null)
+	  	</if>
+	  	<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and rb.is_custody=1
+	  	</if> 
+  </select>
+  
+  
+  
+  <sql id="searchUserTenderRecordWhere">
+	   WHERE       PARENT_ID IS NULL
+	    <if test="contractNo!=null and ''!= contractNo">
+	      and      rb.contract_no LIKE  concat(#{contractNo},'%')
+	    </if>
+	    <if test="borrowUserName!=null and ''!= borrowUserName">
+	      AND     rb.user_id =  (select id  from rocky_member m where  username=#{borrowUserName}) 
+	    </if>
+	    <if test="tenderUserName!=null and ''!= tenderUserName">
+	      AND      rm.USERNAME  = #{tenderUserName} 
+	    </if>
+	    <if test="borrowtype!=0">
+	      AND      rb.borrowtype = #{borrowtype}
+	    </if>
+  </sql>
+  
+  
+    <insert id="insert" useGeneratedKeys="true" keyColumn="ID" keyProperty="id"
+		parameterType="com.cxdai.console.base.entity.BTenderRecord">
+		INSERT INTO `rocky_b_tenderrecord`
+		(`USER_ID`, `BORROW_ID`, `STATUS`, `ACCOUNT`, `INTEREST`, `REPAYMENT_ACCOUNT`, `REPAYMENT_YESACCOUNT`, `REPAYMENT_YESINTEREST`, `ADDTIME`, `ADDIP`,
+		 `TENDER_TYPE`, `AUTOTENDER_ORDER`, `AUTOTENDER_ORDER_REMARK`, `FIRST_BORROW_ID`, `FIRST_BORROW_SCALE`, `USER_LEVEL`, `RATIO`, `DRAW_MONEY`, `NO_DRAW_MONEY`,
+		 `IS_VIP`, `PARENT_ID`, `PLATFORM`, `FIRST_TENDER_REAL_ID`, `AUTO_TYPE`) 
+  		VALUES 
+  		(#{userId}, #{borrowId}, #{status}, #{account}, #{interest}, #{repaymentAccount}, #{repaymentYesaccount}, #{repaymentYesinterest}, unix_timestamp(), #{addip}, 
+  		 #{tenderType}, #{autotenderOrder}, #{autotenderOrderRemark}, #{firstBorrowId}, #{firstBorrowScale}, #{userLevel},  #{ratio}, #{drawMoney}, #{noDrawMoney},
+  		 #{isVip}, #{parentId}, #{platform}, #{firstTenderRealId}, #{autoType})
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+	<!-- 根据定期宝ID查询投标记录表信息--> 
+  <select id="queryFixTenderRecordList" parameterType="com.cxdai.console.fix.vo.TenderRecordCnd" resultMap="tenderRecordVoResultMap" >
+
+	SELECT  <include refid="tender_record_column_List" />,
+			rb.CONTRACT_NO AS borrowContractNo ,
+			ifnull(Sum(rbc.CAPITAL),0)  AS tenderCapital ,
+			ifnull(Sum(rbc.INTEREST),0) AS tenderInterest ,
+			ifnull(Sum(rbc.REPAY_ACCOUNT),0) AS tenderRepayAccount
+	FROM rocky_b_tenderrecord t
+	inner join rocky_b_collectionrecord rbc on rbc.TENDER_ID = t.ID
+	  and rbc.`STATUS` = 0
+	inner join rocky_borrow rb on rbc.BORROW_ID = rb.ID
+	WHERE t.USER_ID = #{userId}
+	  AND t.`STATUS` = 1
+	group by t.ID;
+  </select>
+
+    <select id="selectByPrimaryKey" resultMap="tenderRecordVoResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="tender_record_column_List" />
+        from rocky_b_tenderrecord t
+        where t.ID = #{id,jdbcType=INTEGER}
+    </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.base.entity.BTenderRecord" >
+    update rocky_b_tenderrecord
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowId != null" >
+        BORROW_ID = #{borrowId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        ACCOUNT = #{account,jdbcType=DECIMAL},
+      </if>
+      <if test="interest != null" >
+        INTEREST = #{interest,jdbcType=DECIMAL},
+      </if>
+      <if test="repaymentAccount != null" >
+        REPAYMENT_ACCOUNT = #{repaymentAccount,jdbcType=DECIMAL},
+      </if>
+      <if test="repaymentYesaccount != null" >
+        REPAYMENT_YESACCOUNT = #{repaymentYesaccount,jdbcType=DECIMAL},
+      </if>
+      <if test="repaymentYesinterest != null" >
+        REPAYMENT_YESINTEREST = #{repaymentYesinterest,jdbcType=DECIMAL},
+      </if>
+      <if test="addtime != null" >
+        ADDTIME = #{addtime,jdbcType=VARCHAR},
+      </if>
+      <if test="addip != null" >
+        ADDIP = #{addip,jdbcType=VARCHAR},
+      </if>
+      <if test="tenderType != null" >
+        TENDER_TYPE = #{tenderType,jdbcType=INTEGER},
+      </if>
+      <if test="autotenderOrder != null" >
+        AUTOTENDER_ORDER = #{autotenderOrder,jdbcType=INTEGER},
+      </if>
+      <if test="autotenderOrderRemark != null" >
+        AUTOTENDER_ORDER_REMARK = #{autotenderOrderRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="firstBorrowId != null" >
+        FIRST_BORROW_ID = #{firstBorrowId,jdbcType=INTEGER},
+      </if>
+      <if test="firstBorrowScale != null" >
+        FIRST_BORROW_SCALE = #{firstBorrowScale,jdbcType=VARCHAR},
+      </if>
+      <if test="userLevel != null" >
+        USER_LEVEL = #{userLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="ratio != null" >
+        RATIO = #{ratio,jdbcType=VARCHAR},
+      </if>
+      <if test="drawMoney != null" >
+        DRAW_MONEY = #{drawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="noDrawMoney != null" >
+        NO_DRAW_MONEY = #{noDrawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="isVip != null" >
+        IS_VIP = #{isVip,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="platform != null" >
+        PLATFORM = #{platform,jdbcType=BIT},
+      </if>
+      <if test="firstTenderRealId != null" >
+        FIRST_TENDER_REAL_ID = #{firstTenderRealId,jdbcType=INTEGER},
+      </if>
+      <if test="autoType != null" >
+        AUTO_TYPE = #{autoType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="findtenderrecordByBizNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from rocky_b_tenderrecord 
+  	where BIZ_FREEZE_NO=#{bizNo} for update
+  </select>
+  
+    <select id="findtenderrecordByInvestNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from rocky_b_tenderrecord 
+  	where BIZ_INVEST_NO=#{investNo} for update
+  </select>
+  
+  
+  <update id="updateFailureTenderrecord" parameterType="java.lang.Integer">
+  update rocky_b_tenderrecord set STATUS=-1,E_INVEST_STATUS=30,E_INVEST_DATE=UNIX_TIMESTAMP() where id=#{id}
+  </update>
+  
+  <select id="findSuccessTenderrecord" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  select <include refid="Base_Column_List" />
+  	from rocky_b_tenderrecord 
+  	where BORROW_ID =#{borrowid} and STATUS=0 and E_INVEST_STATUS=20  FOR UPDATE
+  </select>
+  
+  <update id="updateTenderrecordStatus" parameterType="java.lang.Integer">
+  UPDATE rocky_b_tenderrecord set STATUS = 1,E_INVEST_DATE=UNIX_TIMESTAMP() WHERE BORROW_ID  =#{borrowid} and STATUS=0 and E_INVEST_STATUS=20
+  </update>
+  
+  <select id="findFailureTenderrecord" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  select <include refid="Base_Column_List" /> 
+  from rocky_b_tenderrecord 
+  where BORROW_ID=#{borrowId} and status=-1 and E_INVEST_STATUS=30
+  </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from rocky_b_tenderrecord t
+        where t.ID = #{id,jdbcType=INTEGER}
+    </select>
+  
+  
+  <insert id="insertEmailRecord" parameterType="java.lang.Integer">
+         INSERT INTO rocky_mail_send_record 
+
+       (type_id, TYPE, STATUS , ADDTIME,email,user_id) 
+
+       SELECT * FROM(
+
+            SELECT #{borrowid},1,0,NOW(),m.EMAIL,m.id FROM rocky_b_tenderrecord t,rocky_member m 
+
+            WHERE t.USER_ID = m.id
+
+            AND t.BORROW_ID = #{borrowid}
+
+            GROUP BY t.user_id
+
+       ) AS tb;
+  
+  </insert>
+  
+  
+   <select id="getFqInsTotal" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+  <![CDATA[  
+ 	 select getFqInsTotal(#{money},#{apr},#{limit}) from dual
+  ]]>
+  </select>
+  
+  <select id="getUserLevelRatio" statementType="CALLABLE" parameterType="java.util.Map" resultType="java.util.Map">
+  <![CDATA[  
+  {CALL getUserLevelRatio(#{userId,mode=IN,jdbcType=INTEGER},#{userLevel,mode=OUT,jdbcType=VARCHAR},#{ratio,mode=OUT,jdbcType=VARCHAR},#{syceeRatio,mode=OUT,jdbcType=VARCHAR})}
+   ]]>
+  </select>
+  
+  <insert id="insertTenderrecord" parameterType="com.cxdai.console.borrow.approve.entity.TenderRecord" >
+  	INSERT INTO rocky_b_tenderrecord (USER_ID, BORROW_ID, ACCOUNT, INTEREST, REPAYMENT_ACCOUNT, REPAYMENT_YESACCOUNT, REPAYMENT_YESINTEREST, ADDTIME, ADDIP, TENDER_TYPE, IS_VIP,RATIO,USER_LEVEL,PLATFORM,IS_CUSTODY,E_FREEZE_No,E_BANKINFO_ID,E_INVEST_STATUS,E_FREEZE_DATE,BIZ_INVEST_NO,BIZ_FREEZE_NO) 
+  		VALUES ( #{userId},#{borrowId},#{account},#{interest},#{account}+#{interest},0,0,unix_timestamp(),#{addip}, '1', #{isVip},${ratio},${userLevel},${platform},#{isCustody},#{eFreezeNo},#{eBankInfoId},#{eInvestStatus},#{eFreezeDate},#{bizInvestNo},#{bizFreezeNo})
+  	
+  	 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   	 </selectKey>
+  
+  </insert>
+  
+  
+    
+  <select id="findTenderrecordForUpdate" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select   <include refid="tender_record_column_List" />
+  	from rocky_b_tenderrecord t where t.BORROW_ID=#{borrowId} for update
+  </select>
+  
+  <update id="updateTenderrecordZS" parameterType="com.cxdai.console.borrow.approve.entity.TenderRecord" >
+  update rocky_b_tenderrecord
+  <set>
+  	<if test="bizInvestNo!=null and bizInvestNo!=''">
+  	 BIZ_INVEST_NO=#{bizInvestNo},
+  	</if>
+  	<if test="eInvestDate!=null and eInvestDate!=''">
+  	E_INVEST_DATE=#{eInvestDate},
+  	</if>
+  	<if test="eInvestNo!=null and eInvestNo!=''">
+  	E_INVEST_No=#{eInvestNo},
+  	</if>
+  	<if test="eInvestStatus!=null and eInvestStatus!=''">
+  	E_INVEST_STATUS=#{eInvestStatus}
+  	</if>
+  </set>
+  where id=#{id}
+  </update>
+  
+  <select id="findlastTenderrecord" resultMap="BaseResultMap">
+  select <include refid="tender_record_column_List" />  from rocky_b_tenderrecord t WHERE t.borrow_id = #{borrowId} and t.user_id = #{userId} and t.tender_type = 1 order by t.id desc limit 0,1 FOR UPDATE;
+  </select>
+  
+  <select id="isEffectiveMoney" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+  <![CDATA[  
+ 	 select CGisEffectiveMoney(#{borrowId},#{userId},#{investMoney},'1',#{eusemoney}) from dual
+  ]]>
+  </select>
+  
+  
+</mapper>

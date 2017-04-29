@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.lottery.mapper.GoodSendInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.lottery.vo.GoodSendInfo"  extends="com.cxdai.console.base.mapper.BaseGoodSendInfoMapper.BaseResultMap"    >
+    <result  column="goodName" property="goodName"/>
+  </resultMap>
+  
+  <select id="getGoodSendInfoByUseRecordId"    resultMap="BaseResultMap"  >
+     select gsi.*,tlur.LOTTERY_GOODS_NAME goodName   from  t_lottery_goods_send_info gsi LEFT JOIN t_lottery_use_record tlur ON gsi.LOTTERY_USE_RECORD_ID = tlur.ID 
+       WHERE LOTTERY_USE_RECORD_ID  = #{useRecordId}
+  </select>
+  
+  
+  
+</mapper>

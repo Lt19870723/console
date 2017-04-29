@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.finance.virement.mapper.AccountFlowMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.finance.virement.entity.AccountFlow" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="MONEY" property="money" jdbcType="DECIMAL" />
+    <result column="TYPE" property="type" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="NAMURE" property="namure" jdbcType="VARCHAR" />
+    <result column="DETAILED" property="detailed" jdbcType="VARCHAR" />
+    <result column="BANK_CARD" property="bankCard" jdbcType="VARCHAR" />
+    <result column="IS_INVOICE" property="isInvoice" jdbcType="INTEGER" />
+    <result column="APPLICANT" property="applicant" jdbcType="VARCHAR" />
+    <result column="ADD_USER" property="addUser" jdbcType="INTEGER" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+    <result column="UPDATE_USER" property="updateUser" jdbcType="INTEGER" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_IP" property="updateIp" jdbcType="VARCHAR" />
+    <result column="MONEY_TYPE" property="moneyType" jdbcType="INTEGER" />
+    <result column="CARD_ID" property="cardId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, END_TIME, MONEY, TYPE, STATUS, NAMURE, DETAILED, BANK_CARD, IS_INVOICE, 
+    APPLICANT, ADD_USER, ADD_TIME, ADD_IP, UPDATE_USER, UPDATE_TIME, UPDATE_IP, CARD_ID, MONEY_TYPE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select *
+    from cw_account_flow
+    where id = #{id,jdbcType=INTEGER} and status = 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from cw_account_flow
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.finance.virement.entity.AccountFlow" >
+    insert into cw_account_flow (END_TIME, MONEY, 
+      MONEY_TYPE, TYPE, STATUS, 
+      NAMURE, DETAILED,CARD_ID, BANK_CARD, 
+      IS_INVOICE, APPLICANT, ADD_USER, 
+      ADD_TIME, ADD_IP,  UPDATE_TIME)
+    values (#{endTime,jdbcType=TIMESTAMP}, #{money,jdbcType=DECIMAL}, 
+      #{moneyType,jdbcType=INTEGER},  #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{namure,jdbcType=VARCHAR}, #{detailed,jdbcType=VARCHAR}, #{cardId,jdbcType=INTEGER}, #{bankCard,jdbcType=VARCHAR}, 
+      #{isInvoice,jdbcType=INTEGER}, #{applicant,jdbcType=VARCHAR}, #{addUser,jdbcType=INTEGER}, 
+      now(), #{addIp,jdbcType=VARCHAR}, 
+      now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.finance.virement.entity.AccountFlow" >
+    insert into cw_account_flow
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="endTime != null" >
+        END_TIME,
+      </if>
+      <if test="money != null" >
+        MONEY,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="namure != null" >
+        NAMURE,
+      </if>
+      <if test="detailed != null" >
+        DETAILED,
+      </if>
+      <if test="bankCard != null" >
+        BANK_CARD,
+      </if>
+      <if test="isInvoice != null" >
+        IS_INVOICE,
+      </if>
+      <if test="applicant != null" >
+        APPLICANT,
+      </if>
+      <if test="addUser != null" >
+        ADD_USER,
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME,
+      </if>
+      <if test="addIp != null" >
+        ADD_IP,
+      </if>
+      <if test="updateUser != null" >
+        UPDATE_USER,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="updateIp != null" >
+        UPDATE_IP,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="namure != null" >
+        #{namure,jdbcType=VARCHAR},
+      </if>
+      <if test="detailed != null" >
+        #{detailed,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCard != null" >
+        #{bankCard,jdbcType=VARCHAR},
+      </if>
+      <if test="isInvoice != null" >
+        #{isInvoice,jdbcType=INTEGER},
+      </if>
+      <if test="applicant != null" >
+        #{applicant,jdbcType=VARCHAR},
+      </if>
+      <if test="addUser != null" >
+        #{addUser,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateIp != null" >
+        #{updateIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.finance.virement.entity.AccountFlow" >
+    update cw_account_flow
+    <set >
+      <if test="endTime != null" >
+        END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="money != null" >
+        MONEY = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="moneyType != null" >
+        MONEY_TYPE = #{moneyType,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="namure != null" >
+        NAMURE = #{namure,jdbcType=VARCHAR},
+      </if>
+      <if test="detailed != null" >
+        DETAILED = #{detailed,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCard != null" >
+        BANK_CARD = #{bankCard,jdbcType=VARCHAR},
+      </if>
+      <if test="isInvoice != null" >
+        IS_INVOICE = #{isInvoice,jdbcType=INTEGER},
+      </if>
+      <if test="applicant != null" >
+        APPLICANT = #{applicant,jdbcType=VARCHAR},
+      </if>
+      <if test="addUser != null" >
+        ADD_USER = #{addUser,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        ADD_IP = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        UPDATE_USER = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateIp != null" >
+        UPDATE_IP = #{updateIp,jdbcType=VARCHAR},
+      </if>
+       <if test="cardId != null" >
+        CARD_ID = #{cardId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER} AND STATUS =1
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.finance.virement.entity.AccountFlow" >
+    update cw_account_flow
+    set END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      MONEY = #{money,jdbcType=DECIMAL},
+      TYPE = #{type,jdbcType=INTEGER},
+      STATUS = #{status,jdbcType=INTEGER},
+      NAMURE = #{namure,jdbcType=VARCHAR},
+      DETAILED = #{detailed,jdbcType=VARCHAR},
+      BANK_CARD = #{bankCard,jdbcType=VARCHAR},
+      IS_INVOICE = #{isInvoice,jdbcType=INTEGER},
+      APPLICANT = #{applicant,jdbcType=VARCHAR},
+      ADD_USER = #{addUser,jdbcType=INTEGER},
+      ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      ADD_IP = #{addIp,jdbcType=VARCHAR},
+      UPDATE_USER = #{updateUser,jdbcType=INTEGER},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      UPDATE_IP = #{updateIp,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryPageCount" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd" resultType="java.lang.Integer">
+  	SELECT
+		count(*)
+	FROM
+		cw_account_flow t
+	LEFT JOIN rocky_configuration c ON c.ID = t.TYPE
+	where t.`STATUS` = 1
+  	<if test="startDate != null and startDate != ''">
+			AND date_format(t.END_TIME,'%Y-%m-%d') = date_format(#{startDate},'%Y-%m-%d')
+	</if>
+	<if test="endDate != null and endDate != ''">
+		AND t.END_TIME <![CDATA[<=]]>  date_format(#{endDate},'%Y-%m-%d %H:%i:%s')
+	</if>
+  </select>
+  
+   <select id="queryPageList" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd" resultType="com.cxdai.console.finance.virement.entity.AccountFlow">
+  	SELECT
+		t.id id,
+		t.END_TIME endTime,
+		t.MONEY money,
+		t.MONEY_TYPE moneyType,
+		t.TYPE type,
+		t.`STATUS` status,
+		t.NAMURE namure,
+		t.DETAILED as detailed,
+		t.CARD_ID cardId,
+		t.BANK_CARD bankCard,
+		t.IS_INVOICE isInvoice,
+		t.APPLICANT applicant,
+		c.`VALUE` typeName
+	FROM
+		cw_account_flow t
+	LEFT JOIN rocky_configuration c ON c.ID = t.TYPE
+	where t.`STATUS` = 1
+  	<if test="startDate != null and startDate != ''">
+			AND  date_format(t.END_TIME,'%Y-%m-%d') = date_format(#{startDate},'%Y-%m-%d')
+	</if>
+	<if test="endDate != null and endDate != ''">
+		AND t.END_TIME <![CDATA[<=]]>  date_format(#{endDate},'%Y-%m-%d %H:%i:%s')
+	</if>
+  </select>
+  
+  <select id="queryByDate" resultType="com.cxdai.console.finance.virement.vo.AccountFlowResponse" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd">
+  SELECT info.END_TIME endTime,info.MONEY_TYPE  moneyType, info.money money , 
+  co.`VALUE` typeName from (
+	select flow.END_TIME, sum(flow.MONEY) money,
+		flow.MONEY_TYPE,flow.TYPE
+	 from cw_account_flow flow 
+	where flow.`STATUS`=1 AND flow.END_TIME <![CDATA[>=]]> #{startDate}
+	AND flow.END_TIME <![CDATA[<=]]> #{endDate} AND  flow.MONEY_TYPE = #{isSuccess,jdbcType=INTEGER}
+	GROUP BY flow.TYPE) info LEFT JOIN rocky_configuration co
+	ON info.TYPE= co.ID 
+  </select>
+</mapper>

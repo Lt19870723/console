@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.account.cash.mapper.BorrowReportMapper">
+  	
+ 	<!--查询某个用户ID下某种标还款中的待还金额总计-->
+	<select id="queryRepaymentAccountTotalByMemberIdAndBorrowType" parameterType="java.lang.Integer" resultType="java.math.BigDecimal" >
+		SELECT SUM(r.REPAYMENT_ACCOUNT) 
+		from rocky_b_repaymentrecord r,
+			 ROCKY_BORROW b 
+		WHERE r.BORROW_ID = b.ID 
+		AND (b.STATUS = 4 or b.STATUS = 42) 
+		AND r.STATUS = 0 
+		AND borrowType = #{borrowType}
+		and b.USER_ID = #{memberId} 
+  	</select>  		
+</mapper>  

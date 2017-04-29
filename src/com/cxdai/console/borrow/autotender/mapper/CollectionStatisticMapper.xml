@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.borrow.autotender.mapper.CollectionStatisticMapper">
+			<sql id="collection_condition">
+                    <if test="user_id != null and user_id != ''">
+                    	AND t.user_id = #{user_id}
+                    </if>
+                    
+                    <if test="status_type != null and status_type == 0">
+						AND (
+						(c.STATUS =0
+					    <if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+							and c.REPAY_TIME <![CDATA[>=]]> #{beginTime}
+							and c.REPAY_TIME <![CDATA[<]]> #{endTime}
+						</if> 
+			            ) 
+			            )
+					</if>
+					<if test="status_type != null and status_type == 1">
+						AND (
+						(c.STATUS in(1,3) 
+						<if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+							and c.REPAY_YESTIME <![CDATA[>=]]> #{beginTime}
+							and c.REPAY_YESTIME <![CDATA[<]]> #{endTime}
+						</if> 
+			            )
+			            OR 
+			            (c.STATUS =2 and r.IS_REPAIR_INTEREST = 0 
+			             <if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+							and  UNIX_TIMESTAMP(c.ADVANCETIME) <![CDATA[>=]]> #{beginTime}
+							and  UNIX_TIMESTAMP(c.ADVANCETIME) <![CDATA[<]]> #{endTime}
+						</if> 
+			            ) 
+			            )
+					</if>
+					
+					<if test="type_collection != null and type_collection == 0">
+						AND (c.FIRST_BORROW_ID IS NULL or (c.FIRST_BORROW_ID IS NOT NULL and IS_FIRST_BORROW = 2))
+					</if>
+					<if test="type_collection != null and type_collection == 1">
+						AND c.FIRST_BORROW_ID IS NOT NULL and IS_FIRST_BORROW = 1
+					</if>
+					
+					<if test="keyword != null and keyword != ''">
+						and rm.USERNAME  like concat('%', #{keyword} ,'%')
+					</if>
+	</sql>
+
+
+
+    <!-- 封装查询条件 -->
+	<sql id="collectionStatistic_Where_Clause">
+		<if test="id != null">
+			and c.id =#{id}
+		</if>
+		<if test="status != null">
+			and c.STATUS = #{status}
+		</if>
+		<if test="borrowId != null ">
+			and c.BORROW_ID = #{borrowId}
+		</if>
+	</sql>
+
+  	  <!--根据查询条件有效应收总额和人数信息-->
+	<select id="queryRepayTotalByCnd" resultType="com.cxdai.console.borrow.approve.vo.CollectionRepayInfoVo" parameterType="com.cxdai.console.borrow.approve.vo.CollectionStatisticCnd">
+		SELECT IFNULL(SUM(c.REPAY_ACCOUNT),0) AS repayAccountTotal,
+		       count(c.id) AS collectionPersons 
+		FROM rocky_b_collectionrecord c 
+		WHERE 1=1
+		<include refid="collectionStatistic_Where_Clause"/>
+		<if test="repaymentId != null">
+			AND c.`ORDER` = (SELECT `ORDER` FROM rocky_b_repaymentrecord WHERE ID = #{repaymentId})
+		</if>
+		<if test="lockedRecordYn != null and lockedRecordYn == 'yes'">
+			FOR UPDATE
+		</if>
+  	</select>   	
+</mapper>  

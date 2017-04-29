@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.curaccount.mapper.CurAccountReportMapper" >
+
+	<!-- 查询某天收益对账统计信息 -->
+	<select id="queryCurInterestReportByDate" parameterType="com.cxdai.console.curaccount.vo.CurInterestDetailReportCnd" resultType="com.cxdai.console.curaccount.vo.CurInterestDetailReportVo" >
+		SELECT (
+			SELECT count(id) FROM t_cur_interest_detail WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		) as detailCount,
+		(
+			SELECT count(id) FROM t_cur_accountlog WHERE TYPE = 105 AND DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		) as accountLogCount,
+		(
+			SELECT IFNULL(SUM(MONEY), 0) FROM t_cur_interest_detail WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		) as detailMoneyTotal,
+		(
+		SELECT IFNULL(SUM(MONEY), 0) FROM t_cur_accountlog WHERE TYPE = 105 AND DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		) as accountLogMoneyTotal,
+		(
+			SELECT case WHEN count(*) > 0 THEN 1 ELSE 0 END FROM (
+				SELECT * FROM t_cur_interest_detail WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d') 
+				GROUP BY USER_ID HAVING count(USER_ID) > 1
+			) t
+		) as isRepeatDetail,
+		(
+			SELECT case WHEN count(*) > 0 THEN 1 ELSE 0 END FROM (
+				SELECT * FROM t_cur_accountlog WHERE TYPE = 105 AND DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+				GROUP BY USER_ID HAVING count(USER_ID) > 1
+			) t
+		) as isRepeatAccountLog,
+		(
+			SELECT CASE WHEN count(*) > 0 THEN 1 ELSE 0 END FROM (
+			SELECT m.USERNAME, CASE WHEN cal.MONEY = (cal.USE_MONEY - (SELECT USE_MONEY FROM t_cur_accountlog tcal WHERE tcal.id = MAX(tal.id))) THEN 1 ELSE 0 END as contrastResult
+			FROM t_cur_account cat, t_cur_accountlog cal, t_cur_accountlog tal, rocky_member m
+			WHERE (
+			(
+			DATE_FORMAT(cat.ADDTIME,'%Y-%m-%d') <![CDATA[ < ]]> DATE_FORMAT(#{date},'%Y-%m-%d') AND cat.`STATUS` = 0) 
+			or 
+			(ENDTIME > DATE_FORMAT(#{date},'%Y-%m-%d') AND cat.`STATUS` = -1)
+			)
+			AND cat.USER_ID = cal.USER_ID AND cal.TYPE = 105 AND DATE_FORMAT(cal.ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+			AND cat.USER_ID = tal.USER_ID AND tal.ID <![CDATA[ < ]]> cal.ID AND cat.USER_ID = m.ID 
+			GROUP BY cat.USER_ID
+			) t WHERE t.contrastResult = 0
+		) as isEnterMoney,
+		(
+			SELECT CASE WHEN count(t1.USER_ID) > 0 THEN 1 ELSE 0 END FROM 
+			(
+			SELECT USER_ID FROM t_cur_account WHERE (DATE_FORMAT(ADDTIME,'%Y-%m-%d') <![CDATA[ < ]]> DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = 0) or (ENDTIME > DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = -1)
+			) t1
+			LEFT JOIN (SELECT USER_ID FROM t_cur_interest_detail WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+			) t2 ON t1.USER_ID = t2.USER_ID, rocky_member m
+			 WHERE t2.USER_ID IS NULL AND t1.USER_ID = m.ID
+		) as isUserNotHaveInterestDetial,
+		(
+			SELECT CASE WHEN count(t1.USER_ID) > 0 THEN 1 ELSE 0 END FROM 
+			(SELECT USER_ID FROM t_cur_account WHERE (DATE_FORMAT(ADDTIME,'%Y-%m-%d') <![CDATA[ < ]]> DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = 0) or (ENDTIME > DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = -1)) t1
+			LEFT JOIN (
+			SELECT USER_ID FROM t_cur_interest_detail WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+			) t2 ON t1.USER_ID = t2.USER_ID, rocky_member m
+			WHERE t2.USER_ID IS NULL AND t1.USER_ID = m.ID
+		) as isUserNotHaveAccountLog
+		FROM DUAL
+	</select>
+	
+	<!-- 查询某天内未生成收益明细记录的用户 -->
+	<select id="queryNotDetailForUserNameByDate" parameterType="com.cxdai.console.curaccount.vo.CurInterestDetailReportCnd" resultType="com.cxdai.console.curaccount.vo.CurInterestDetailErrorVo" >
+		SELECT m.USERNAME FROM 
+		(SELECT USER_ID FROM t_cur_account WHERE (DATE_FORMAT(ADDTIME,'%Y-%m-%d') <![CDATA[ < ]]> DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = 0) or (ENDTIME > DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = -1)) t1
+		LEFT JOIN (SELECT USER_ID FROM t_cur_interest_detail WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		) t2 ON t1.USER_ID = t2.USER_ID, rocky_member m
+		WHERE t2.USER_ID IS NULL AND t1.USER_ID = m.ID
+	</select>
+	
+	<!-- 查询某天内未生成活期生息（收益入账）资金明细记录的用户 -->
+	<select id="queryNotAccountLogForUserNameByDate" parameterType="com.cxdai.console.curaccount.vo.CurInterestDetailReportCnd" resultType="com.cxdai.console.curaccount.vo.CurInterestDetailErrorVo" >
+		SELECT t1.USER_ID as userId, m.USERNAME as userName FROM 
+		(SELECT USER_ID FROM t_cur_account WHERE (DATE_FORMAT(ADDTIME,'%Y-%m-%d') <![CDATA[ < ]]> DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = 0) or (ENDTIME > DATE_FORMAT(#{date},'%Y-%m-%d') AND `STATUS` = -1)) t1
+		LEFT JOIN (
+		SELECT USER_ID FROM t_cur_interest_detail WHERE DATE_FORMAT(ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		) t2 ON t1.USER_ID = t2.USER_ID, rocky_member m
+		WHERE t2.USER_ID IS NULL AND t1.USER_ID = m.ID
+	</select>
+	
+	
+	<!-- 查询某天内重复生成收益明细记录的用户 -->
+	<select id="queryRepeatDetailForUserNameByDate" parameterType="com.cxdai.console.curaccount.vo.CurInterestDetailReportCnd" resultType="com.cxdai.console.curaccount.vo.CurInterestDetailErrorVo" >
+		SELECT t1.USER_ID as userId, m.USERNAME as userName FROM t_cur_interest_detail cid, rocky_member m
+		WHERE DATE_FORMAT(cid.ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d') AND cid.USER_ID = m.id
+		GROUP BY cid.USER_ID HAVING count(cid.USER_ID) > 1
+	</select>
+	
+	<!-- 查询某天内重复生成活期生息资金明细记录的用户 -->
+	<select id="queryRepeatAccountLogForUserNameByDate" parameterType="com.cxdai.console.curaccount.vo.CurInterestDetailReportCnd" resultType="com.cxdai.console.curaccount.vo.CurInterestDetailErrorVo" >
+		SELECT l.USER_ID as userId, m.USERNAME as userName FROM t_cur_accountlog l, rocky_member m 
+		WHERE l.TYPE = 105 AND DATE_FORMAT(l.ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d') AND l.USER_ID = m.ID
+		GROUP BY l.USER_ID HAVING count(l.USER_ID) > 1
+	</select>
+	
+	<!-- 查询某天内收益入账有误的用户 -->
+	<select id="queryEnterMoneyErrorForUserNameByDate" parameterType="com.cxdai.console.curaccount.vo.CurInterestDetailReportCnd" resultType="com.cxdai.console.curaccount.vo.CurInterestDetailErrorVo" >
+		SELECT t.USER_ID as userId, t.USERNAME as userName FROM (
+		SELECT cat.USER_ID,m.USERNAME, CASE WHEN cal.MONEY = (cal.USE_MONEY - (SELECT USE_MONEY FROM t_cur_accountlog tcal WHERE tcal.id = MAX(tal.id))) THEN 1 ELSE 0 END as contrastResult
+		FROM t_cur_account cat, t_cur_accountlog cal, t_cur_accountlog tal, rocky_member m
+		WHERE 
+		(
+			(
+			DATE_FORMAT(cat.ADDTIME,'%Y-%m-%d') <![CDATA[ < ]]> DATE_FORMAT(NOW(),'%Y-%m-%d') AND cat.`STATUS` = 0) 
+			or 
+			(ENDTIME > DATE_FORMAT(NOW(),'%Y-%m-%d') AND cat.`STATUS` = -1)
+		)
+		AND cat.USER_ID = cal.USER_ID AND cal.TYPE = 105 AND DATE_FORMAT(cal.ADDTIME,'%Y-%m-%d') = DATE_FORMAT(#{date},'%Y-%m-%d')
+		AND cat.USER_ID = tal.USER_ID AND tal.ID <![CDATA[ < ]]> cal.ID AND cat.USER_ID = m.ID 
+		GROUP BY cat.USER_ID
+		) t WHERE t.contrastResult = 0
+	</select>
+	
+	<!-- 查询活期宝总金额账户对账统计信息 -->
+	<select id="queryCurAccountTotalReport" resultType="com.cxdai.console.curaccount.vo.CurAccountRepportVo" >
+		SELECT t.*, case WHEN sumTotal = (sumInTotal - sumOutTotal + sumAccountLogInterestTotal) THEN 1 ELSE 0 END as isEqual FROM (
+		SELECT 
+		(SELECT IFNULL(SUM(ca.TOTAL),0) FROM t_cur_account ca WHERE ca.`STATUS` = 0) as sumTotal,
+		(SELECT IFNULL(SUM(INTEREST_TOTAL),0) FROM t_cur_account WHERE `STATUS` = 0) as sumInterestTotal,
+		(SELECT IFNULL(SUM(ci.ACCOUNT),0) FROM t_cur_account ca, t_cur_in ci WHERE ca.`STATUS` = 0 AND ca.USER_ID = ci.USER_ID) as sumInTotal,
+		(SELECT IFNULL(SUM(co.ACCOUNT),0) FROM t_cur_account ca, t_cur_out co WHERE ca.`STATUS` = 0 AND ca.USER_ID = co.USER_ID) as sumOutTotal,
+		(SELECT IFNULL(SUM(cd.MONEY),0) FROM t_cur_account ca, t_cur_interest_detail cd WHERE ca.`STATUS` = 0 AND ca.USER_ID = cd.USER_ID) as sumInterestDetailTotal,
+		(SELECT IFNULL(SUM(tal.MONEY),0) FROM t_cur_account ca, t_cur_accountlog tal WHERE ca.`STATUS` = 0 AND ca.USER_ID = tal.user_id AND tal.type = 105) as sumAccountLogInterestTotal
+		FROM DUAL
+		) t
+	</select>
+	
+	
+</mapper>

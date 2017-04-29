@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.maintain.cms.mapper.CmsArticleTagMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.maintain.cms.entity.CmsArticleTag" >
+    <id column="ARTICLE_ID" property="articleId" jdbcType="INTEGER" />
+    <id column="TAG_ID" property="tagId" jdbcType="INTEGER" />
+    <result column="CHANNEL_ID" property="channelId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ARTICLE_ID, TAG_ID, CHANNEL_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleTagKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_cms_article_tag
+    where ARTICLE_ID = #{articleId,jdbcType=INTEGER}
+      and TAG_ID = #{tagId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleTagKey" >
+    delete from t_cms_article_tag
+    where ARTICLE_ID = #{articleId,jdbcType=INTEGER}
+      and TAG_ID = #{tagId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleTag" >
+    insert into t_cms_article_tag (ARTICLE_ID, TAG_ID, CHANNEL_ID  )
+    select  #{articleId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER} from dual
+    where  not exists  (select 1 from  t_cms_article_tag  where ARTICLE_ID =#{articleId,jdbcType=INTEGER}  and TAG_ID =#{tagId,jdbcType=INTEGER}  and  CHANNEL_ID =#{channelId,jdbcType=INTEGER} LIMIT 0,1  ) 
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleTag" >
+    insert into t_cms_article_tag
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="articleId != null" >
+        ARTICLE_ID,
+      </if>
+      <if test="tagId != null" >
+        TAG_ID,
+      </if>
+      <if test="channelId != null" >
+        CHANNEL_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="articleId != null" >
+        #{articleId,jdbcType=INTEGER},
+      </if>
+      <if test="tagId != null" >
+        #{tagId,jdbcType=INTEGER},
+      </if>
+      <if test="channelId != null" >
+        #{channelId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleTag" >
+    update t_cms_article_tag
+    <set >
+      <if test="channelId != null" >
+        CHANNEL_ID = #{channelId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ARTICLE_ID = #{articleId,jdbcType=INTEGER}
+      and TAG_ID = #{tagId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleTag" >
+    update t_cms_article_tag
+    set CHANNEL_ID = #{channelId,jdbcType=INTEGER}
+    where ARTICLE_ID = #{articleId,jdbcType=INTEGER}
+      and TAG_ID = #{tagId,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  <delete id="deleteArticleTag"   parameterType="java.util.Map">
+   delete from t_cms_article_tag where ARTICLE_ID=#{articleId} 
+	    and TAG_ID not in (select id from  t_cms_tag where STATUS = 0 and name in 
+	    <foreach collection="tags" item="tag" index="index" open="(" separator="," close=")">
+	     #{tag}
+	    </foreach>
+	    )
+  </delete>
+  
+    <delete id="deleteArticleTagByTags"   parameterType="java.util.Map">
+	   delete from t_cms_article_tag  where    TAG_ID   in  
+		    <foreach collection="tagIds" item="id" index="index" open="(" separator="," close=")">
+		     #{id}
+		    </foreach>
+    </delete>
+    
+     <delete id="deleteArticleTagByArticleId"   parameterType="java.lang.Integer">
+	   delete from t_cms_article_tag  where   ARTICLE_ID  = #{articleId}  
+    </delete>
+    
+    
+    
+    
+  
+  
+</mapper>

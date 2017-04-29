@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report5" language="groovy" pageWidth="1200" pageHeight="842" columnWidth="1160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3050f6bd-fc98-42bd-b523-785b9ecece4e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="dealStatusStr" class="java.lang.String">
+		<fieldDescription><![CDATA[dealStatusStr]]></fieldDescription>
+	</field>
+	<field name="dealTimeStr" class="java.lang.String">
+		<fieldDescription><![CDATA[dealTimeStr]]></fieldDescription>
+	</field>
+	<field name="dealUsername" class="java.lang.String">
+		<fieldDescription><![CDATA[dealUsername]]></fieldDescription>
+	</field>
+	<field name="exchangeTimeStr" class="java.lang.String">
+		<fieldDescription><![CDATA[exchangeTimeStr]]></fieldDescription>
+	</field>
+	<field name="mobilenum" class="java.lang.String">
+		<fieldDescription><![CDATA[mobilenum]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[name]]></fieldDescription>
+	</field>
+	<field name="remark" class="java.lang.String">
+		<fieldDescription><![CDATA[remark]]></fieldDescription>
+	</field>
+	<field name="username" class="java.lang.String">
+		<fieldDescription><![CDATA[username]]></fieldDescription>
+	</field>
+	<field name="dealRemark" class="java.lang.String">
+		<fieldDescription><![CDATA[dealRemark]]></fieldDescription>
+	</field>
+	<field name="realname" class="java.lang.String">
+		<fieldDescription><![CDATA[realname]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="100" y="0" width="97" height="25" uuid="0f40faad-902a-44e0-94cd-46dee958bf0c"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[商品名称]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="197" y="0" width="86" height="25" uuid="dff72f4e-be8c-41b1-a377-7f95a3cec91b"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[用户名]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="25" uuid="7b07d494-ec59-4c44-b759-c2384f92fd93"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[序号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="683" y="0" width="126" height="25" uuid="a71c4a77-69aa-44e6-b5fa-640304243c99"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[处理时间]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="0" width="100" height="25" uuid="e410a801-ff0f-4173-ba45-063e4ff16851"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[手机号码]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="809" y="0" width="139" height="25" uuid="9dc83dbf-777d-415e-8932-b7970ea55163"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[兑换时间]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="483" y="0" width="100" height="25" uuid="4ff8815a-b29e-4352-bc20-66ae74d719c7"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[处理人]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="583" y="0" width="100" height="25" uuid="ddeba072-f9db-4a2c-9e5a-06105f63d68b"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[处理状态]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="948" y="0" width="100" height="25" uuid="2068c363-d75f-413e-9ec0-7efc00c7389b"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[处理备注]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="283" y="0" width="100" height="25" uuid="6aba43ae-e8e0-4af6-82c0-56393735bb0d"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[真实姓名]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="32" splitType="Stretch">
+			<textField>
+				<reportElement x="100" y="1" width="97" height="30" uuid="a8a64ad7-9651-4977-ab74-85b988fcf63f"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="197" y="1" width="86" height="30" uuid="0e7be193-8e2d-4f9e-a92c-96abb52c6f5f"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="1" width="100" height="30" uuid="710eac42-1557-47a6-9d26-42e40b0d82b7"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{PAGE_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="683" y="1" width="126" height="30" uuid="3de43f22-a61a-4245-85fd-8acb1ec74b18"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{dealTimeStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="383" y="1" width="100" height="30" uuid="4fc51aba-1ef3-42f1-8a3b-f3cc2da7f838"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{mobilenum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="809" y="1" width="139" height="30" uuid="bc3de8d2-184f-40a4-af79-321b11751f52"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{exchangeTimeStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="483" y="1" width="100" height="30" uuid="8b4f33d3-eaaf-4258-ae22-e582791fd01a"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{dealUsername}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="583" y="1" width="100" height="30" uuid="842e0190-7a3d-4143-9330-7957ac3b1e39"/>
+				<textFieldExpression><![CDATA[$F{dealStatusStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="948" y="1" width="100" height="30" uuid="f6027c38-c4f9-492c-9020-65b6247a637c"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{dealRemark}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="1" width="100" height="30" uuid="a194f705-acb3-47b6-9196-5405f743698b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{realname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="43" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="23" uuid="ab03845d-1f7c-43d2-a25c-40f0cccce1d2"/>
+				<textElement textAlignment="Center">
+					<font fontName="黑体" size="13"/>
+				</textElement>
+				<text><![CDATA[兑换记录总数]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="23" width="100" height="20" uuid="c90667c8-0e88-47e9-be22-03970e3a966b"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

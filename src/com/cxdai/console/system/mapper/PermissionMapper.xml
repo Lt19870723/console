@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.system.mapper.PermissionMapper">
+
+	<select id="countPermissionList" parameterType="com.cxdai.console.system.vo.PermissionCnd" resultType="java.lang.Integer">
+		select count(*) from t_system_permission <include refid="selectPermissionList_where" />
+	</select>
+	<select id="selectPermissionList" parameterType="com.cxdai.console.system.vo.PermissionCnd" resultType="com.cxdai.console.system.entity.Permission">
+		select * from t_system_permission <include refid="selectPermissionList_where" /> order by ID
+	</select>
+	<sql id="selectPermissionList_where">
+		<where>
+		<if test="name != null and name != ''">NAME like concat('%', #{name},'%')</if>
+		<if test="status != null">and STATUS = #{status}</if>
+		</where>
+	</sql>
+	
+	<select id="selectById" parameterType="java.lang.Integer" resultType="com.cxdai.console.system.vo.PermissionVo">
+		select p.*,
+		  (select group_concat(pr.RESOURCES_ID) from t_system_permission_resources pr where pr.PERMISSION_ID = p.ID) resourcesIds
+		from t_system_permission p where p.ID = #{permissionId}
+	</select>
+	
+	<insert id="insert" parameterType="com.cxdai.console.system.entity.Permission" useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+		insert into t_system_permission (NAME, `DESC`, STATUS, REMARK)
+		values (#{name}, #{desc}, #{status}, #{remark})
+	</insert>
+	
+	<insert id="insertPermissionResources" parameterType="java.util.Map">
+		insert into t_system_permission_resources (PERMISSION_ID, RESOURCES_ID, `TYPE`)
+		values<foreach collection="resourcesIds" item="resourcesId" separator=",">(#{permissionId}, #{resourcesId}, 0)</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.cxdai.console.system.entity.Permission">
+		update t_system_permission
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="desc != null">
+				`DESC` = #{desc,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateStatus" parameterType="java.lang.Integer">
+		update t_system_permission set STATUS = (case `STATUS` when 0 then 1 else 0 end) WHERE ID = #{permissionId}
+	</update>
+	
+	<delete id="deletePermissionResourcesByPermissionId" parameterType="java.lang.Integer">
+		delete from t_system_permission_resources where PERMISSION_ID = #{permissionId}
+	</delete>
+	
+	<delete id="deleteRolePermissionByPermissionId" parameterType="java.lang.Integer">
+		delete from t_system_role_permission where PERMISSION_ID = #{permissionId}
+	</delete>
+	
+	<delete id="deleteUserPermissionByPermissionId" parameterType="java.lang.Integer">
+		delete from t_system_user_permission where PERMISSION_ID = #{permissionId}
+	</delete>
+</mapper>

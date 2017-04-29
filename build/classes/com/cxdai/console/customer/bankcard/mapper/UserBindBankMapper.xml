@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.bankcard.mapper.UserBindBankMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.customer.bankcard.entity.BankinfoLog" id="bankInfoResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 		column="USER_ID" />
+		<result property="bankName" 	column="BANKNAME" />
+		<result property="cardNum"		column="CARDNUM" />
+		<result property="realName"		column="REALNAME" />
+		<result property="idCardNo"		column="IDCARDNO" />
+		<result property="cnapsCode"	 column="CNAPS_CODE" />
+	</resultMap>
+	
+	<resultMap id="bankRM" type="com.cxdai.console.customer.bankcard.entity.Bank">
+		<id column="CNAPS_CODE" property="cnapsCode" jdbcType="BIGINT" />
+		<result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+		<result column="CITY" property="city" jdbcType="VARCHAR" />
+		<result column="DISTRICT" property="district" jdbcType="VARCHAR" />
+		<result column="BANK_NAME" property="bankName" jdbcType="VARCHAR" />
+		<result column="BRANCH_NAME" property="branchName" jdbcType="VARCHAR" />
+		<result column="BANK_CODE" property="bankCode" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="bankInfoBaseColumn">
+		b.ID, 
+		b.USER_ID, 
+		b.BANKNAME, 
+		b.CARDNUM, 
+		b.BRANCH, 
+		b.REALNAME,
+		b.IDCARDNO,
+		b.CNAPS_CODE
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.customer.bankcard.entity.BankinfoLog">
+		INSERT INTO rocky_bankinfo 
+		(USER_ID, 	
+			BANKNAME,	
+			CARDNUM,	
+			BRANCH,	
+			REALNAME,	
+			IDCARDNO, 
+			CNAPS_CODE	)
+		VALUES
+		(#{userId},
+		#{bankName},
+		#{cardNum},
+		#{branch},	
+		#{realName},
+		#{idCardNo},
+		#{cnapsCode})
+		
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="bankInfoResultMap" >
+		select 	
+		   <include refid="bankInfoBaseColumn"/>
+		from
+			rocky_bankinfo b
+		where 1=1
+		and b.id=#{id}
+  	</select>
+	
+   
+  	<select id="countCardByCardNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from rocky_bankInfo where CARDNUM = #{cardNum} limit 0,1
+	</select>
+	
+    <select id="queryCardCountByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select count(1) from rocky_bankInfo where user_id = #{userId}  
+	</select>
+	
+  
+  
+  	<delete id="deleteBankinfoById" parameterType="java.lang.Integer">
+		delete from rocky_bankinfo where ID = #{id}
+	</delete>
+	<!-- 删除指定用户所有银行卡 -->
+	<delete id="deleteBankinfoByUserId" parameterType="java.lang.Integer">
+		delete from rocky_bankinfo where USER_ID = #{userId}
+	</delete>
+	
+	 
+	
+    <select id="queryProvinceList" resultMap="bankRM">
+		select distinct PROVINCE from t_bank where status = 0
+	</select>
+	
+	<select id="queryCityList" parameterType="java.lang.String" resultMap="bankRM">
+		select distinct CITY from t_bank where PROVINCE = #{province} and status = 0
+	</select>
+	
+	<select id="queryDistrictList" parameterType="java.lang.String" resultMap="bankRM">
+		select distinct DISTRICT from t_bank where CITY = #{city} and status = 0
+	</select>
+	
+	<select id="queryBankList" parameterType="java.lang.String" resultMap="bankRM">
+		select distinct BANK_CODE, BANK_NAME from t_bank where DISTRICT = #{district} and status = 0
+	</select>
+	
+	<select id="queryBranchList" parameterType="java.util.Map" resultMap="bankRM">
+		select BRANCH_NAME, CNAPS_CODE from t_bank where BANK_CODE = #{bankCode} and DISTRICT = #{district} and status = 0
+	</select>
+	
+	<select id="queryBranchListLike" parameterType="java.util.Map" resultMap="bankRM">
+		select BRANCH_NAME, CNAPS_CODE from t_bank where status = 0 and BANK_CODE = #{bankCode}  and DISTRICT = #{district} and BRANCH_NAME like '%' #{branchKey} '%' 
+	</select>
+	
+	<select id="queryBankInfosByCnapsCode" parameterType="java.util.Map" resultMap="bankRM">
+		select * from t_bank where CNAPS_CODE = #{cnapsCode,jdbcType=BIGINT} and status = 0
+	</select>
+  
+    <select id="queryBanksByCnd" parameterType="com.cxdai.console.customer.bankcard.vo.UserBindBankCnd" resultMap="bankInfoResultMap">
+		 SELECT 
+		 <include refid="bankInfoBaseColumn"/>
+		  from rocky_bankinfo b  where user_id = ( select id from rocky_member m where m.username=#{userName}  )    
+	</select>
+	
+	  
+  	
+</mapper>  

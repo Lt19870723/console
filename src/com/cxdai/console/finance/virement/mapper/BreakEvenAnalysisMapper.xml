@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.finance.virement.mapper.BreakEvenAnalysisMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.finance.virement.entity.BreakEvenAnalysis" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="INCOME" property="income" jdbcType="DECIMAL" />
+    <result column="PAY" property="pay" jdbcType="DECIMAL" />
+    <result column="NET_PROCEEDS" property="netProceeds" jdbcType="DECIMAL" />
+    <result column="RECHARGE" property="recharge" jdbcType="DECIMAL" />
+    <result column="ADVANCE" property="advance" jdbcType="DECIMAL" />
+    <result column="NET_FLOW" property="netFlow" jdbcType="DECIMAL" />
+    <result column="INCOME_RATE" property="incomeRate" jdbcType="VARCHAR" />
+    <result column="PAY_RATE" property="payRate" jdbcType="VARCHAR" />
+    <result column="RECHARGE_RATE" property="rechargeRate" jdbcType="VARCHAR" />
+    <result column="RECORDE_RATE" property="recordeRate" jdbcType="VARCHAR" />
+    <result column="ALL_PRINCIPAL" property="allPrincipal" jdbcType="DECIMAL" />
+    <result column="THROUGH_PRINCIPAL" property="throughPrincipal" jdbcType="DECIMAL" />
+    <result column="EXPECT_RATE" property="expectRate" jdbcType="VARCHAR" />
+    <result column="EXPECT_CASH" property="expectCash" jdbcType="DECIMAL" />
+    <result column="ACTUAL_RATE" property="actualRate" jdbcType="VARCHAR" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="TIME" property="time" jdbcType="TIMESTAMP" />
+    <result column="TYPE" property="type" jdbcType="INTEGER" />
+  </resultMap>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.finance.virement.entity.BreakEvenAnalysis" >
+    update cw_breakeven_analysis
+    set 
+      EXPECT_RATE = #{expectRate},
+      EXPECT_CASH = #{expectCash}
+    where ID = #{id}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select ID, INCOME, PAY, NET_PROCEEDS, RECHARGE, ADVANCE, NET_FLOW, INCOME_RATE, PAY_RATE, 
+    RECHARGE_RATE, RECORDE_RATE, ALL_PRINCIPAL, THROUGH_PRINCIPAL, EXPECT_RATE, EXPECT_CASH, 
+    ACTUAL_RATE, ADD_TIME, TIME, TYPE
+    from cw_breakeven_analysis
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select ID, INCOME, PAY, NET_PROCEEDS, RECHARGE, ADVANCE, NET_FLOW, INCOME_RATE, PAY_RATE, 
+    RECHARGE_RATE, RECORDE_RATE, ALL_PRINCIPAL, THROUGH_PRINCIPAL, EXPECT_RATE, EXPECT_CASH, 
+    ACTUAL_RATE, ADD_TIME, TIME, TYPE
+    from cw_breakeven_analysis
+  </select>
+  
+  <sql id="where_serch_sql">
+  	<if test="beginTime != null and beginTime != ''">
+  		<![CDATA[AND DATE_FORMAT(
+		r.TIME, '%Y-%m-%d'
+		)  >= #{beginTime}]]>
+  	</if>
+  	<if test="endTime != null and endTime != ''">
+  		<![CDATA[AND DATE_FORMAT(
+		r.TIME, '%Y-%m-%d'
+		) <= #{endTime}]]>
+  	</if>
+  	ORDER BY r.TIME ASC
+  </sql>
+  <select id="queryListCountByCnd" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultType="int">
+  	SELECT COUNT(*) FROM  cw_breakeven_analysis r WHERE 1 = 1 <include refid="where_serch_sql" /> 
+  </select>
+  
+  <select id="queryListByCnd" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultMap="BaseResultMap">
+  	SELECT * FROM cw_breakeven_analysis r  WHERE 1 = 1 and r.TYPE=2 <include refid="where_serch_sql" /> 
+  </select>
+  
+  <select id="queryBreakEvenAnalysisList" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultMap="BaseResultMap">
+  	SELECT * FROM cw_breakeven_analysis r WHERE 1 = 1 and r.TYPE=2<include refid="where_serch_sql" /> 
+  </select>
+    
+   <select id="findByMonth" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultMap="BaseResultMap">
+  	SELECT * FROM cw_breakeven_analysis r 
+  	WHERE r.TYPE = 1 <include refid="where_serch_sql" />
+  </select>
+  
+  <sql id="where_search_sql">
+  	<where>
+  		(r.TYPE = 2 
+  		<if test="beginTime != null and beginTime != ''">
+  			<![CDATA[AND DATE_FORMAT(r.TIME, '%Y-%m-%d') >= #{beginTime}]]>
+  		</if>
+  		<if test="endTime != null and endTime != ''">
+  			<![CDATA[AND DATE_FORMAT(r.TIME, '%Y-%m-%d') <= #{endTime}]]>
+  		</if>
+  		)
+  		OR (r.TYPE = 1
+  		<if test="begin != null and begin != ''"> 
+  			AND DATE_FORMAT(r.TIME, '%Y-%m') = DATE_FORMAT(DATE_SUB(#{begin}, INTERVAL 1 MONTH), '%Y-%m')
+  		</if>
+  		)
+  	</where>
+  </sql>
+  <!-- 根据时间查询收入支出信息 -->
+  <select id="getIncomePayResultMap" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultType="map">
+  	SELECT r.ID AS id, IFNULL(r.PAY, 0) AS pay, IFNULL(r.INCOME, 0) AS income, CASE r.TYPE WHEN 1 THEN CONCAT(DATE_FORMAT(r.TIME, '%m月'), '平均') 
+	ELSE DATE_FORMAT(r.TIME, '%m月%d日') END AS dataDate FROM cw_breakeven_analysis r <include refid="where_search_sql" />  	
+  	ORDER BY r.TYPE ASC, id ASC 
+  </select>
+  
+  <!-- 根据条件查询最大收入 -->
+  <select id="getMaxIncome" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultType="java.math.BigDecimal">
+  	SELECT IFNULL(MAX(r.INCOME), 0) AS maxIncome FROM cw_breakeven_analysis r <include refid="where_search_sql" />
+  </select>
+  
+  <!-- 根据条件查询最大收入、最大支出 -->
+  <select id="getMaxPayOrIncome" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultType="map">
+  	SELECT IFNULL(MAX(r.PAY), 0) AS maxPay, IFNULL(MAX(r.INCOME), 0) AS maxIncome FROM cw_breakeven_analysis r <include refid="where_search_sql" /> 
+  </select>
+  
+  <!-- 净收益 -->
+  <select id="getNetBenefit" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultType="map">
+  	SELECT r.ID AS id, r.TYPE AS type, CASE r.TYPE WHEN 1 THEN CONCAT(DATE_FORMAT(r.TIME, '%m月'), '平均') 
+	ELSE DATE_FORMAT(r.TIME, '%m月%d日') END dateTime, IFNULL(r.NET_PROCEEDS, 0) AS netBenefit FROM cw_breakeven_analysis r 
+  	<include refid="where_search_sql" />
+  	ORDER BY r.TYPE ASC, id ASC
+  </select>
+  
+  <!-- 根据条件查询最大净收益与最小净收益 -->
+  <select id="getMinOrMaxNetBenefit" parameterType="com.cxdai.console.finance.virement.vo.BreakEvenCnd" resultType="map">
+  	SELECT IFNULL(MAX(r.NET_PROCEEDS), 0) AS maxNetBenefit, IFNULL(MIN(r.NET_PROCEEDS), 0) AS minNetBenefit FROM cw_breakeven_analysis r 
+  	<include refid="where_search_sql" />
+  </select>
+  
+  
+</mapper>

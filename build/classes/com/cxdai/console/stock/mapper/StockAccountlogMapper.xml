@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.stock.mapper.StockAccountlogMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.stock.entity.StockAccountlog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="account_id" property="accountId" jdbcType="INTEGER" />
+    <result column="opt_stock" property="optStock" jdbcType="INTEGER" />
+    <result column="total" property="total" jdbcType="INTEGER" />
+    <result column="use_stock" property="useStock" jdbcType="INTEGER" />
+    <result column="no_use_stock" property="noUseStock" jdbcType="INTEGER" />
+    <result column="opt_type" property="optType" jdbcType="INTEGER" />
+    <result column="target_id" property="targetId" jdbcType="INTEGER" />
+    <result column="target_name" property="targetName" jdbcType="VARCHAR" />
+    <result column="target_type" property="targetType" jdbcType="INTEGER" />
+    <result column="to_user" property="toUser" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="addip" property="addip" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, account_id, opt_stock, total, use_stock, no_use_stock, opt_type, target_id, 
+    target_name, target_type, to_user, remark, addtime, addip
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from gq_stock_accountlog
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from gq_stock_accountlog
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.stock.entity.StockAccountlog" >
+    insert into gq_stock_accountlog (id, user_id, account_id, 
+      opt_stock, total, use_stock, 
+      no_use_stock, opt_type, target_id, 
+      target_name, target_type, to_user, 
+      remark, addtime, addip
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{accountId,jdbcType=INTEGER}, 
+      #{optStock,jdbcType=INTEGER}, #{total,jdbcType=INTEGER}, #{useStock,jdbcType=INTEGER}, 
+      #{noUseStock,jdbcType=INTEGER}, #{optType,jdbcType=INTEGER}, #{targetId,jdbcType=INTEGER}, 
+      #{targetName,jdbcType=VARCHAR}, #{targetType,jdbcType=INTEGER}, #{toUser,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP}, #{addip,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.stock.entity.StockAccountlog" >
+    insert into gq_stock_accountlog
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="accountId != null" >
+        account_id,
+      </if>
+      <if test="optStock != null" >
+        opt_stock,
+      </if>
+      <if test="total != null" >
+        total,
+      </if>
+      <if test="useStock != null" >
+        use_stock,
+      </if>
+      <if test="noUseStock != null" >
+        no_use_stock,
+      </if>
+      <if test="optType != null" >
+        opt_type,
+      </if>
+      <if test="targetId != null" >
+        target_id,
+      </if>
+      <if test="targetName != null" >
+        target_name,
+      </if>
+      <if test="targetType != null" >
+        target_type,
+      </if>
+      <if test="toUser != null" >
+        to_user,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="addip != null" >
+        addip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="optStock != null" >
+        #{optStock,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        #{total,jdbcType=INTEGER},
+      </if>
+      <if test="useStock != null" >
+        #{useStock,jdbcType=INTEGER},
+      </if>
+      <if test="noUseStock != null" >
+        #{noUseStock,jdbcType=INTEGER},
+      </if>
+      <if test="optType != null" >
+        #{optType,jdbcType=INTEGER},
+      </if>
+      <if test="targetId != null" >
+        #{targetId,jdbcType=INTEGER},
+      </if>
+      <if test="targetName != null" >
+        #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="targetType != null" >
+        #{targetType,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        #{toUser,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        #{addip,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.stock.entity.StockAccountlog" >
+    update gq_stock_accountlog
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null" >
+        account_id = #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="optStock != null" >
+        opt_stock = #{optStock,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        total = #{total,jdbcType=INTEGER},
+      </if>
+      <if test="useStock != null" >
+        use_stock = #{useStock,jdbcType=INTEGER},
+      </if>
+      <if test="noUseStock != null" >
+        no_use_stock = #{noUseStock,jdbcType=INTEGER},
+      </if>
+      <if test="optType != null" >
+        opt_type = #{optType,jdbcType=INTEGER},
+      </if>
+      <if test="targetId != null" >
+        target_id = #{targetId,jdbcType=INTEGER},
+      </if>
+      <if test="targetName != null" >
+        target_name = #{targetName,jdbcType=VARCHAR},
+      </if>
+      <if test="targetType != null" >
+        target_type = #{targetType,jdbcType=INTEGER},
+      </if>
+      <if test="toUser != null" >
+        to_user = #{toUser,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        addip = #{addip,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.stock.entity.StockAccountlog" >
+    update gq_stock_accountlog
+    set user_id = #{userId,jdbcType=INTEGER},
+      account_id = #{accountId,jdbcType=INTEGER},
+      opt_stock = #{optStock,jdbcType=INTEGER},
+      total = #{total,jdbcType=INTEGER},
+      use_stock = #{useStock,jdbcType=INTEGER},
+      no_use_stock = #{noUseStock,jdbcType=INTEGER},
+      opt_type = #{optType,jdbcType=INTEGER},
+      target_id = #{targetId,jdbcType=INTEGER},
+      target_name = #{targetName,jdbcType=VARCHAR},
+      target_type = #{targetType,jdbcType=INTEGER},
+      to_user = #{toUser,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      addip = #{addip,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

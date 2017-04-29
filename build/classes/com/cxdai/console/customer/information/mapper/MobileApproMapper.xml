@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.information.mapper.MobileApproMapper">
+	
+	<!-- 返回的结果集 -->
+	<resultMap type="com.cxdai.console.customer.information.vo.MobileApproVo" id="mobileApproMapperResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 		column="USER_ID" />
+		<result property="mobileNum" 	column="MOBILENUM" />
+		<result property="randCode"		column="RANDCODE" />
+		<result property="passed"		column="PASSED" />
+		<result property="addTime"		column="ADDTIME" />
+		<result property="addIp"		column="ADDIP" />
+		<result property="approTime"	column="APPROTIME" />
+		<result property="username"	    column="USERNAME" />
+		<result property="memberType"	column="memberType" />
+		
+	</resultMap>
+	
+	
+		<!-- 返回的结果集 -->
+	<resultMap type="com.cxdai.console.customer.information.vo.EmailApproVo" id="emailApproMapperResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 		column="USER_ID" />
+		<result property="RANDUUID"		column="RANDUUID" />
+		<result property="CHECKED"		column="CHECKED" />
+		<result property="APPRTIME"		column="APPRTIME" />
+		<result property="APPRIP"		column="APPRIP" />
+		<result property="username"	    column="USERNAME" />
+		<result property="addTime"		column="ADDTIME" />
+		<result property="memberType"	column="memberType" />
+	</resultMap>
+	
+ 
+	
+	<!--基本列 -->
+	<sql id="mobileApproBaseColumn">
+		m.ID, 
+		m.USER_ID, 
+		m.MOBILENUM, 
+		m.RANDCODE, 
+		m.PASSED, 
+		m.ADDTIME,
+		m.ADDIP,
+		m.APPROTIME
+	</sql>
+	
+	<!-- 封装查询条件 -->
+	<sql id="mobileAppro_Where_Clause">
+		<if test="id != null">
+			and m.id =#{id}
+		</if>
+		<if test="userId != null ">
+			and m.USER_ID = #{userId}
+		</if>
+	</sql>
+	
+  	<!-- 根据条件查询记录集合 -->
+	<select id="queryMobileApproList" parameterType="com.cxdai.console.customer.information.vo.MobileApproCnd" resultMap="mobileApproMapperResultMap" >
+		select 	
+		   <include refid="mobileApproBaseColumn"/>
+		from
+			rocky_mobile_appro m
+		where 1=1
+		<include refid="mobileAppro_Where_Clause"/>
+  	</select>
+  	
+  	  	<!-- 根据条件查询记录数量-->
+	<select id="queryMobileApproCount" parameterType="com.cxdai.console.customer.information.vo.MobileApproCnd" resultType="java.lang.Integer" >
+		select count(v.id)
+		from
+			rocky_mobile_appro m
+		where 1=1
+		<include refid="mobileAppro_Where_Clause"/>
+  	</select>
+  	 
+  	
+  	<!--******************手机**************  -->
+  	
+  		<!-- 根据条件查询未通过审核记录数量-->
+	<select id="getNoMobileCheckCount" parameterType="com.cxdai.console.customer.information.vo.RealNameApproCnd" resultType="java.lang.Integer" >
+		 	 				select
+				 			count(*)
+							from rocky_member  a  LEFT JOIN
+							rocky_mobile_appro b 
+							on 	 a.id=b.USER_ID  
+							where 1= 1
+							 <if test="username != null || username != '' ">
+								and a.username like CONCAT('%',#{username},'%')
+							</if>
+							
+							<if test="number != null || number != '' ">
+								and ( (b.mobileNum like CONCAT('%',#{number},'%')) or (b.mobileNum is null))
+							</if>
+							
+							<if test="auditType != 99  ">
+								and IFNULL(b.passed  ,0)  =  #{auditType} 
+							</if>
+							
+							order by
+							a.addtime desc ,
+							IFNULL(b.passed,0)
+	 
+		
+  	</select>
+  	
+  	<!--判断是否是理财人-->
+	<select id="getMobileCheck" parameterType="com.cxdai.console.customer.information.vo.RealNameApproCnd" resultType="java.lang.Integer" >
+			 select count(*)
+			from rocky_mobile_appro
+			where user_id = #{userId}
+		
+  	</select>
+  	  
+	 		<!-- 根据条件查询未通过审核记录列表-->
+	<select id="getNoMobileCheckList" parameterType="com.cxdai.console.customer.information.vo.RealNameApproCnd" resultMap="mobileApproMapperResultMap" >
+					 	 select
+							a.id as userId ,
+							a.username as username ,
+							case when b.PASSED  is null  and 	 a.IS_FINANCIAL_USER=0 
+							 then '99999999999'
+							else b.MOBILENUM END  mobileNum,
+							IS_FINANCIAL_USER AS memberType,
+							a.addtime as addtime,
+							IFNULL(b.passed,0) as passed
+							from rocky_member  a  LEFT JOIN
+							rocky_mobile_appro b 
+							on 	 a.id=b.USER_ID   
+							where 1= 1
+							 <if test="username != null || username != '' ">
+								and a.username like CONCAT('%',#{username},'%')
+							</if>
+							
+							<if test="number != null || number != '' ">
+								and b.mobileNum like CONCAT('%',#{number},'%') 
+							</if>
+							
+							<if test="auditType != 99  ">
+								and IFNULL(b.passed  ,0)  =  #{auditType} 
+							</if>
+							order by
+							a.addtime desc ,
+							IFNULL(b.passed,0)
+		 
+  	</select>
+  	
+   <!-- 保存验证信息-->
+	<select id="saveNoMobileCheck" parameterType="com.cxdai.console.customer.information.vo.MobileApproVo" >
+	  
+	 insert into rocky_mobile_appro  (user_id,mobilenum,randcode,PASSED,APPROTIME,ADDTIME,ADDIP) 
+	 values
+	 (#{userId},#{mobileNum},#{randCode},#{passed},#{approTime},#{addTime},#{addIp})
+	  
+  	</select>
+  		
+  	 	  <!--理财者邮箱更新borrow的type，-->
+	<update id="updateMobileMember"  parameterType="com.cxdai.console.customer.information.vo.MobileApproVo">
+ 		 update rocky_member set  type= 0
+ 		 where id=#{userId}
+  	</update>
+  	
+  	 <!--理财者邮箱更新rocky_mobile_appro的-->
+	<update id="updateMobileApper"  parameterType="com.cxdai.console.customer.information.vo.MobileApproVo">
+ 		 update rocky_mobile_appro set   PASSED= 1,approTime = #{approTime}
+ 		 where user_id=#{userId}
+  	</update>
+  	
+  	 	 	  <!--理财者邮箱更新borrow的type，-->
+	<update id="updateMobileMembernopass"  parameterType="com.cxdai.console.customer.information.vo.MobileApproVo">
+ 		 update rocky_member set  type= -1
+ 		 where id=#{userId}
+  	</update>
+  	
+  	 	 	  <!--理财者邮箱更新borrow的type，-->
+	<update id="updateMobileAppernopass"  parameterType="com.cxdai.console.customer.information.vo.MobileApproVo">
+ 		  update rocky_mobile_appro set   PASSED= -1,approTime = #{approTime}
+ 		  where user_id=#{userId}
+  	</update>
+  	
+  	
+  	  	 	 	  <!--理财者邮箱更新borrow的type，-->
+	<update id="updateMobilenew"  parameterType="com.cxdai.console.customer.information.vo.MobileApproVo">
+ 		  update rocky_mobile_appro set  mobileNum= #{mobileNum}
+ 		  where user_id=#{userId}
+  	</update>
+  	
+  	
+  	 <!-- *************************邮箱************************* -->
+  	
+  	
+ 	 		<!-- 根据条件查询未通过邮箱记录列表-->
+	<select id="getNoEmailCheckList" parameterType="com.cxdai.console.customer.information.vo.RealNameApproCnd" resultMap="emailApproMapperResultMap" >
+	 
+							 	select
+								a.id as userId ,
+								a.username as username ,
+								a.EMAIL,
+								IS_FINANCIAL_USER as memberType,
+								a.addtime as addtime,
+					      		b.CHECKED
+								from rocky_member  a
+								INNER JOIN
+								rocky_email_appro b 
+								ON  
+								a.id=b.USER_ID  
+							    where 1 =1 
+							<if test="username != null || username != '' ">
+								and a.username like CONCAT('%',#{username},'%')
+							</if>
+							
+							<if test="number != null || number != '' ">
+								and ( (a.EMAIL like CONCAT('%',#{number},'%')) or (a.EMAIL is null))
+							</if>
+							
+							<if test="auditType != 99  ">
+								and IFNULL(b.CHECKED  ,0)  =  #{auditType} 
+							</if>
+							
+							order by a.addtime desc,b.CHECKED
+		
+  	</select>
+ 
+
+ 
+  	
+  		<!-- 根据条件查询未通过审核记录数量-->
+	<select id="getNoEmailCheckCount" parameterType="com.cxdai.console.customer.information.vo.RealNameApproCnd" resultType="java.lang.Integer" >
+	 
+							
+							select
+						 		count(*)
+								from rocky_member  a
+								INNER JOIN
+								rocky_email_appro b 
+								ON  
+								a.id=b.USER_ID  
+							    where 1 =1 
+							<if test="username != null || username != '' ">
+								and a.username like CONCAT('%',#{username},'%')
+							</if>
+							
+							<if test="number != null || number != '' ">
+								and a.EMAIL like CONCAT('%',#{number},'%')
+							</if>
+							
+							<if test="auditType != 99  ">
+								and IFNULL(b.CHECKED  ,0)  =  #{auditType} 
+							</if>
+							
+			
+  	</select>
+  	
+  	  	<!--判断是否是理财人-->
+	<select id="getEmailCheck" parameterType="com.cxdai.console.customer.information.vo.RealNameApproCnd" resultType="java.lang.Integer" >
+  			 select count(*)
+			from rocky_email_appro
+			where user_id = #{userId}  
+			
+		<!-- 	select IS_FINANCIAL_USER from rocky_member
+			where id =   #{userId} -->
+		
+  	</select>
+  	 
+  	
+  	 <!--投资者更新-->
+	<select id="saveNoEmailCheck" parameterType="com.cxdai.console.customer.information.vo.EmailApproVo" >
+		 insert into rocky_email_appro  (user_id, RANDUUID,CHECKED ,APPRTIME ,APPRIP ) 
+		 values
+		 (#{userId},#{RANDUUID},#{CHECKED},#{APPRTIME},#{APPRIP})
+  	</select>
+  	 
+	<update id="updateEmail" parameterType="com.cxdai.console.customer.information.vo.EmailApproVo" >
+ 		 update rocky_member set email='999999999@gcjr.com' , type= 0
+ 		 where id=#{userId}
+  	</update>
+ 
+    <!-- 理财者更新 -->
+	<update id="updateEmailMember" parameterType="com.cxdai.console.customer.information.vo.EmailApproVo" >
+ 		 update rocky_member set   type= 0 
+ 		 where id=#{userId}
+  	</update>
+  		  	 <!-- // 更新邮箱-->
+	<update id="updateEmailApper" parameterType="com.cxdai.console.customer.information.vo.EmailApproVo" >
+ 		 update rocky_email_appro set CHECKED=1,APPRTIME=#{APPRTIME} ,APPRIP=#{APPRIP}
+ 		 where user_id=#{userId}
+  	</update>
+  	
+  	 
+  	 
+  	    <!-- 理财者不通过更新 -->
+	<update id="updateEmailMemberNoPass" parameterType="com.cxdai.console.customer.information.vo.EmailApproVo" >
+ 		 update rocky_member set type= -1
+ 		 where id=#{userId}
+  	</update>
+  		  	 <!-- // 更新不通过邮箱-->
+	<update id="updateEmailApperNoPass" parameterType="com.cxdai.console.customer.information.vo.EmailApproVo" >
+ 		 update rocky_email_appro set CHECKED = -1,APPRTIME=#{APPRTIME} ,APPRIP=#{APPRIP}
+ 		 where user_id=#{userId}
+  	</update>
+  	
+  	
+	<!--修改邮箱  -->
+ 	<update id="updateEmailnew" parameterType="com.cxdai.console.customer.information.vo.EmailApproVo" >
+ 	 		 update rocky_member set email = #{EMAIL}
+		 where id=#{userId}
+ 	
+ 	</update>
+ 	
+ 	  	<!-- 验证手机认证数据是否重复-->
+	<select id="queryRepeatMobileApproCount" parameterType="com.cxdai.console.customer.information.vo.MobileApproCnd" resultType="java.lang.Integer" >
+		select count(m.id)
+		from
+			rocky_mobile_appro m
+		where 1=1 AND m.PASSED = 1
+		<if test="userId != null">
+			and m.USER_ID !=#{userId}
+		</if>
+		<if test="mobileNum !=null and mobileNum !=''">
+			and m.MOBILENUM =#{mobileNum}
+		</if>
+  	</select>
+  	
+</mapper>  

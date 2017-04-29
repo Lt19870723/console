@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.borrow.approve.mapper.BorrowerMapper">
+	<resultMap id="borrowerVoResultMap" type="com.cxdai.console.borrow.approve.vo.BorrowerVo">
+		<id column="ID" 						property="id"/>
+		<result column="BORROW_ID" 				property="borrowId" />
+		<result column="MARITAL_STATUS" 		property="maritalStatus" />
+		<result column="EDUCATION" 				property="education" />
+		<result column="INDUSTRY"				property="industry" />
+		<result column="SCALE" 				    property="scale" />
+		<result column="JOB_TITLE" 				property="jobTitle" />
+		<result column="WORK_CITY"				property="workCity"	/>
+		<result column="WORK_YEARS" 			property="workYears" />
+		<result column="ADDTIME" 				property="addtime"/>
+		<result column="ADDIP" 					property="addip" />
+		<result column="birthday" 				property="birthday" />
+		<result column="username" 				property="username" />
+		<result column="income" 				property="income" />
+	</resultMap>
+	
+	<!--借款标基本列 -->
+	<sql id="borrowerVoColumn">
+		br.ID,
+		br.BORROW_ID,
+		br.MARITAL_STATUS,
+		br.EDUCATION,
+		br.INDUSTRY,
+		br.SCALE,
+		br.JOB_TITLE,
+		br.WORK_CITY,
+		br.WORK_YEARS,
+		br.ADDTIME,
+		br.ADDIP
+	</sql>
+	
+	<!-- 查询借款者信息 -->
+	<select id="queryBorrowerByBorrowId" resultMap="borrowerVoResultMap"
+		parameterType="java.lang.Integer">
+		select 
+			<include refid="borrowerVoColumn" />
+			,bi.income
+		from t_borrower br,rocky_borrow b
+		left join rocky_baseinfo bi on bi.user_id = b.USER_ID
+		where br.BORROW_ID = b.id
+		and br.BORROW_ID =  #{borrowId}
+	</select>
+	
+	<!-- 查询用户名和生日信息 -->
+	<select id="queryBorrowerBaseInfoByBorrowId" resultMap="borrowerVoResultMap"
+		parameterType="java.lang.Integer">
+		select 
+			ap.birthday
+			,m.username
+		from rocky_member m 
+		left join rocky_realname_appro ap on ap.user_id = m.ID
+		where m.id = #{userId}
+	</select>
+</mapper>

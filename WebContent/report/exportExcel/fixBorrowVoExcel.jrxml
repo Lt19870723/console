@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fixBorrowVoExcel" language="groovy" pageWidth="900" pageHeight="842" columnWidth="860" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3f6a1dd-d917-439b-9ec3-18dafc3ca6b9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="contractNo" class="java.lang.String">
+		<fieldDescription><![CDATA[contractNo]]></fieldDescription>
+	</field>
+	<field name="statusStr" class="java.lang.String">
+		<fieldDescription><![CDATA[statusStr]]></fieldDescription>
+	</field>
+	<field name="planAccountStr2" class="java.lang.String">
+		<fieldDescription><![CDATA[planAccountStr]]></fieldDescription>
+	</field>
+	<field name="lockLimitStr" class="java.lang.String">
+		<fieldDescription><![CDATA[lockLimitStr]]></fieldDescription>
+	</field>
+	<field name="lockEndTimeStr" class="java.lang.String">
+		<fieldDescription><![CDATA[lockEndTimeStr]]></fieldDescription>
+	</field>
+	<field name="borrowCapitalStr" class="java.lang.String">
+		<fieldDescription><![CDATA[borrowCapitalStr]]></fieldDescription>
+	</field>
+	<field name="borrowInterestStr" class="java.lang.String">
+		<fieldDescription><![CDATA[borrowInterestStr]]></fieldDescription>
+	</field>
+	<field name="borrowContractNo" class="java.lang.String">
+		<fieldDescription><![CDATA[borrowContractNo]]></fieldDescription>
+	</field>
+	<field name="borrowRepayTimeStr" class="java.lang.String">
+		<fieldDescription><![CDATA[borrowRepayTimeStr]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="41" width="100" height="20" uuid="294d17e6-2630-416e-b702-c30fdd8963a8"/>
+				<text><![CDATA[定期宝编号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="41" width="100" height="20" uuid="cddcad5b-a208-4265-869f-fd32e4672f68"/>
+				<text><![CDATA[状态]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="41" width="100" height="20" uuid="b74f369d-7be4-4ba5-aab2-72bbdcf5dee3"/>
+				<text><![CDATA[开放额度]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="41" width="100" height="20" uuid="bc0f90bc-06c9-4e23-a694-1404104819ac"/>
+				<text><![CDATA[锁定期限]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="41" width="100" height="20" uuid="a72b1f44-409c-42b1-ae3c-7f5992ef4e83"/>
+				<text><![CDATA[宝还款日]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="41" width="100" height="20" uuid="b830857d-885a-43ef-9a6f-359336c27380"/>
+				<text><![CDATA[投标回款本息]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="41" width="100" height="20" uuid="19bf82dd-0de6-46d4-89b3-d2060c2c9328"/>
+				<text><![CDATA[投标回款利息]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="700" y="41" width="130" height="20" uuid="2c25a468-e068-4501-a031-32b792bf0aaa"/>
+				<text><![CDATA[回款借款标编号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="830" y="41" width="122" height="20" uuid="0a08af97-3de6-489b-93ae-aa7e0a07e273"/>
+				<text><![CDATA[投标回款时间]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="d103cf32-203f-4a9e-be6d-25a1189a4d8e"/>
+				<textFieldExpression><![CDATA[$F{contractNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="100" height="20" uuid="3d43376e-ea69-48ec-8643-cb341999086b"/>
+				<textFieldExpression><![CDATA[$F{statusStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="20" uuid="d1bd7bf7-52dc-4e1d-81e6-58416255afc6"/>
+				<textFieldExpression><![CDATA[$F{planAccountStr2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="100" height="20" uuid="338f41b2-21a8-4df0-aee3-93a32ac9f943"/>
+				<textFieldExpression><![CDATA[$F{lockLimitStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="0" width="100" height="20" uuid="015da838-5017-49a8-b46c-240db4d86df6"/>
+				<textFieldExpression><![CDATA[$F{lockEndTimeStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="0" width="100" height="20" uuid="faf0df0e-7550-49c6-ac15-5481c7a1427b"/>
+				<textFieldExpression><![CDATA[$F{borrowCapitalStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="600" y="0" width="100" height="20" uuid="b529bf27-e60a-4b11-a52e-c751927cc9ad"/>
+				<textFieldExpression><![CDATA[$F{borrowInterestStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="700" y="0" width="130" height="20" uuid="a987c776-c582-4ab4-8d3d-c548acee2757"/>
+				<textFieldExpression><![CDATA[$F{borrowContractNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="830" y="0" width="122" height="20" uuid="05d8f4de-bdda-46e6-a269-ea01aa98dd93"/>
+				<textFieldExpression><![CDATA[$F{borrowRepayTimeStr}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

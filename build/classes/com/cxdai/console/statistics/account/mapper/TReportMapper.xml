@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ 
+<mapper namespace="com.cxdai.console.statistics.account.mapper.TReportMapper">
+<!-- 
+ 	//交易数据统计 
+	// 充值金额 rechangeTotalMoney;
+	// 提现金额：cashTotalMoney;
+	// 投资人充值总额： rechangeTotalByTZ;
+	// 借款人充值总额：  rechangeTotalByJK;
+	// 净充值金额：  netRechargeTotal;
+	// 用户资金总额： useMoneyTotal;
+	// 用户优先可用资金总额：  firstBorrowUseMoneyTotal;
+	// 抵押标成交金额： dyAccountMoney;
+	// 净值标成交金额： jzAccountMoney;
+	// 抵押标时间加权成交金额：  dybTimeTotal;
+	// 净值标 时间加权交易金额： jzbTimeTotal;
+	// 秒标成交金额： mbAccountMoney;
+	// 推荐标成交金额： tjbAccountMoney;
+	// 已支付抵押标利息总额：（即时） dybHavePayInterstTotal;
+	// 待支付抵押标利息总额：  dybUnPayInterstTotal;
+	// 上线活动奖励：（即时）  activityAwardTotal;
+ 
+ -->
+ 
+ 
+ 		<!-- 		网站支出数据统计	
+ 			//支出总和：payTotal
+	         	//实名认证奖励：realnamePassAwardTotal              	
+	         	//推广注册奖励： （充值1000，推荐人和被推荐人各奖励10元） generalizeRegisterTotal      	       	
+	         	//提现补帖奖励：（待收超过5000，月初奖励10元） monthFirstAwardTotal       	         		         	
+	         	//论坛活动奖励：forumActivityAwardTotal              	
+	         	//线下充值奖励：offLineRechargeAwardTotal	         	        	
+	         	//网银在线充值费用：chinaBankFeeTotal           	
+	         	//盛付通充值费用：shengpayFeeTotal                  	
+	         	//国付宝充值费用： guopayFeeTotal	          
+	         	//新浪支付充值费用：sinaFeeTotal    	                	
+	         	// 充值费用总和：（3家第三方充值费用总和加上线下充值奖励） rechargeTotal
+	         	 -->
+	         	
+	         	
+	         		<!-- 		网站收入数据统计 
+				//：收入总和 incomeTotal
+				 //VIP费用收入： vipIncomeTotal       
+				//提现手续费： takeCashFeeTotal               
+				// 利息管理费：interestFeeTotal                
+				//净值标借款管理费：netBorrowFeeTotal
+				 // 净收益：（收入总和—支出总和）netEarningTotal
+	         		// 网银在线充值手续费收入
+					  moneyLineReseive;
+						// 新浪支付充值手续费收入
+						 sinaLineReseive;
+ 
+	         		-->
+ 	  
+ 
+	<resultMap type="com.cxdai.console.statistics.account.vo.TotalReportVo" id="operateStatementResultMap">
+		    <result property="memberCount" 			column="memberCount"/>
+		    <result property="realNameApproCount" 	column="realNameApproCount"/>
+		    <result property="vipApproApproCount" 		column="vipApproApproCount"/>
+		    <result property="addInvestPersonsTotal" 	column="addInvestPersonsTotal"/>
+		    <result property="investPersonsTotal" 		column="investPersonsTotal"/>
+		    <result property="losePersonsTotal" 		column="losePersonsTotal"/>
+		    <result property="nowInvestPersonsTotal" 	column="nowInvestPersonsTotal"/>
+		    <result property="observePersonsTotal" 		column="observePersonsTotal"/>
+			
+			<result property="rechangeTotalMoney" 		column="rechangeTotalMoney"/>
+			<result property="cashTotalMoney" 		column="cashTotalMoney"/>
+			<result property="rechangeTotalByTZ" 		column="rechangeTotalByTZ"/>
+			<result property="rechangeTotalByJK" 		column="rechangeTotalByJK"/>
+			<result property="netRechargeTotal" 		column="netRechargeTotal"/>
+			<result property="useMoneyTotal" 		column="useMoneyTotal"/>		    
+			<result property="firstBorrowUseMoneyTotal" 		column="firstBorrowUseMoneyTotal"/>
+		    <result property="dyAccountMoney" 		column="dyAccountMoney"/>
+			<result property="jzAccountMoney" 		column="jzAccountMoney"/>
+			<result property="dybTimeTotal" 		column="dybTimeTotal"/>
+			<result property="jzbTimeTotal" 		column="jzbTimeTotal"/>		    
+			<result property="mbAccountMoney" 		column="mbAccountMoney"/>
+		    <result property="tjbAccountMoney" 		column="tjbAccountMoney"/>	    		    		    		    		    		    		    		 
+			<result property="dybHavePayInterstTotal" 		column="dybHavePayInterstTotal"/>
+			<result property="dybUnPayInterstTotal" 		column="dybUnPayInterstTotal"/>
+			<result property="activityAwardTotal" 		column="activityAwardTotal"/>		    
+ 	 		    		    		    	
+			<result property="payTotal" 		column="payTotal"/>
+			<result property="realnamePassAwardTotal" 		column="realnamePassAwardTotal"/>
+			<result property="generalizeRegisterTotal" 		column="generalizeRegisterTotal"/>
+			<result property="monthFirstAwardTotal" 		column="monthFirstAwardTotal"/>
+			<result property="forumActivityAwardTotal" 		column="forumActivityAwardTotal"/>
+			<result property="offLineRechargeAwardTotal" 		column="offLineRechargeAwardTotal"/>		    
+			<result property="chinaBankFeeTotal" 		column="chinaBankFeeTotal"/>
+		    <result property="shengpayFeeTotal" 		column="shengpayFeeTotal"/>
+			<result property="guopayFeeTotal" 		column="guopayFeeTotal"/>
+			<result property="sinaFeeTotal" 		column="sinaFeeTotal"/>
+   		    <result property="rechargeTotal" 		column="rechargeTotal"/>	    		    		    		    		    		 
+ 
+	 		<result property="incomeTotal" 		column="incomeTotal"/>
+			<result property="vipIncomeTotal" 		column="vipIncomeTotal"/>		    
+			<result property="takeCashFeeTotal" 		column="takeCashFeeTotal"/>
+		    <result property="interestFeeTotal" 		column="interestFeeTotal"/>
+			<result property="netBorrowFeeTotal" 		column="netBorrowFeeTotal"/>
+			<result property="netEarningTotal" 		column="netEarningTotal"/>
+   	 		<result property="moneyLineReseive" 		column="moneyLineReseive"/>
+			<result property="sinaLineReseive" 		column="sinaLineReseive"/>
+	
+			<result property="dbAccountMoney" 		column="dbAccountMoney"/>
+			<result property="dyTransferAccountMoney" 		column="dyTransferAccountMoney"/>
+			<result property="jzTransferAccountMoney" 		column="jzTransferAccountMoney"/>
+			<result property="mbTransferAccountMoney" 		column="mbTransferAccountMoney"/>
+			<result property="tjbTransferAccountMoney" 		column="tjbTransferAccountMoney"/>
+			<result property="dbTransferAccountMoney" 		column="dbTransferAccountMoney"/>
+			<result property="llFeeReseive" 		column="llFeeReseive"/>
+			<result property="transferManagerFree" 		column="transferManagerFree"/>
+	 		<result property="firstTransferManagerFree" 		column="firstTransferManagerFree"/>
+	 		<result property="changeDrawMoneyFee" 		column="changeDrawMoneyFee"/>
+	 		<result property="netBorrowOverdueFee" 		column="netBorrowOverdueFee"/>
+	</resultMap>
+	<resultMap type="com.cxdai.console.statistics.customer.entity.NewInterestMember" id="newInterestMemberResultMap">
+	</resultMap>
+	 
+ <!-- 查询addInvestPersonsTotal -->
+	<select id="queryAddInvestPersonsTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultType="java.lang.Integer">
+	 <![CDATA[ 
+	      select count(*) addInvestPersonsTotal from (
+			select user_id from (
+			select rbt.user_id from rocky_b_tenderrecord rbt
+			INNER JOIN ROCKY_MEMBER rm on rbt.user_id=rm.id
+			 where rbt.`STATUS` not in(-1,0) 
+			and rm.ADDTIME >= #{beginTimeSec}
+			and rm.ADDTIME <= #{endTimeSec}
+			and rbt.ADDTIME >= #{beginTimeSec}
+			and rbt.ADDTIME <= #{endTimeSec}
+			group by rbt.user_id
+			UNION all
+			select tftd.user_id from t_fix_tender_detail tftd
+			INNER JOIN ROCKY_MEMBER rm on tftd.user_id=rm.id
+			 where tftd.`STATUS` in(1,3)
+			and rm.ADDTIME >= #{beginTimeSec}
+			and rm.ADDTIME <= #{endTimeSec}
+			and UNIX_TIMESTAMP(tftd.ADDTIME) >= #{beginTimeSec}
+			and UNIX_TIMESTAMP(tftd.ADDTIME) <= #{endTimeSec}
+			 group by tftd.user_id
+			) t group by user_id) t2
+	  ]]>
+	</select>
+ <!-- 查询investPersonsTotal -->
+	<select id="queryInvestPersonsTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultType="java.lang.Integer">
+	 <![CDATA[ 
+	     SELECT IFNULL(COUNT(DISTINCT(T1.USER_ID)),0) AS investPersonsTotal FROM (
+            SELECT T.USER_ID FROM ROCKY_BORROW B,ROCKY_B_COLLECTIONRECORD T
+		     WHERE 1=1
+			 AND B.ID=T.BORROW_ID
+			 AND (B.STATUS = 4 OR B.STATUS = 5 OR B.STATUS = 42)
+			 AND T.ADDTIME >= #{beginTimeSec}
+			 AND T.ADDTIME <= #{endTimeSec}
+			UNION ALL
+			 SELECT T.USER_ID FROM t_fix_borrow B,t_fix_collectionrecord T
+		     WHERE 1=1
+			 AND B.ID=T.FIX_BORROW_ID
+			 AND B.STATUS IN(5,7)
+			 AND UNIX_TIMESTAMP(T.ADDTIME) >= #{beginTimeSec}
+			 AND UNIX_TIMESTAMP(T.ADDTIME) <= #{endTimeSec}
+			 ) T1
+	  ]]>
+	</select>
+	 <!-- 查询nowInvestPersonsTotal -->
+	<select id="queryNowInvestPersonsTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultType="java.lang.Integer">
+	 <![CDATA[ 
+	    select count(1)  nowInvestPersonsTotal from (select t.TOTAL from (select (a.DRAW_MONEY+a.NO_DRAW_MONEY+a.NO_USE_MONEY+a.COLLECTION+a.FIRST_BORROW_USE_MONEY+IFNULL(cur.TOTAL,0)+IFNULL(fix.fixCapitalTotal,0)+IFNULL(coll.fixInvestNoTotal,0)) as TOTAL	
+		from (select ID from rocky_member a where 1=1) m  
+		LEFT JOIN rocky_account a on m.id = a.USER_ID
+		LEFT JOIN t_cur_account cur on m.id = cur.USER_ID 
+		LEFT JOIN (SELECT USER_ID,SUM(c.ACCOUNT) as fixCapitalTotal FROM t_fix_tender_detail c 		 
+		 where c.status in(0,1) GROUP by USER_ID) fix on m.id = fix.USER_ID 
+		LEFT JOIN (SELECT USER_ID,SUM(co.INTEREST) as fixInvestNoTotal FROM t_fix_collectionrecord co 		 
+		 where co.status=0  GROUP by USER_ID) coll on m.id = coll.USER_ID) t) t1 where t1.TOTAL>100 
+	  ]]>
+	</select>
+	<select id="queryTReport" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultMap="operateStatementResultMap">
+	 <![CDATA[ 
+	    select  
+	 	( SELECT  IFNULL(COUNT(*),0) FROM ROCKY_MEMBER where 1=1 and `STATUS`=0 
+	  	    and ADDTIME >=   #{beginTimeSec} 
+	  	    and ADDTIME <=  #{endTimeSec}
+	  	     )  as  memberCount ,
+	 
+		( SELECT  IFNULL(COUNT(*),0) FROM ROCKY_REALNAME_APPRO where ISPASSED = 1  
+		   and APPROVETIME >=   #{beginTimeSec} 
+		   and APPROVETIME <=  #{endTimeSec} 
+		  ) as realNameApproCount,
+ 
+	   (SELECT  IFNULL(COUNT(*),0) FROM ROCKY_VIP_APPRO where PASSED = 1  
+		 and APPROVETIME >=   #{beginTimeSec} 
+		 and APPROVETIME <=  #{endTimeSec} ) as vipApproApproCount,
+
+	       
+		( SELECT  IFNULL(COUNT(DISTINCT a.user_id),0) FROM rocky_realname_appro a 
+		 WHERE a.ispassed = 1 
+		    AND a.user_id NOT in (  
+		 	SELECT r.user_id  FROM ROCKY_RECHARGERECORD r 
+		 	WHERE 1=1 
+		 	AND r.status = 1 
+			 ) 
+			and a.APPROVETIME >= #{beginTimeSec}
+		 and a.APPROVETIME <=  #{endTimeSec} ) as observePersonsTotal,
+
+		 ( SELECT  IFNULL(SUM(MONEY),0)  FROM rocky_rechargerecord  WHERE STATUS = 1 and (
+		  (TYPE = 1  
+	 		and VERIFY_TIME >= #{beginTimeSec}
+ 			 and VERIFY_TIME <= #{endTimeSec}
+	 		 ) or (TYPE = 2  
+		 		and VERIFY_TIME2 >= #{beginTimeSec}
+			    and VERIFY_TIME2 <=  #{endTimeSec} 
+			 ))	
+		  and user_id!=371 and user_id!=693 ) as rechangeTotalMoney,
+		  
+		  	( SELECT  IFNULL(SUM(TOTAL),0)  FROM rocky_cashrecord  WHERE `STATUS` = '2'  
+	 		 and VERIFY_TIME2 >=  #{beginTimeSec}
+ 			 and VERIFY_TIME2 <=  #{endTimeSec} ) as cashTotalMoney,
+ 			 
+		  	( SELECT  IFNULL(SUM(TOTAL),0)  FROM rocky_cashrecord  WHERE 
+		  	 ADDTIME >=  #{beginTimeSec}
+ 			 and ADDTIME <=  #{endTimeSec} ) as cashTotalApplyMoney,
+
+	 		( SELECT  IFNULL(SUM(r.MONEY),0)  FROM rocky_rechargerecord r,rocky_member m  WHERE r.STATUS = 1 AND r.USER_ID = m.id and ((r.TYPE = 1 
+		  and r.VERIFY_TIME >=  #{beginTimeSec}
+			  and r.VERIFY_TIME <=  #{endTimeSec}
+		  ) or (r.TYPE = 2  
+			  and r.VERIFY_TIME2 >= #{beginTimeSec}
+			  and r.VERIFY_TIME2 <= #{endTimeSec} 
+		 )) 
+			 and r.user_id!=371 and r.user_id!=693  
+			 AND m.IS_FINANCIAL_USER = 1 ) as rechangeTotalByTZ,
+
+			( SELECT  IFNULL(SUM(r.MONEY),0) TOTALMONEY FROM rocky_rechargerecord r,rocky_member m  WHERE r.STATUS = 1 AND r.USER_ID = m.id and ((r.TYPE = 1 
+		  and r.VERIFY_TIME >=  #{beginTimeSec}
+			  and r.VERIFY_TIME <=  #{endTimeSec}
+		  ) or (r.TYPE = 2  
+			  and r.VERIFY_TIME2 >= #{beginTimeSec}
+			  and r.VERIFY_TIME2 <= #{endTimeSec} 
+		 )) 
+			 and r.user_id!=371 and r.user_id!=693  
+			 AND m.IS_FINANCIAL_USER = 0 ) as rechangeTotalByJK,
+	 
+		  	( SELECT  IFNULL(SUM(use_money),0) FROM rocky_account 
+		  WHERE 1=1 
+		 AND user_id!=371 AND user_id!=693 ) as useMoneyTotal,
+		  
+		 (  SELECT (IFNULL(SUM(FIRST_BORROW_USE_MONEY),0)-(SELECT IFNULL(SUM(USE_MONEY),0) FROM t_first_tender_real ftr WHERE FTR.STATUS = 3)) FROM rocky_account 
+		  WHERE 1=1 
+		  AND user_id!=371 AND user_id!=693 ) as 	firstBorrowUseMoneyTotal,
+
+		 ( 
+			SELECT  IFNULL(SUM(ACCOUNT),0) sumAccount  FROM ROCKY_BORROW  WHERE 1=1  
+				 	 and BORROWTYPE =  2
+				  	AND (STATUS = 4 OR STATUS = 5 OR STATUS = 42)  
+				  and SUCCESS_TIME >=  #{beginTimeSec}  and SUCCESS_TIME <=  #{endTimeSec}
+		 ) as dyAccountMoney,
+		  	  
+		  ( 
+			SELECT  IFNULL(SUM(ACCOUNT),0) sumAccount  FROM ROCKY_BORROW  WHERE 1=1  
+				 	 and BORROWTYPE =  3
+				  	AND (STATUS = 4 OR STATUS = 5 OR STATUS = 42)  
+				  and SUCCESS_TIME >=  #{beginTimeSec}  and SUCCESS_TIME <=  #{endTimeSec}
+		 ) as jzAccountMoney,
+	
+		 (  
+			  
+				SELECT  IFNULL(SUM(ACCOUNT),0) sumAccount  FROM ROCKY_BORROW  WHERE 1=1  
+					 	 and BORROWTYPE =  4
+					  	AND (STATUS = 4 OR STATUS = 5 OR STATUS = 42)  
+					  and SUCCESS_TIME >=  #{beginTimeSec}  and SUCCESS_TIME <=  #{endTimeSec}
+		 ) as mbAccountMoney,
+		 
+		 (  
+				SELECT  IFNULL(SUM(ACCOUNT),0) sumAccount  FROM ROCKY_BORROW  WHERE 1=1  
+					 	 and BORROWTYPE =  1
+					  	AND (STATUS = 4 OR STATUS = 5 OR STATUS = 42)  
+					  and SUCCESS_TIME >=  #{beginTimeSec}  and SUCCESS_TIME <=  #{endTimeSec}
+		  ) as tjbAccountMoney,
+
+		 (SELECT   IFNULL(SUM(b.ACCOUNT* 
+		 CASE b.STYLE 
+		 WHEN 4 THEN ROUND(b.TIME_LIMIT/30, 4) 
+		 ELSE b.TIME_LIMIT 
+		 END),0)
+		 FROM rocky_borrow b 
+		 WHERE 1=1 
+		AND b.BORROWTYPE = 2 
+		 AND (b.STATUS = 4 OR b.STATUS = 5 OR b.STATUS = 42) 
+		  and b.SUCCESS_TIME >= #{beginTimeSec}
+		and b.SUCCESS_TIME <= #{endTimeSec}) 	as dybTimeTotal,
+
+		( SELECT   IFNULL(SUM(b.ACCOUNT* CASE b.STYLE 
+	       WHEN 4 THEN ROUND(b.TIME_LIMIT/30, 4) 
+	        ELSE b.TIME_LIMIT 
+		   END),0) 
+	     FROM rocky_borrow b 
+		  WHERE 1=1 
+		  AND b.BORROWTYPE = 3 
+		  AND (b.STATUS = 4 OR b.STATUS = 5 OR b.STATUS = 42) 
+			  and b.SUCCESS_TIME >= #{beginTimeSec}
+			  and b.SUCCESS_TIME <= #{endTimeSec}
+		 )as jzbTimeTotal,
+		  
+		( SELECT  IFNULL(SUM(c.REPAY_YESACCOUNT - c.CAPITAL),0) 
+			FROM  rocky_b_collectionrecord c ,rocky_borrow b
+	 	 WHERE c.STATUS IN(1,2,3)  
+		 AND c.BORROW_ID = b.ID AND b.BORROWTYPE = 2 
+		 and (c.REPAY_YESTIME >= #{beginTimeSec} or UNIX_TIMESTAMP(c.ADVANCETIME)>= #{beginTimeSec})
+		 and (c.REPAY_YESTIME <= #{endTimeSec} or UNIX_TIMESTAMP(c.ADVANCETIME) <= #{endTimeSec})
+		) as dybHavePayInterstTotal,
+		
+		 (SELECT  IFNULL(SUM(c.INTEREST),0)  FROM rocky_b_tenderrecord t,rocky_borrow b,rocky_b_collectionrecord c 
+		 WHERE c.STATUS = 0  
+		AND t.BORROW_ID = b.ID AND c.TENDER_ID = t.ID AND b.BORROWTYPE = 2  )	 as  dybUnPayInterstTotal,
+		
+		  (SELECT SUM(money) FROM rocky_accountlog 
+	      WHERE TYPE='activity_exchange_money' )	as activityAwardTotal
+		FROM dual
+	  ]]>
+	</select>
+	<!-- 统计报表SQL -->
+	<select id="queryTReport1" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultMap="operateStatementResultMap">
+	 <![CDATA[ 
+	 select  
+		(SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+			WHERE TYPE='web_recharge' 
+			AND (remark='实名与手机认证通过奖励' or remark='邮箱、手机及实名认证通过奖励')
+			AND user_id!=-1 
+			and ADDTIME >=  #{beginTimeSec}
+			and ADDTIME <= #{endTimeSec})  as realnamePassAwardTotal,
+	
+			 ( SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+		 	WHERE TYPE='web_recharge' 
+		 	 AND (remark  LIKE '%您推荐的用户%' OR remark = '首充1000奖励费用') 
+			  and ADDTIME >=  #{beginTimeSec}
+			 and ADDTIME <= #{endTimeSec} )
+			 as generalizeRegisterTotal,
+			 
+			  (SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+		 	 WHERE TYPE='web_recharge' 
+			 AND remark ='系统每月奖励10元，资金已到账。' 
+			  and ADDTIME >= #{beginTimeSec}
+			  and ADDTIME <= #{endTimeSec})  as  monthFirstAwardTotal,
+			  
+			  (SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+		 	   WHERE TYPE='offline_recharge_award' 
+			  and ADDTIME >=#{beginTimeSec}
+			  and ADDTIME <= #{endTimeSec})   as   offLineRechargeAwardTotal,
+			  
+		 ( SELECT  IFNULL(SUM(monthfee),0)  
+		 FROM ( 
+	 		SELECT CASE
+	 			 WHEN money<=20000000 THEN money*0.002
+		 	 	     WHEN (money > 20000000 AND money<=60000000) THEN money*0.0018
+	 			  WHEN money>60000000 THEN money*0.0016
+	      		END AS monthfee
+	 			FROM (
+	 				SELECT FROM_UNIXTIME(ADDTIME,'%Y-%m') AS moneth,SUM(money) AS money
+		 			FROM rocky_rechargerecord r
+	 			WHERE onlinetype=4
+	 			AND STATUS=1
+              AND TYPE=1
+			    and ADDTIME >= #{beginTimeSec}
+			    and ADDTIME <= #{endTimeSec}
+	 			GROUP BY FROM_UNIXTIME(ADDTIME,'%Y-%m') 
+		 		) result  
+				) t )  as sinaFeeTotal,
+				
+
+			( SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+			  WHERE 1=1
+			  AND TYPE='vip_cost' 
+		   AND user_id!=-1
+			  AND remark = 'vip认证通过' 
+			   and ADDTIME >= #{beginTimeSec}
+				  and ADDTIME <= #{endTimeSec})  as vipIncomeTotal,
+				  
+			 (SELECT  IFNULL(SUM(C.fee),0) TOTALCASH FROM rocky_cashrecord C 
+		     WHERE C.STATUS = 2
+		   and VERIFY_TIME2 >=  #{beginTimeSec}
+			  and VERIFY_TIME2 <=  #{endTimeSec} )  as  takeCashFeeTotal,
+		  
+			( SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+		   WHERE 1=1 
+		  AND TYPE='inverest_fee' 
+			   and ADDTIME >=  #{beginTimeSec}
+		 and ADDTIME <= #{endTimeSec}	)  as  interestFeeTotal,
+			
+			(  SELECT   IFNULL(SUM(t.money),0) 
+		
+			 FROM rocky_borrow b,( 
+					 	SELECT  borrow_Id AS borrowId,a.money,a.addtime 
+			  	FROM rocky_accountlog a 
+				 	WHERE 1=1 
+					 	AND TYPE='borrow_manage_fee' 
+						and ID_TYPE=0
+					 	) t 
+					 	WHERE b.ID = t.borrowId 
+					 AND b.borrowtype=3 
+						 and t.ADDTIME >= #{beginTimeSec}
+						 and t.ADDTIME <= #{endTimeSec}
+					  
+			) as  netBorrowFeeTotal,
+			
+			(select   IFNULL(sum(FEE),0) from rocky_rechargerecord
+			where onlinetype=1  and STATUS=1   
+			and VERIFY_TIME >= #{beginTimeSec}
+			and VERIFY_TIME <= #{endTimeSec}) as  moneyLineReseive ,
+			
+				(select   IFNULL(sum(FEE),0) from rocky_rechargerecord
+			where onlinetype=4  and STATUS=1   
+			and VERIFY_TIME >= #{beginTimeSec}
+			and VERIFY_TIME <= #{endTimeSec})	 
+						as  sinaLineReseive,
+						
+		 (  
+				SELECT  IFNULL(SUM(ACCOUNT),0) sumAccount  FROM ROCKY_BORROW  WHERE 1=1  
+					 	 and BORROWTYPE =  5
+					  	AND (STATUS = 4 OR STATUS = 5 OR STATUS = 42)  
+					  and SUCCESS_TIME >=  #{beginTimeSec}  and SUCCESS_TIME <=  #{endTimeSec}
+		  ) as dbAccountMoney,			
+			 		
+		( 
+		   SELECT  IFNULL(SUM(rbs.ACCOUNT),0)  FROM  rocky_b_transfer  rbs WHERE  rbs.STATUS =4  AND   rbs.BORROW_TYPE =2 
+			   AND rbs.SUCCESS_TIME  >=  FROM_UNIXTIME(#{beginTimeSec})  AND rbs.SUCCESS_TIME  <=   FROM_UNIXTIME(#{endTimeSec})
+		 ) as  dyTransferAccountMoney,
+		(
+		 SELECT  IFNULL(SUM(rbs.ACCOUNT),0)  FROM  rocky_b_transfer  rbs WHERE  rbs.STATUS =4  AND   rbs.BORROW_TYPE =3
+			   AND rbs.SUCCESS_TIME  >=  FROM_UNIXTIME(#{beginTimeSec})  AND rbs.SUCCESS_TIME  <=   FROM_UNIXTIME(#{endTimeSec})
+		) as  jzTransferAccountMoney,
+		(
+		 SELECT IFNULL(SUM(rbs.ACCOUNT),0)  FROM  rocky_b_transfer  rbs WHERE  rbs.STATUS =4  AND   rbs.BORROW_TYPE =4
+			   AND rbs.SUCCESS_TIME  >=  FROM_UNIXTIME(#{beginTimeSec})  AND rbs.SUCCESS_TIME  <=   FROM_UNIXTIME(#{endTimeSec})
+		) as  mbTransferAccountMoney,
+		(
+		SELECT IFNULL(SUM(rbs.ACCOUNT),0)  FROM  rocky_b_transfer  rbs WHERE  rbs.STATUS =4  AND   rbs.BORROW_TYPE =1 
+			   AND rbs.SUCCESS_TIME  >=  FROM_UNIXTIME(#{beginTimeSec})  AND rbs.SUCCESS_TIME  <=   FROM_UNIXTIME(#{endTimeSec})
+		) as  tjbTransferAccountMoney,
+		(SELECT  IFNULL(SUM(rbs.ACCOUNT),0)  FROM  rocky_b_transfer  rbs WHERE  rbs.STATUS =4  AND   rbs.BORROW_TYPE =5
+			   AND rbs.SUCCESS_TIME  >=  FROM_UNIXTIME(#{beginTimeSec})  AND rbs.SUCCESS_TIME  <=   FROM_UNIXTIME(#{endTimeSec})
+		) as  dbTransferAccountMoney,
+		(
+		
+		select   IFNULL(sum(FEE),0) from rocky_rechargerecord
+			where onlinetype=5  and STATUS=1   
+			and VERIFY_TIME >= #{beginTimeSec}
+			and VERIFY_TIME <= #{endTimeSec}
+		
+		) as  llFeeReseive,		 	
+		(
+		SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+		   WHERE 1=1 
+		  AND TYPE='transfer_manage_fee' 
+			   and ADDTIME >=  #{beginTimeSec}
+		 and ADDTIME <= #{endTimeSec}
+		) as  transferManagerFree,
+		(
+		SELECT  IFNULL(SUM(money),0) FROM rocky_accountlog 
+		   WHERE 1=1 
+		  AND TYPE='first_transfer_manage_fee' 
+			   and ADDTIME >=  #{beginTimeSec}
+		 and ADDTIME <= #{endTimeSec}
+		) as  firstTransferManagerFree,
+		(
+		SELECT TRUNCATE(IFNULL(SUM(FEE),0),2) FROM t_todraw_log WHERE `STATUS` = 1 
+		AND ADDTIME >= FROM_UNIXTIME(#{beginTimeSec})
+		and ADDTIME <= FROM_UNIXTIME(#{endTimeSec})
+		) as changeDrawMoneyFee,
+		(
+			TRUNCATE(
+			(SELECT IFNULL(SUM(r.LATE_INTEREST),0) FROM rocky_b_repaymentrecord r,rocky_borrow b 
+			WHERE r.`STATUS` = 1 AND r.WEBSTATUS = 1 AND r.BORROW_ID = b.ID AND b.BORROWTYPE = 3 
+			AND r.REPAYMENT_YESTIME >= #{beginTimeSec} AND r.REPAYMENT_YESTIME <= #{endTimeSec}
+			)-( 
+				SELECT IFNULL(SUM(MONEY), 0) FROM rocky_accountlog l,( 
+				SELECT DISTINCT r.id FROM rocky_b_repaymentrecord r,rocky_borrow b 
+				WHERE r.`STATUS` = 1 AND r.WEBSTATUS = 1 AND r.BORROW_ID = b.ID AND b.BORROWTYPE = 3 
+				AND r.REPAYMENT_YESTIME >= #{beginTimeSec} AND r.REPAYMENT_YESTIME <= #{endTimeSec}
+				) r WHERE l.BORROW_ID = r.id AND l.TYPE = 'later_interest_back' 
+			),2)
+		) as netBorrowOverdueFee
+		FROM dual
+		
+	 ]]>
+	
+	</select>
+	
+	
+
+	
+	 
+		<!--   流失投资者人数：（之前有充值并投标超过100【包含100元】，现资产总额小于100） -->
+	<!-- 查询结束时间和当前时间相等 -->
+	<select id="queryLosePersonsTotal1" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.lang.Integer">
+		 <![CDATA[
+			 SELECT IFNULL(COUNT(DISTINCT a.user_id),0) as  LosePersonsTotal1 FROM rocky_account a,rocky_b_tenderrecord t 
+		 	 WHERE a.total<100 
+			 AND a.user_id = t.user_id 
+			 AND t.ACCOUNT>=100 	
+		]]>
+	</select>
+ 	<!-- 查询结束时间和当前时间不相等 -->
+	<select id="queryLosePersonsTotal2" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.lang.Integer">
+      SELECT IFNULL(COUNT(DISTINCT a.user_id),0) FROM 
+			 (			 
+				SELECT A.USER_ID   
+			 	FROM rocky_account_day_log a 
+				WHERE a.total &lt; 100 
+			    AND a.ADDTIME &gt;= DATE(#{endTime,jdbcType=TIMESTAMP}) and a.ADDTIME &lt; DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+		  ) A,rocky_b_tenderrecord t 
+		  WHERE 1=1
+		 AND a.user_id = t.user_id 
+		 AND t.ACCOUNT>=100 
+		and t.ADDTIME &lt;= #{endTimeSec,jdbcType=VARCHAR}  
+	</select>
+
+
+   
+   <!-- 	 论坛活动奖励： -->
+	<select id="queryForumAwardTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+		 <![CDATA[
+			 		 SELECT  IFNULL(SUM(t.USER_POINTS_MONEY),0) 
+					  FROM rocky_points_exchange_log t 
+					 where 1=1 
+					 and UNIX_TIMESTAMP(ADDTIME) >= #{beginTimeSec}
+					 and UNIX_TIMESTAMP(ADDTIME) <= #{endTimeSec}
+					 	
+		]]>
+	</select>
+	<select id="queryActivityAwardTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+		 <![CDATA[
+					 SELECT IFNULL(SUM(temp.activityMoney*(0.5/100)),0)  
+					 FROM (	 	 
+				 	SELECT t.user_id AS userId, 
+					 	      SUM(t.ACCOUNT* CASE b.STYLE
+					 	        WHEN 4 THEN ROUND(b.TIME_LIMIT/30, 4) 
+					 	        ELSE b.TIME_LIMIT 
+					 	        END) AS activityMoney 
+					 	 FROM rocky_b_tenderrecord t, 
+					 	 rocky_borrow b 
+				 		 WHERE 1=1 
+				 		 AND t.BORROW_ID = b.ID 
+					 		 AND b.BORROWTYPE = 2  
+					 		 AND (t.STATUS=1 OR t.STATUS=2) 
+				 		 and t.addtime >=  #{beginTimeSecForforum}
+					 	  and t.addtime <= #{endTimeSecForforum}
+				 	 GROUP BY t.user_id 
+				 ) temp 
+		]]>
+	</select>
+
+
+	<!--  旧账号，已失效的账号网银在线充值费用： -->
+		<select id="queryPayFeeTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+		
+				  SELECT IFNULL(SUM(money),0) FROM ROCKY_RECHARGERECORD 
+				  WHERE STATUS=1  
+				  AND TYPE=1 
+				  AND onlinetype = #{onlinetype}
+				   and VERIFY_TIME  <![CDATA[>=]]>  #{beginTimeSec}
+				   and VERIFY_TIME  <![CDATA[<=]]> #{endTimeSec}
+				 <if test=" merchantNo != null  and  merchantNo != '' ">
+				  	and SUBSTRING(trade_no,10,8) =  #{ merchantNo }
+				</if>
+		  
+		</select>
+		
+		<!-- onlinetype等于2中的网银在线总额  已经废弃-->
+		<select id="queryPayFeeTotalOnline" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+				  SELECT IFNULL(SUM(money),0) FROM ROCKY_RECHARGERECORD 
+				  WHERE STATUS=1  
+				  AND TYPE=1 
+				  AND onlinetype = 2
+				  and  left(VERIFY_REMARK,4)='网银在线'
+				   and ADDTIME  <![CDATA[>=]]>  #{beginTimeSec}
+				   and ADDTIME  <![CDATA[<=]]> #{endTimeSec}
+				 <if test=" merchantNo != null  and  merchantNo != '' ">
+				  	and SUBSTRING(trade_no,10,8) =  #{ merchantNo }
+				</if>
+		</select>
+
+	<!--  统计公司需要给连连支付的充值费用-->
+		<select id="queryllPayFeeTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+		<![CDATA[   
+			select IFNULL(SUM(lianlianMoney),0) from(
+				SELECT CASE WHEN money*0.001<0.1 THEN 0.1 ELSE money*0.001 END AS lianlianMoney
+				FROM rocky_rechargerecord r 
+				WHERE onlinetype=5 and PLATFORM=1 AND STATUS=1 AND TYPE=1
+				and ADDTIME >= #{beginTimeSec}
+				and ADDTIME <= #{endTimeSec}
+				UNION ALL
+				SELECT CASE WHEN money*(CASE WHEN FROM_UNIXTIME(VERIFY_TIME)<DATE('2016-01-01') THEN 0.001 ELSE 0.002 END)<0.1 THEN 0.1 
+								ELSE money*(CASE WHEN FROM_UNIXTIME(VERIFY_TIME)<DATE('2016-01-01') THEN 0.001 ELSE 0.002 END) END AS lianlianMoney
+				FROM rocky_rechargerecord r
+				WHERE onlinetype=5 and PLATFORM in (2,3,4) AND STATUS=1 AND TYPE=1
+				and ADDTIME  >= #{beginTimeSec}
+				and ADDTIME  <= #{endTimeSec}
+			) result		  
+		]]>
+		</select>		
+		
+		<!--  统计公司需要给富友支付的充值费用-->
+		<select id="queryFuiouPayFeeTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+		<![CDATA[     
+			select  IFNULL(SUM(money)*0.001,0)  from rocky_rechargerecord 
+			WHERE onlinetype=6 AND `STATUS`=1 AND TYPE=1 and ADDTIME  >= #{beginTimeSec} and ADDTIME  <= #{endTimeSec}
+		]]>
+		</select>	
+		
+ <!-- 	 活期宝已支付投资人利息： -->
+	<select id="queryCurInterestTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+			 		 SELECT IFNULL(SUM(MONEY), 0) FROM T_CUR_INTEREST_DETAIL
+					 where 1=1 
+					 and ADDTIME &gt;= #{beginTime}
+					 and ADDTIME &lt; DATE_ADD(DATE(#{endTime}),INTERVAL 1 DAY) 
+	</select>
+	<!-- 	 红包支出 -->
+	<select id="queryCurRedOutTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultType="java.math.BigDecimal">
+	SELECT IFNULL(SUM(MONEY), 0) FROM t_red_envelop_account where STATUS=4
+	<if test="redBeginTime != null and redBeginTime != ''">
+		AND USE_TIME <![CDATA[>=]]>
+		#{redBeginTime}
+	</if>
+	<if test="redEendTime != null and redEendTime != ''">
+		AND USE_TIME <![CDATA[<=]]>
+		#{redEendTime}
+	</if>
+</select>
+
+<!--查询 -->
+	<select id="queryGongxiangJiangTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd" resultType="java.math.BigDecimal">
+	SELECT IFNULL(SUM(DIRECT_MONEY), 0) FROM t_invite_reward_issue where 1=1
+	<if test="redBeginTime != null and redBeginTime != ''">
+		AND UPDATE_TIME <![CDATA[>=]]>
+		#{redBeginTime}
+	</if>
+	<if test="redEendTime != null and redEendTime != ''">
+		AND UPDATE_TIME <![CDATA[<=]]>
+		#{redEendTime}
+	</if>
+</select>
+
+	<!--  网银在线充值费用 -->
+	<select id="queryPayFeeTotalForOnline" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+		  SELECT IFNULL(SUM(onlineTotal),0) from (
+			(SELECT (IFNULL(SUM(money),0)*(CASE WHEN FROM_UNIXTIME(VERIFY_TIME)>=DATE('2016-05-01') THEN 0.001 WHEN FROM_UNIXTIME(VERIFY_TIME)>=DATE('2016-01-01') THEN 0.0008 ELSE 0.0025 END)) as onlineTotal
+			FROM ROCKY_RECHARGERECORD WHERE STATUS=1 AND TYPE=1 AND onlinetype = #{onlinetype} 
+			and VERIFY_TIME  <![CDATA[>=]]>  #{beginTimeSec}
+		   	and VERIFY_TIME  <![CDATA[<=]]> #{endTimeSec}
+			and SUBSTRING(trade_no,10,8) =  #{onlineNo22791329})
+			UNION ALL
+			(SELECT (IFNULL(SUM(money),0)*(CASE WHEN FROM_UNIXTIME(VERIFY_TIME)>=DATE('2016-05-01') THEN 0.001 WHEN FROM_UNIXTIME(VERIFY_TIME)>=DATE('2016-01-01') THEN 0.0008 ELSE 0.002 END)) as onlineTotal
+			 FROM ROCKY_RECHARGERECORD WHERE STATUS=1 AND TYPE=1 AND onlinetype = #{onlinetype} 
+			and VERIFY_TIME  <![CDATA[>=]]>  #{beginTimeSec}
+		    and VERIFY_TIME  <![CDATA[<=]]> #{endTimeSec}
+			and SUBSTRING(trade_no,10,8) =  #{onlineNo22899911})
+			UNION ALL
+			(SELECT (IFNULL(SUM(money),0)*(CASE WHEN FROM_UNIXTIME(VERIFY_TIME)>=DATE('2016-05-01') THEN 0.001 WHEN FROM_UNIXTIME(VERIFY_TIME)>=DATE('2016-01-01') THEN 0.0008 ELSE 0.002 END)) as onlineTotal
+			 FROM ROCKY_RECHARGERECORD WHERE STATUS=1  AND TYPE=1 AND onlinetype = #{onlinetype} 
+			 and VERIFY_TIME  <![CDATA[>=]]>  #{beginTimeSec}
+		   	 and VERIFY_TIME  <![CDATA[<=]]> #{endTimeSec}
+			and SUBSTRING(trade_no,10,8) =  #{onlineNo23234639})
+			UNION ALL
+			(SELECT (IFNULL(SUM(money),0)*0.001) as onlineTotal
+			 FROM ROCKY_RECHARGERECORD WHERE STATUS=1  AND TYPE=1 AND onlinetype = #{onlinetype} 
+			 and VERIFY_TIME  <![CDATA[>=]]>  #{beginTimeSec}
+		   	 and VERIFY_TIME  <![CDATA[<=]]> #{endTimeSec}
+			and SUBSTRING(trade_no,14,8) =  #{onlineNo23234639})
+			) t		  		  
+	</select>
+	<!--  新投资人查询 刘涛-->
+	<select id="queryNewInterestMemberList" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultMap="newInterestMemberResultMap">
+	select 
+		(borrowrepaymentAccountTotal+fixrepaymentAccountTotal) as repaymentAccountTotal,(borrowinvestMoneyTotal+fixinvestMoneyTotal+firstinvestMoneyTotal+subscribeinvestMoneyTotal+firstZinvestMoneyTotal) as investMoneyTotal,
+		t4.userName,t4.mobilenum,t4.realName,t4.registerTime,t4.investTime,t4.investMoney,t4.type,t4.source,t4.inviterName 
+		 from(
+		select t2.*,rm.USERNAME as userName,ma.MOBILENUM as mobilenum,ra.REALNAME as realName,FROM_UNIXTIME(rm.ADDTIME) as registerTime,rm.SOURCE as source,
+		(select rmb.USERNAME from rocky_member rmb where  rmb.STATUS=0 and rmb.id=rm.INVITERID limit 1) as inviterName,
+		<!-- 标待收 -->
+		(SELECT IFNULL(SUM((IFNULL(rbc.REPAY_ACCOUNT,0))),0) FROM rocky_b_collectionrecord rbc 
+        WHERE  rbc.USER_ID=t2.userId  and rbc.STATUS=0
+		) as borrowrepaymentAccountTotal,
+		<!-- 宝待收-->
+		(SELECT IFNULL(SUM((IFNULL(tfc.REPAY_ACCOUNT,0))),0) FROM t_fix_collectionrecord tfc 
+        WHERE  tfc.USER_ID=t2.userId and tfc.STATUS=0
+		) as fixrepaymentAccountTotal,
+		<!-- 散标总额-->
+		(select IFNULL(SUM(IFNULL(btr.ACCOUNT,0)),0) 
+		from rocky_b_tenderrecord btr where btr.USER_ID=t2.userId
+		and btr.STATUS in(1,2,-2) and btr.PARENT_ID is null and  btr.FIRST_TENDER_REAL_ID is null and FROM_UNIXTIME(btr.ADDTIME) &gt;= DATE(#{beginTime,jdbcType=TIMESTAMP}) and FROM_UNIXTIME(btr.ADDTIME) &lt;DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+		)  as borrowinvestMoneyTotal,
+		<!-- 债转总额-->
+		(select IFNULL(SUM(IFNULL(rbs.ACCOUNT,0)),0) 
+		 from  rocky_b_subscribe rbs  
+		 where  rbs.USER_ID=t2.userId and rbs.STATUS in(3) and rbs.ADD_TIME &gt;= DATE(#{beginTime,jdbcType=TIMESTAMP}) and rbs.ADD_TIME &lt;DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+	    ) as subscribeinvestMoneyTotal,
+	    <!-- 宝总额-->
+		(select IFNULL(SUM(IFNULL(td.ACCOUNT,0)),0)
+		 from  t_fix_tender_detail td  
+		 where  td.USER_ID=t2.userId and td.STATUS in(1,3) and td.ADDTIME &gt;= DATE(#{beginTime,jdbcType=TIMESTAMP}) and td.ADDTIME &lt;DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+	    ) as fixinvestMoneyTotal,
+	     <!-- 直通车债转总额-->
+	   (select IFNULL(SUM(IFNULL(fs.ACCOUNT,0)),0)
+		from t_first_subscribe fs 
+		where fs.USER_ID=t2.userId and fs.STATUS=3 and fs.ADD_TIME &gt;= DATE(#{beginTime,jdbcType=TIMESTAMP}) and fs.ADD_TIME &lt;DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+		)  as firstinvestMoneyTotal,
+		 <!-- 直通车总额-->
+	   (select IFNULL(SUM(IFNULL(btr.ACCOUNT,0)),0)
+		from t_first_tender_detail btr 
+		where btr.USER_ID=t2.userId and btr.STATUS in(1)  and btr.ADDTIME&gt;= DATE(#{beginTime,jdbcType=TIMESTAMP}) and btr.ADDTIME &lt;DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+		)  as firstZinvestMoneyTotal
+		 from(
+			select *
+			 from
+			(select * from(
+			  select rbt.user_id as userId,FROM_UNIXTIME(rbt.ADDTIME) as investTime,
+	            rbt.ACCOUNT as investMoney,  
+	            if(rb.AREA_TYPE=1 or (rb.AREA_TYPE=0 and rb.AREA_CHANGE_TIME is not null) ,'新手标','散标') as type 
+				from rocky_b_tenderrecord rbt
+				INNER JOIN rocky_borrow rb on rbt.BORROW_ID=rb.id
+				where rbt.STATUS in(1,2,-2) and rbt.PARENT_ID is null and rbt.FIRST_TENDER_REAL_ID is NULL 
+			   UNION ALL
+			    <!-- 债权转让-->
+			    select rbs.user_id as userId,rbs.ADD_TIME as investTime,rbs.ACCOUNT as investMoney,'债权转让' as type
+				from rocky_b_subscribe rbs 
+				where rbs.STATUS in(3) 
+			 UNION ALL
+		       <!-- 直通车债转-->
+		        select fs.user_id as userId,fs.ADD_TIME as investTime,fs.ACCOUNT as investMoney,'直通车债转' as type
+				from t_first_subscribe fs 
+				where fs.STATUS in(3) 
+			  UNION ALL
+			  <!-- 直通车 -->
+			  select ftd.user_id as userId,ftd.ADDTIME as investTime,ftd.ACCOUNT as investMoney,'直通车' as type
+			  from t_first_tender_detail ftd 
+			  where ftd.STATUS in(1) 
+			  UNION ALL
+	      <!-- 定期宝-->
+			select tftd.user_id as userId,tftd.ADDTIME as investTime,tftd.ACCOUNT as investMoney,if(fb.AREA_TYPE=1 or (fb.AREA_TYPE=0 and fb.AREA_CHANGE_TIME is not null) ,'新手宝',fb.name) as type 
+			from t_fix_tender_detail tftd
+			INNER JOIN  t_fix_borrow fb on tftd.FIX_BORROW_ID=fb.id
+			where tftd.`STATUS` in(1,3) 
+			) t order by t.investTime asc ) t1 group by t1.userId) t2
+			INNER JOIN  ROCKY_MEMBER rm on t2.userId=rm.id and rm.STATUS=0
+			<if test="source!=null and source!='' ">
+			 and rm.source=#{source,jdbcType=VARCHAR}
+			</if>
+			left JOIN  rocky_realname_appro ra on ra.user_id=rm.id
+			left JOIN  rocky_mobile_appro ma on ma.user_id=rm.id
+			where t2.investTime &gt;= DATE(#{beginTime,jdbcType=TIMESTAMP}) and t2.investTime &lt; DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+			order by t2.investTime ASC
+		) t4
+	</select>
+	<!--  新投资人查询 刘涛-->
+	<select id="queryNewInterestMemberCount" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.lang.Integer">
+		select 
+		  count(1)
+		 from(
+		select t2.*
+		 from(
+			select *
+			 from
+			(select * from(
+			  select rbt.user_id as userId,FROM_UNIXTIME(rbt.ADDTIME) as investTime,
+	            rbt.ACCOUNT as investMoney,  
+	            if(rb.AREA_TYPE=1 or (rb.AREA_TYPE=0 and rb.AREA_CHANGE_TIME is not null) ,'新手标','散标') as type 
+				from rocky_b_tenderrecord rbt
+				INNER JOIN rocky_borrow rb on rbt.BORROW_ID=rb.id
+				where rbt.STATUS in(1,2,-2) and rbt.PARENT_ID is null and rbt.FIRST_TENDER_REAL_ID is NULL 
+			   UNION ALL
+			    <!-- 债权转让-->
+			    select rbs.user_id as userId,rbs.ADD_TIME as investTime,rbs.ACCOUNT as investMoney,'债权转让' as type
+				from rocky_b_subscribe rbs 
+				where rbs.STATUS in(3) 
+			 UNION ALL
+		       <!-- 直通车债转-->
+		        select fs.user_id as userId,fs.ADD_TIME as investTime,fs.ACCOUNT as investMoney,'直通车债转' as type
+				from t_first_subscribe fs 
+				where fs.STATUS in(3) 
+			  UNION ALL
+			  <!-- 直通车 -->
+			  select ftd.user_id as userId,ftd.ADDTIME as investTime,ftd.ACCOUNT as investMoney,'直通车' as type
+			  from t_first_tender_detail ftd 
+			  where ftd.STATUS in(1) 
+			  UNION ALL
+	      <!-- 定期宝-->
+			select tftd.user_id as userId,tftd.ADDTIME as investTime,tftd.ACCOUNT as investMoney,if(fb.AREA_TYPE=1 or (fb.AREA_TYPE=0 and fb.AREA_CHANGE_TIME is not null) ,'新手宝',fb.name) as type
+			from t_fix_tender_detail tftd
+			INNER JOIN  t_fix_borrow fb on tftd.FIX_BORROW_ID=fb.id
+			where tftd.`STATUS` in(1,3) 
+			) t order by t.investTime asc ) t1 group by t1.userId) t2
+			INNER JOIN  ROCKY_MEMBER rm on t2.userId=rm.id and rm.STATUS=0
+			<if test="source!=null and source!='' ">
+			 and rm.source=#{source,jdbcType=VARCHAR}
+			</if>
+			where t2.investTime &gt;= DATE(#{beginTime,jdbcType=TIMESTAMP}) and t2.investTime &lt; DATE_ADD(DATE(#{endTime,jdbcType=TIMESTAMP}),INTERVAL 1 DAY)
+			order by t2.investTime ASC
+		) t4
+	</select>
+    <select id="queryCzbankCustodyTotal" parameterType="com.cxdai.console.statistics.account.vo.ReportStatementCnd"  resultType="java.math.BigDecimal">
+		<![CDATA[
+			select  IFNULL(SUM(money)*0.002,0)  from rocky_rechargerecord
+			WHERE onlinetype=8 AND `STATUS`=1 AND TYPE=1 and ADDTIME  >= #{beginTimeSec} and ADDTIME  <= #{endTimeSec}
+		]]>
+		</select>
+</mapper>  

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.finance.virement.mapper.CheckWithdrawalsMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.finance.virement.entity.CheckWithdrawals" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="BILL_DATE" property="billDate" jdbcType="TIMESTAMP" />
+    <result column="PRESENT_SUCCESS_MONEY" property="presentSuccessMoney" jdbcType="DECIMAL" />
+    <result column="TAKE_CASH_MONEY" property="takeCashMoney" jdbcType="DECIMAL" />
+    <result column="ACTUAL_CASH_MONEY" property="actualCashMoney" jdbcType="DECIMAL" />
+    <result column="TOTAL_EXPENDITURE" property="totalExpenditure" jdbcType="DECIMAL" />
+    <result column="COUNTER_FEE" property="counterFee" jdbcType="DECIMAL" />
+    <result column="DIFFERENCE" property="difference" jdbcType="DECIMAL" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="IS_SUCCESS" property="isSuccess" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="VERIFY_TIME" property="verifyTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_USER" property="addUser" jdbcType="INTEGER" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+    <result column="UPDATE_USER" property="updateUser" jdbcType="INTEGER" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_IP" property="updateIp" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from cw_check_withdrawals
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.finance.virement.entity.CheckWithdrawals" >
+    insert into cw_check_withdrawals (BILL_DATE, PRESENT_SUCCESS_MONEY, 
+      TAKE_CASH_MONEY, ACTUAL_CASH_MONEY, TOTAL_EXPENDITURE, 
+      COUNTER_FEE, DIFFERENCE, REMARKS, 
+      IS_SUCCESS, STATUS, VERIFY_TIME, 
+      ADD_USER, ADD_TIME, ADD_IP, 
+      UPDATE_USER, UPDATE_TIME, UPDATE_IP
+      )
+    values (#{billDate,jdbcType=TIMESTAMP}, #{presentSuccessMoney,jdbcType=DECIMAL}, 
+      #{takeCashMoney,jdbcType=DECIMAL}, #{actualCashMoney,jdbcType=DECIMAL}, #{totalExpenditure,jdbcType=DECIMAL}, 
+      #{counterFee,jdbcType=DECIMAL}, #{difference,jdbcType=DECIMAL}, #{remarks,jdbcType=VARCHAR}, 
+      #{isSuccess,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{verifyTime,jdbcType=TIMESTAMP}, 
+      #{addUser,jdbcType=INTEGER}, now(), #{addIp,jdbcType=VARCHAR}, 
+      #{updateUser,jdbcType=INTEGER}, now(), #{updateIp,jdbcType=VARCHAR}
+      )
+  </insert>
+  <!-- 对账信息变更操作  -->
+  <update id="updateCheckWithById" parameterType="com.cxdai.console.finance.virement.vo.UpdateCheckWithCnd" >
+    update cw_check_withdrawals
+    set 
+      TOTAL_EXPENDITURE = #{totalExpenditure,jdbcType=DECIMAL},
+      COUNTER_FEE = #{counterFee,jdbcType=DECIMAL},
+      DIFFERENCE = #{difference,jdbcType=DECIMAL},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+       <if test="isSuccess != null and isSuccess != ''">
+      	IS_SUCCESS = #{isSuccess,jdbcType=INTEGER},
+      </if>
+      <if test="isSuccess == 1">
+      	 VERIFY_TIME = now(),
+      </if>
+      UPDATE_USER = #{updateUser,jdbcType=INTEGER},
+      UPDATE_TIME = now(),
+      UPDATE_IP = #{updateIp,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER} AND STATUS = 1
+  </update>
+  
+    <!-- 手工对账操作  -->
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.finance.virement.entity.CheckWithdrawals" >
+    update cw_check_withdrawals
+    set 
+      PRESENT_SUCCESS_MONEY = #{presentSuccessMoney,jdbcType=DECIMAL}, 
+      TAKE_CASH_MONEY = #{takeCashMoney,jdbcType=DECIMAL},
+      ACTUAL_CASH_MONEY =  #{actualCashMoney,jdbcType=DECIMAL},
+      IS_SUCCESS = #{isSuccess,jdbcType=INTEGER},
+      UPDATE_USER = #{updateUser,jdbcType=INTEGER},
+      UPDATE_TIME = now(),
+      UPDATE_IP = #{updateIp,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER} AND STATUS = 1
+  </update>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select ID, BILL_DATE, PRESENT_SUCCESS_MONEY, TAKE_CASH_MONEY, ACTUAL_CASH_MONEY, 
+    TOTAL_EXPENDITURE, COUNTER_FEE, DIFFERENCE, REMARKS, IS_SUCCESS, STATUS, VERIFY_TIME, 
+    ADD_USER, ADD_TIME, ADD_IP, UPDATE_USER, UPDATE_TIME, UPDATE_IP
+    from cw_check_withdrawals
+    where ID = #{id,jdbcType=INTEGER} AND  STATUS = 1
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select ID, BILL_DATE, PRESENT_SUCCESS_MONEY, TAKE_CASH_MONEY, ACTUAL_CASH_MONEY, 
+    TOTAL_EXPENDITURE, COUNTER_FEE, DIFFERENCE, REMARKS, IS_SUCCESS, STATUS, VERIFY_TIME, 
+    ADD_USER, ADD_TIME, ADD_IP, UPDATE_USER, UPDATE_TIME, UPDATE_IP
+    from cw_check_withdrawals
+  </select>
+  
+  <!-- 分页查询每日提现汇总数据 -->
+  <select id="queryPageCheckWithdrawals" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd" 
+  resultMap="BaseResultMap">
+  	select * from cw_check_withdrawals 
+  	where   STATUS = 1
+		<if test="startDate != null and startDate != ''">
+			AND BILL_DATE <![CDATA[>=]]> date_format(#{startDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND BILL_DATE <![CDATA[<=]]>  date_format(#{endDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="isSuccess != null and isSuccess != ''">
+			AND IS_SUCCESS = #{isSuccess,jdbcType=INTEGER}
+		</if>
+		order by BILL_DATE DESC
+  </select>
+   <!-- 查询每日提现汇总数据数量 -->
+<select id="queryPageCheckWithCount" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd" 
+  resultType="java.lang.Integer">
+  	select count(*) from cw_check_withdrawals 
+  	where   STATUS = 1
+		<if test="startDate != null and startDate != ''">
+			AND BILL_DATE <![CDATA[>=]]> date_format(#{startDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND BILL_DATE <![CDATA[<=]]>  date_format(#{endDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="isSuccess != null and isSuccess != ''">
+			AND IS_SUCCESS = #{isSuccess,jdbcType=INTEGER}
+		</if>
+  </select>
+  
+  <select id="selectByPrimaryKeyForUpdate" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select ID, BILL_DATE, PRESENT_SUCCESS_MONEY, TAKE_CASH_MONEY, ACTUAL_CASH_MONEY, 
+    TOTAL_EXPENDITURE, COUNTER_FEE, DIFFERENCE, REMARKS, IS_SUCCESS, STATUS, VERIFY_TIME, 
+    ADD_USER, ADD_TIME, ADD_IP, UPDATE_USER, UPDATE_TIME, UPDATE_IP
+    from cw_check_withdrawals
+    where ID = #{id,jdbcType=INTEGER} FOR UPDATE
+  </select>
+  
+  <update id="updateWithdrawal" parameterType="com.cxdai.console.finance.virement.entity.CheckWithdrawals">
+  	update cw_check_withdrawals
+    set 
+      PRESENT_SUCCESS_MONEY = #{presentSuccessMoney,jdbcType=DECIMAL},
+      TAKE_CASH_MONEY = #{takeCashMoney,jdbcType=DECIMAL},
+      ACTUAL_CASH_MONEY = #{actualCashMoney,jdbcType=DECIMAL},
+      UPDATE_USER = #{updateUser,jdbcType=INTEGER},
+      IS_SUCCESS = #{isSuccess,jdbcType=INTEGER},
+      UPDATE_TIME = now(),
+      UPDATE_IP = #{updateIp,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER} AND  STATUS = 1
+  </update>
+</mapper>

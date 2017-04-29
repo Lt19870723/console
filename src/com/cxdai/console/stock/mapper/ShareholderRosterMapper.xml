@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.stock.mapper.ShareholderRosterMapper" >
+  <resultMap id="ShareholderResultMap" type="com.cxdai.console.stock.entity.ShareholderRoster" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_real_name" property="userRealName" jdbcType="VARCHAR" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+    <result column="stock_code" property="stockCode" jdbcType="VARCHAR" />
+    <result column="stock_name" property="stockName" jdbcType="VARCHAR" />
+    <result column="stock_total" property="stockTotal" jdbcType="INTEGER" />
+    <result column="shareholding_ratio" property="shareholdingRatio" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="adduser" property="adduser" jdbcType="INTEGER" />
+    <result column="opt_user_real_name" property="optUserRealName" jdbcType="VARCHAR" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="addip" property="addip" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, user_name, user_real_name, id_card, stock_code, stock_name, stock_total, 
+    shareholding_ratio, status, version, remark, adduser, opt_user_real_name, addtime, 
+    addip
+  </sql>
+  
+  
+  <!-- 查询股东花名册信息 -->
+  	<select id="queryShareholderForPage" parameterType="com.cxdai.console.stock.vo.ShareholderCnd" resultMap="ShareholderResultMap" >
+		SELECT
+			b.id as id,
+			b.user_id as userId,
+			m.USERNAME as userName,
+			b.user_real_name as userRealName,
+			b.id_card as idCard,
+			b.stock_code as stockCode,
+			b.stock_name as stockName,
+			b.stock_total as stockTotal,
+			b.shareholding_ratio as shareholdingRatio,
+			b. STATUS as status,
+			b.version as version,
+			b.remark as remark,
+			b.adduser as adduser,
+			b.opt_user_real_name as optUserRealName,
+			b.addtime as addtime,
+			b.addip as addip
+		FROM
+			gq_shareholder_roster b
+			LEFT JOIN rocky_member m on b.user_id=m.id and m.`STATUS`=0
+		where b.status=${status}
+		<if test="userName != null and userName != ''">
+		AND b.user_name like concat('%',trim( replace( #{userName} , '\r\n', ' ' ) ) ,'%')
+	    </if>
+	    <if test="userRealName != null and userRealName != ''">
+	    AND b.user_real_name like concat('%',trim( replace( #{userRealName} , '\r\n', ' ' ) ) ,'%')
+	    </if>
+	   <if test="idCard != null and idCard != ''">
+	     AND b.id_card like concat('%',trim( replace( #{idCard} , '\r\n', ' ' ) ) ,'%')
+	    </if>
+	     <if test="stockCode != null and stockCode != ''">
+	      and b.stock_code=#{stockCode}
+	    </if>
+	    
+	 	<if test="beginTime != null and beginTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+	    </if>
+	    <if test="endinTime != null and endinTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')<=  DATE_FORMAT(#{endinTime}, '%Y-%m-%d')   ]]>
+	    </if>
+  	</select>
+  	
+  	<!-- 统计股东花名册信息 -->
+  	<select id="queryShareholderForCounts" parameterType="com.cxdai.console.stock.vo.ShareholderCnd" resultType="java.lang.Integer" >
+		SELECT
+			count(*)
+		FROM
+			gq_shareholder_roster b
+			LEFT JOIN rocky_member m on b.user_id=m.id and m.`STATUS`=0
+		where b.status=${status}
+		<if test="userName != null and userName != ''">
+		AND b.user_name like concat('%',trim( replace( #{userName} , '\r\n', ' ' ) ) ,'%')
+	    </if>
+	    <if test="userRealName != null and userRealName != ''">
+	    AND b.user_real_name like concat('%',trim( replace( #{userRealName} , '\r\n', ' ' ) ) ,'%')
+	    </if>
+	   <if test="idCard != null and idCard != ''">
+	     AND b.id_card like concat('%',trim( replace( #{idCard} , '\r\n', ' ' ) ) ,'%')
+	    </if>
+	     <if test="stockCode != null and stockCode != ''">
+	      and b.stock_code=#{stockCode}
+	    </if>
+	    
+	 	<if test="beginTime != null and beginTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+	    </if>
+	    <if test="endinTime != null and endinTime != ''">
+	     <![CDATA[ and DATE_FORMAT(b.addtime, '%Y-%m-%d')<=  DATE_FORMAT(#{endinTime}, '%Y-%m-%d')   ]]>
+	    </if>
+		
+  	</select>
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="ShareholderResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from gq_shareholder_roster
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from gq_shareholder_roster
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.stock.entity.ShareholderRoster" >
+    insert into gq_shareholder_roster (id, user_id, user_name, 
+      user_real_name, id_card, stock_code, 
+      stock_name, stock_total, shareholding_ratio, 
+      status, version, remark, 
+      adduser, opt_user_real_name, addtime, 
+      addip)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, 
+      #{userRealName,jdbcType=VARCHAR}, #{idCard,jdbcType=VARCHAR}, #{stockCode,jdbcType=VARCHAR}, 
+      #{stockName,jdbcType=VARCHAR}, #{stockTotal,jdbcType=INTEGER}, #{shareholdingRatio,jdbcType=DECIMAL}, 
+      #{status,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{adduser,jdbcType=INTEGER}, #{optUserRealName,jdbcType=VARCHAR}, #{addtime,jdbcType=TIMESTAMP}, 
+      #{addip,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.stock.entity.ShareholderRoster" >
+    insert into gq_shareholder_roster
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="userRealName != null" >
+        user_real_name,
+      </if>
+      <if test="idCard != null" >
+        id_card,
+      </if>
+      <if test="stockCode != null" >
+        stock_code,
+      </if>
+      <if test="stockName != null" >
+        stock_name,
+      </if>
+      <if test="stockTotal != null" >
+        stock_total,
+      </if>
+      <if test="shareholdingRatio != null" >
+        shareholding_ratio,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="adduser != null" >
+        adduser,
+      </if>
+      <if test="optUserRealName != null" >
+        opt_user_real_name,
+      </if>
+      <if test="addip != null" >
+        addip,
+      </if>
+        addtime
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userRealName != null" >
+        #{userRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null" >
+        #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="stockCode != null" >
+        #{stockCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stockName != null" >
+        #{stockName,jdbcType=VARCHAR},
+      </if>
+      <if test="stockTotal != null" >
+        #{stockTotal,jdbcType=INTEGER},
+      </if>
+      <if test="shareholdingRatio != null" >
+        #{shareholdingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="adduser != null" >
+        #{adduser,jdbcType=INTEGER},
+      </if>
+      <if test="optUserRealName != null" >
+        #{optUserRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="addip != null" >
+        #{addip,jdbcType=VARCHAR},
+      </if>
+       now()
+    </trim>
+     <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	 SELECT LAST_INSERT_ID() AS ID    
+   	</selectKey>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.stock.entity.ShareholderRoster" >
+    update gq_shareholder_roster
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userRealName != null" >
+        user_real_name = #{userRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null" >
+        id_card = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="stockCode != null" >
+        stock_code = #{stockCode,jdbcType=VARCHAR},
+      </if>
+      <if test="stockName != null" >
+        stock_name = #{stockName,jdbcType=VARCHAR},
+      </if>
+      <if test="stockTotal != null" >
+        stock_total = #{stockTotal,jdbcType=INTEGER},
+      </if>
+      <if test="shareholdingRatio != null" >
+        shareholding_ratio = #{shareholdingRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="adduser != null" >
+        adduser = #{adduser,jdbcType=INTEGER},
+      </if>
+      <if test="optUserRealName != null" >
+        opt_user_real_name = #{optUserRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        addip = #{addip,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.stock.entity.ShareholderRoster" >
+    update gq_shareholder_roster
+    set user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_real_name = #{userRealName,jdbcType=VARCHAR},
+      id_card = #{idCard,jdbcType=VARCHAR},
+      stock_code = #{stockCode,jdbcType=VARCHAR},
+      stock_name = #{stockName,jdbcType=VARCHAR},
+      stock_total = #{stockTotal,jdbcType=INTEGER},
+      shareholding_ratio = #{shareholdingRatio,jdbcType=DECIMAL},
+      status = #{status,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      adduser = #{adduser,jdbcType=INTEGER},
+      opt_user_real_name = #{optUserRealName,jdbcType=VARCHAR},
+      addtime = #{addtime,jdbcType=TIMESTAMP},
+      addip = #{addip,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+   <select id="findShoreInfo" resultType="com.cxdai.console.stock.entity.ShareholderRoster" parameterType="java.lang.Integer" >
+   SELECT
+			b.USERNAME AS userName,
+			t.user_real_name AS userRealName,
+			t.id_card AS idCard,
+			m.MOBILENUM AS mobilenum
+		FROM
+			gq_shareholder_roster t
+		LEFT JOIN rocky_member b on t.user_id=b.id and b.`STATUS`=0
+		LEFT JOIN rocky_mobile_appro m ON m.user_id = t.user_id
+		AND m.PASSED = 1
+    where t.id = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 获取最新股东花名册版本号 -->
+  <select id="queryVersion" resultType="java.lang.Integer">
+	  select MAX(version) from gq_shareholder_roster 
+  </select>
+  
+  <!-- 作废此版本股东花名册 -->
+  <update id="toVoid" parameterType="java.lang.Integer" >
+    update gq_shareholder_roster
+    set status = -1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryList" parameterType="java.lang.Integer" resultMap="ShareholderResultMap">
+  	select * from gq_shareholder_roster where version = #{version,jdbcType=INTEGER}
+  </select>
+</mapper>

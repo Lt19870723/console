@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.base.mapper.BaseSourceTypeChanceMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.base.entity.BaseSourceTypeChance" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="LOTTERY_CHANCE_RULE_INFO_ID" property="lotteryChanceRuleInfoId" jdbcType="INTEGER" />
+    <result column="LOTTERY_GOODS_ID" property="lotteryGoodsId" jdbcType="INTEGER" />
+    <result column="CHANCE" property="chance" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="ADD_USER_ID" property="addUserId" jdbcType="INTEGER" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_USER_ID" property="lastUpdateUserId" jdbcType="INTEGER" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_IP" property="lastUpdateIp" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, LOTTERY_CHANCE_RULE_INFO_ID, LOTTERY_GOODS_ID, CHANCE, STATUS, ADD_USER_ID, ADD_TIME, 
+    ADD_IP, LAST_UPDATE_USER_ID, LAST_UPDATE_TIME, LAST_UPDATE_IP, REMARK
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_lottery_source_type_chance
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    update t_lottery_source_type_chance set status =1
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.base.entity.BaseSourceTypeChance" >
+    insert into t_lottery_source_type_chance (ID, LOTTERY_CHANCE_RULE_INFO_ID, LOTTERY_GOODS_ID, 
+      CHANCE, STATUS, ADD_USER_ID, 
+      ADD_TIME, ADD_IP, LAST_UPDATE_USER_ID, 
+      LAST_UPDATE_TIME, LAST_UPDATE_IP, REMARK
+      )
+    values (#{id,jdbcType=INTEGER}, #{lotteryChanceRuleInfoId,jdbcType=INTEGER}, #{lotteryGoodsId,jdbcType=INTEGER}, 
+      #{chance,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, #{addUserId,jdbcType=INTEGER}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{addIp,jdbcType=VARCHAR}, #{lastUpdateUserId,jdbcType=INTEGER}, 
+      #{lastUpdateTime,jdbcType=TIMESTAMP}, #{lastUpdateIp,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.base.entity.BaseSourceTypeChance" >
+    insert into t_lottery_source_type_chance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="lotteryChanceRuleInfoId != null" >
+        LOTTERY_CHANCE_RULE_INFO_ID,
+      </if>
+      <if test="lotteryGoodsId != null" >
+        LOTTERY_GOODS_ID,
+      </if>
+      <if test="chance != null" >
+        CHANCE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="addUserId != null" >
+        ADD_USER_ID,
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME,
+      </if>
+      <if test="addIp != null" >
+        ADD_IP,
+      </if>
+      <if test="lastUpdateUserId != null" >
+        LAST_UPDATE_USER_ID,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+      <if test="lastUpdateIp != null" >
+        LAST_UPDATE_IP,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryChanceRuleInfoId != null" >
+        #{lotteryChanceRuleInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryGoodsId != null" >
+        #{lotteryGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="chance != null" >
+        #{chance,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addUserId != null" >
+        #{addUserId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateUserId != null" >
+        #{lastUpdateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateIp != null" >
+        #{lastUpdateIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.base.entity.BaseSourceTypeChance" >
+    update t_lottery_source_type_chance
+    <set >
+      <if test="lotteryChanceRuleInfoId != null" >
+        LOTTERY_CHANCE_RULE_INFO_ID = #{lotteryChanceRuleInfoId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryGoodsId != null" >
+        LOTTERY_GOODS_ID = #{lotteryGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="chance != null" >
+        CHANCE = #{chance,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addUserId != null" >
+        ADD_USER_ID = #{addUserId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        ADD_IP = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateUserId != null" >
+        LAST_UPDATE_USER_ID = #{lastUpdateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateIp != null" >
+        LAST_UPDATE_IP = #{lastUpdateIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.base.entity.BaseSourceTypeChance" >
+    update t_lottery_source_type_chance
+    set LOTTERY_CHANCE_RULE_INFO_ID = #{lotteryChanceRuleInfoId,jdbcType=INTEGER},
+      LOTTERY_GOODS_ID = #{lotteryGoodsId,jdbcType=INTEGER},
+      CHANCE = #{chance,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=INTEGER},
+      ADD_USER_ID = #{addUserId,jdbcType=INTEGER},
+      ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      ADD_IP = #{addIp,jdbcType=VARCHAR},
+      LAST_UPDATE_USER_ID = #{lastUpdateUserId,jdbcType=INTEGER},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      LAST_UPDATE_IP = #{lastUpdateIp,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

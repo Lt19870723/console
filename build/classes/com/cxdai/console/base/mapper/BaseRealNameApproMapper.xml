@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseRealNameApproMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.customer.information.entity.RealNameAppro" id="realNameApproResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 		column="USER_ID" />
+		<result property="realName" 	column="REALNAME" />
+		<result property="idCardNo" 	column="IDCARDNO" />
+		<result property="pic1" 		column="PIC1" />
+		<result property="pic2"	    	column="PIC2" />
+		<result property="isPassed"	    column="ISPASSED" />
+		<result property="approveUser"	column="APPROVEUSER" />
+		<result property="approveTime"	column="APPROVETIME" />
+		<result property="appTime"	    column="APPTIME" />
+		<result property="appIp"	    column="APPIP" />
+		<result property="reason"	    column="REASON" />
+		<result property="nativePlace"	column="NATIVEPLACE" />
+		<result property="nation"	    column="NATION" />
+		<result property="cardType"	    column="CARDTYPE" />
+		<result property="sex"	    	column="SEX" />
+		<result property="birthDay"	    column="BIRTHDAY" />
+		<result property="version"	    column="VERSION" />
+		<result property="remark"	    column="REMARK" />
+		<result property="platform"	    column="PLATFORM" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="realNameApproBaseColumn">
+		a.ID, 
+		a.USER_ID, 
+		a.REALNAME,
+		a.IDCARDNO, 
+		a.PIC1, 
+		a.PIC2,
+		a.ISPASSED,
+		a.APPROVEUSER,
+		a.APPROVETIME,
+		a.APPTIME,
+		a.APPIP,
+		a.REASON,
+		a.NATIVEPLACE,
+		a.NATION,
+		a.CARDTYPE,
+		a.SEX,
+		a.BIRTHDAY,
+		a.version,
+		a.remark,
+		a.platform
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.customer.information.entity.RealNameAppro">
+		INSERT INTO rocky_realname_appro
+		(USER_ID, 	REALNAME,	IDCARDNO,	PIC1,	PIC2,	ISPASSED,	APPROVEUSER,	APPROVETIME, 
+		 APPTIME,	APPIP,	REASON,	NATIVEPLACE,	NATION,	CARDTYPE,	SEX,	BIRTHDAY,	VERSION, REMARK, PLATFORM)
+		VALUES
+		(#{userId},#{realName},#{idCardNo},#{pic1},	#{pic2},#{isPassed},#{approveUser},#{approveTime},
+		#{appTime},#{appIp},#{reason},#{nativePlace},#{nation},#{cardType},#{sex},#{birthDay},#{version}, #{remark}, #{platform})
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="realNameApproResultMap" >
+		select 	
+		   <include refid="realNameApproBaseColumn"/>
+		from
+			rocky_realname_appro a
+		where 1=1
+		and a.id=#{id}
+  	</select>
+  	
+  	<!-- 根据UserID查询 -->
+	<select id="queryByUserId" parameterType="java.lang.Integer" resultMap="realNameApproResultMap" >
+		select 	
+		   <include refid="realNameApproBaseColumn"/>
+		from
+			rocky_realname_appro a
+		where 1=1
+		and a.user_id=#{id}
+  	</select>
+	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.customer.information.entity.RealNameAppro" >
+    update rocky_realname_appro
+    <set >
+      <if test="realName != null" >
+        REALNAME = #{realName},
+      </if>
+      <if test="idCardNo != null" >
+        IDCARDNO = #{idCardNo},
+      </if>
+      <if test="pic1 != null" >
+        PIC1 = #{pic1},
+      </if> 
+      <if test="pic2 != null" >
+        PIC2 = #{pic2},
+      </if> 
+      <if test="isPassed != null" >
+        ISPASSED = #{isPassed},
+      </if> 
+      <if test="approveUser != null" >
+        APPROVEUSER = #{approveUser},
+      </if> 
+      <if test="approveTime != null" >
+        APPROVETIME = #{approveTime},
+      </if>
+      <if test="appTime != null" >
+        APPTIME = #{appTime},
+      </if>
+      <if test="appIp != null" >
+        APPIP = #{appIp},
+      </if>
+      <if test="reason != null" >
+        REASON = #{reason},
+      </if>
+      <if test="nativePlace != null" >
+        NATIVEPLACE = #{nativePlace},
+      </if>
+      <if test="nation != null" >
+        NATION = #{nation},
+      </if>
+      <if test="cardType != null" >
+        CARDTYPE = #{cardType},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex},
+      </if>  
+      <if test="birthDay != null" >
+        BIRTHDAY = #{birthDay},
+      </if> 
+      <if test="version != null" >
+        VERSION = #{version},
+      </if> 
+      <if test="remark != null and remark != ''" >
+        REMARK = #{remark},
+      </if>
+      <if test="platform != null" >
+        PLATFORM = #{platform},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  	
+</mapper>  

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.borrow.check.mapper.BorrowerDealErrorMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.borrow.check.entity.BorrowerDealError" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="borrow_id" property="borrowId" jdbcType="INTEGER" />
+    <result column="P2PID" property="p2pid" jdbcType="VARCHAR" />
+    <result column="serialNo" property="serialno" jdbcType="VARCHAR" />
+    <result column="ACCOUNT" property="account" jdbcType="DECIMAL" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="tradetime" property="tradetime" jdbcType="TIMESTAMP" />
+    <result column="addtime" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="updtime" property="updtime" jdbcType="TIMESTAMP" />
+    <result column="updateUser" property="updateuser" jdbcType="INTEGER" />
+    <result column="addUser" property="adduser" jdbcType="INTEGER" />
+    <result column="dispose_status" property="disposeStatus" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId"/>
+    <result column="oriSerialNo" property="oriSerialNo"/>
+  </resultMap>
+ 
+ 
+  <sql id="Base_Column_List" >
+    id, status, borrow_id, P2PID, serialNo, ACCOUNT, fee, tradetime, addtime, updtime, 
+    updateUser, addUser, dispose_status, remark,user_id,oriSerialNo
+  </sql>
+ 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+   
+    select 
+    <include refid="Base_Column_List" />
+    from t_borrower_deal_error
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="findBorrowErrorCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select 
+    count(id)
+    from t_borrower_deal_error
+    where borrow_id=#{borrowId}
+  </select>
+  
+  
+    <select id="findBorrowerError" parameterType="com.cxdai.console.borrow.check.vo.BorrowErrorCnd" resultType="com.cxdai.console.borrow.check.vo.BorrowErrorVo">
+    select 
+    tbdr.id as id,tbdr.status as status,tbdr.borrow_id as borrowId,tbdr.addtime as addTime,tbdr.updtime as updateTime,
+    tbdr.updateUser as updateUser,tbdr.dispose_status as disposeStatus,tbdr.remark as remark,rb.NAME as borrowName,rb.ACCOUNT as account,
+    rb.ACCOUNT_YES as accountYes,rb.RepayName as repayName,rm.USERNAME as userName 
+    from t_borrower_deal_error tbdr left join rocky_borrow rb 
+    on tbdr.borrow_id=rb.id
+    left join rocky_member rm on rm.id=rb.USER_ID
+    where  tbdr.p2pId is null and tbdr.serialNo is null and tbdr.oriSerialNo is null and tbdr.status in(0,1)
+    <if test="disposeStatus!=null and disposeStatus!=''">
+     and tbdr.dispose_status=#{disposeStatus}
+    </if>
+    <if test="status!=null and status!=''">
+     and tbdr.status=#{status}	
+    </if>
+  </select>
+  
+  
+  
+    <select id="findBorrowerErrorCount" parameterType="com.cxdai.console.borrow.check.vo.BorrowErrorCnd" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from t_borrower_deal_error tbdr left join rocky_borrow rb 
+    on tbdr.borrow_id=rb.id
+    left join rocky_member rm on rm.id=rb.USER_ID
+    where  tbdr.p2pId is null and tbdr.serialNo is null
+    <if test="disposeStatus!=null and disposeStatus!=''">
+     and tbdr.dispose_status=#{disposeStatus}
+    </if>
+    <if test="status!=null and status!=''">
+     and tbdr.status=#{status}	
+    </if>
+  </select>
+  
+  
+  <select id="findFBReqAccount" resultType="com.cxdai.console.borrow.check.vo.BorrowErrorVo" parameterType="com.cxdai.console.borrow.check.vo.BorrowErrorCnd">
+  	select tbde.id as id, tbde.oriSerialNo as oriSerialNo,tbde.ACCOUNT as account,tbde.addtime as addTime,tbde.remark as remark,rm.USERNAME as userName,tbde.dispose_status as disposeStatus,tbde.check_remark
+  	from t_borrower_deal_error tbde inner join rocky_member rm 
+  	on tbde.user_id=rm.id
+  	where tbde.status in(2,3)
+  	<if test="userName!=null and userName!=''">
+  		and rm.USERNAME =#{userName}
+  	</if>
+  	 <if test="disposeStatus!=null and disposeStatus!=''">
+    	and tbde.dispose_status=#{disposeStatus}
+    </if>
+  </select>
+  
+    <select id="findFBReqAccountCount" resultType="java.lang.Integer" parameterType="com.cxdai.console.borrow.check.vo.BorrowErrorCnd">
+  	select count(tbde.id)
+  	from t_borrower_deal_error tbde inner join rocky_member rm 
+  	on tbde.user_id=rm.id
+  	where tbde.status=2
+  	<if test="userName!=null and userName!=''">
+  		and rm.USERNAME =#{userName}
+  	</if>
+  	 <if test="disposeStatus!=null and disposeStatus!=''">
+    	and tbde.dispose_status=#{disposeStatus}
+    </if>
+  </select>
+  
+  
+  <insert id="insert" parameterType="com.cxdai.console.borrow.check.entity.BorrowerDealError" >
+  
+    insert into t_borrower_deal_error (status, borrow_id, 
+      P2PID, serialNo, ACCOUNT, 
+      fee, tradetime, addtime, 
+      updtime, updateUser, addUser, 
+      dispose_status, remark)
+    values ( #{status,jdbcType=INTEGER}, #{borrowId,jdbcType=INTEGER}, 
+      #{p2pid,jdbcType=VARCHAR}, #{serialno,jdbcType=VARCHAR}, #{account,jdbcType=DECIMAL}, 
+      #{fee,jdbcType=DECIMAL}, #{tradetime,jdbcType=TIMESTAMP}, now(), 
+      #{updtime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=INTEGER}, #{adduser,jdbcType=INTEGER}, 
+      #{disposeStatus,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR})
+  </insert>
+ 
+ 
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.borrow.check.entity.BorrowerDealError" >
+   
+    update t_borrower_deal_error
+    <set >
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="borrowId != null" >
+        borrow_id = #{borrowId,jdbcType=INTEGER},
+      </if>
+      <if test="p2pid != null" >
+        P2PID = #{p2pid,jdbcType=VARCHAR},
+      </if>
+      <if test="serialno != null" >
+        serialNo = #{serialno,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        ACCOUNT = #{account,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        fee = #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="tradetime != null" >
+        tradetime = #{tradetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updtime != null" >
+        updtime = #{updtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateuser != null" >
+        updateUser = #{updateuser,jdbcType=INTEGER},
+      </if>
+      <if test="adduser != null" >
+        addUser = #{adduser,jdbcType=INTEGER},
+      </if>
+      <if test="disposeStatus != null" >
+        dispose_status = #{disposeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="checkRemark!=null and checkRemark!=''">
+        check_remark=#{checkRemark},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+ 
+</mapper>

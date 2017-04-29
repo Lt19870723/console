@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.finance.virement.mapper.CheckRechargeMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.finance.virement.entity.CheckRecharge" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="DATE" property="date" jdbcType="TIMESTAMP" />
+    <result column="TYPE" property="type" jdbcType="INTEGER" />
+    <result column="TOTAL_MONEY" property="totalMoney" jdbcType="DECIMAL" />
+    <result column="SUCCESS_MONEY" property="successMoney" jdbcType="DECIMAL" />
+    <result column="CHECK_SUCCESS_MONEY" property="checkSuccessMoney" jdbcType="DECIMAL" />
+    <result column="CALCULATION_FEE" property="calculationFee" jdbcType="DECIMAL" />
+    <result column="CHECK_FEE" property="checkFee" jdbcType="DECIMAL" />
+    <result column="DIFFERENCE_FEE" property="differenceFee" jdbcType="DECIMAL" />
+    <result column="RECEIVE_MONEY" property="receiveMoney" jdbcType="DECIMAL" />
+    <result column="FICTITIOUS_RECHARGE" property="fictitiousRecharge" jdbcType="DECIMAL" />
+    <result column="DIFFERENCE_TOTAL" property="differenceTotal" jdbcType="DECIMAL" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="IS_SUCCESS" property="isSuccess" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="VERIFY_TIME" property="verifyTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_USER" property="addUser" jdbcType="INTEGER" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+    <result column="UPDATE_USER" property="updateUser" jdbcType="INTEGER" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_IP" property="updateIp" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, DATE, TYPE, TOTAL_MONEY, SUCCESS_MONEY, CHECK_SUCCESS_MONEY, CALCULATION_FEE, 
+    CHECK_FEE, DIFFERENCE_FEE, RECEIVE_MONEY, FICTITIOUS_RECHARGE, DIFFERENCE_TOTAL, 
+    REMARKS, IS_SUCCESS, STATUS, VERIFY_TIME, ADD_USER, ADD_TIME, ADD_IP, UPDATE_USER, 
+    UPDATE_TIME, UPDATE_IP
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from cw_check_recharge
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from cw_check_recharge
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.finance.virement.entity.CheckRecharge" >
+    insert into cw_check_recharge (ID, DATE, TYPE, 
+      TOTAL_MONEY, SUCCESS_MONEY, CHECK_SUCCESS_MONEY, 
+      CALCULATION_FEE, CHECK_FEE, DIFFERENCE_FEE, 
+      RECEIVE_MONEY, FICTITIOUS_RECHARGE, DIFFERENCE_TOTAL, 
+      REMARKS, IS_SUCCESS, STATUS, 
+      VERIFY_TIME, ADD_USER, ADD_TIME, 
+      ADD_IP, UPDATE_USER, UPDATE_TIME, 
+      UPDATE_IP)
+    values (#{id,jdbcType=INTEGER}, #{date,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, 
+      #{totalMoney,jdbcType=DECIMAL}, #{successMoney,jdbcType=DECIMAL}, #{checkSuccessMoney,jdbcType=DECIMAL}, 
+      #{calculationFee,jdbcType=DECIMAL}, #{checkFee,jdbcType=DECIMAL}, #{differenceFee,jdbcType=DECIMAL}, 
+      #{receiveMoney,jdbcType=DECIMAL}, #{fictitiousRecharge,jdbcType=DECIMAL}, #{differenceTotal,jdbcType=DECIMAL}, 
+      #{remarks,jdbcType=VARCHAR}, #{isSuccess,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{verifyTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addIp,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateIp,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.finance.virement.entity.CheckRecharge" >
+    insert into cw_check_recharge
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="date != null" >
+        DATE,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="totalMoney != null" >
+        TOTAL_MONEY,
+      </if>
+      <if test="successMoney != null" >
+        SUCCESS_MONEY,
+      </if>
+      <if test="checkSuccessMoney != null" >
+        CHECK_SUCCESS_MONEY,
+      </if>
+      <if test="calculationFee != null" >
+        CALCULATION_FEE,
+      </if>
+      <if test="checkFee != null" >
+        CHECK_FEE,
+      </if>
+      <if test="differenceFee != null" >
+        DIFFERENCE_FEE,
+      </if>
+      <if test="receiveMoney != null" >
+        RECEIVE_MONEY,
+      </if>
+      <if test="fictitiousRecharge != null" >
+        FICTITIOUS_RECHARGE,
+      </if>
+      <if test="differenceTotal != null" >
+        DIFFERENCE_TOTAL,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="isSuccess != null" >
+        IS_SUCCESS,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="verifyTime != null" >
+        VERIFY_TIME,
+      </if>
+      <if test="addUser != null" >
+        ADD_USER,
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME,
+      </if>
+      <if test="addIp != null" >
+        ADD_IP,
+      </if>
+      <if test="updateUser != null" >
+        UPDATE_USER,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="updateIp != null" >
+        UPDATE_IP,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="totalMoney != null" >
+        #{totalMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="successMoney != null" >
+        #{successMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="checkSuccessMoney != null" >
+        #{checkSuccessMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="calculationFee != null" >
+        #{calculationFee,jdbcType=DECIMAL},
+      </if>
+      <if test="checkFee != null" >
+        #{checkFee,jdbcType=DECIMAL},
+      </if>
+      <if test="differenceFee != null" >
+        #{differenceFee,jdbcType=DECIMAL},
+      </if>
+      <if test="receiveMoney != null" >
+        #{receiveMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="fictitiousRecharge != null" >
+        #{fictitiousRecharge,jdbcType=DECIMAL},
+      </if>
+      <if test="differenceTotal != null" >
+        #{differenceTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="isSuccess != null" >
+        #{isSuccess,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTime != null" >
+        #{verifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addUser != null" >
+        #{addUser,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateIp != null" >
+        #{updateIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="saveRecharge" parameterType="com.cxdai.console.finance.virement.vo.CheckAccountRequestCnd" >
+    update cw_check_recharge
+    <set >
+        CHECK_SUCCESS_MONEY = #{checkSuccessMoney,jdbcType=DECIMAL},
+        CHECK_FEE = #{checkFee,jdbcType=DECIMAL},
+      <if test="differenceFee != null" >
+        DIFFERENCE_FEE = #{differenceFee,jdbcType=DECIMAL},
+      </if>
+        RECEIVE_MONEY = #{receiveMoney,jdbcType=DECIMAL},
+        FICTITIOUS_RECHARGE = #{fictitiousRecharge,jdbcType=DECIMAL},
+      <if test="differenceTotal != null" >
+        DIFFERENCE_TOTAL = #{differenceTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="isSuccess != null" >
+        IS_SUCCESS = #{isSuccess,jdbcType=INTEGER},
+      </if>
+      <if test="isSuccess == 1" >
+        VERIFY_TIME = now(),
+      </if>
+      <if test="updateUser != null" >
+        UPDATE_USER = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateIp != null" >
+        UPDATE_IP = #{updateIp,jdbcType=VARCHAR},
+      </if>
+       UPDATE_TIME = now(),
+    </set>
+    where DATE <![CDATA[>=]]> date_format(CONCAT(#{date},' 00:00:00'),'%Y-%m-%d %H:%i:%s')
+    AND DATE <![CDATA[<=]]>  date_format(CONCAT(#{date},' 23:59:59'),'%Y-%m-%d %H:%i:%s')
+    AND  TYPE = #{type,jdbcType=INTEGER} AND  STATUS = 1
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.finance.virement.entity.CheckRecharge" >
+    update cw_check_recharge
+    set DATE = #{date,jdbcType=TIMESTAMP},
+      TYPE = #{type,jdbcType=INTEGER},
+      TOTAL_MONEY = #{totalMoney,jdbcType=DECIMAL},
+      SUCCESS_MONEY = #{successMoney,jdbcType=DECIMAL},
+      CHECK_SUCCESS_MONEY = #{checkSuccessMoney,jdbcType=DECIMAL},
+      CALCULATION_FEE = #{calculationFee,jdbcType=DECIMAL},
+      CHECK_FEE = #{checkFee,jdbcType=DECIMAL},
+      DIFFERENCE_FEE = #{differenceFee,jdbcType=DECIMAL},
+      RECEIVE_MONEY = #{receiveMoney,jdbcType=DECIMAL},
+      FICTITIOUS_RECHARGE = #{fictitiousRecharge,jdbcType=DECIMAL},
+      DIFFERENCE_TOTAL = #{differenceTotal,jdbcType=DECIMAL},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      IS_SUCCESS = #{isSuccess,jdbcType=INTEGER},
+      STATUS = #{status,jdbcType=INTEGER},
+      VERIFY_TIME = #{verifyTime,jdbcType=TIMESTAMP},
+      ADD_USER = #{addUser,jdbcType=INTEGER},
+      ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      ADD_IP = #{addIp,jdbcType=VARCHAR},
+      UPDATE_USER = #{updateUser,jdbcType=INTEGER},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      UPDATE_IP = #{updateIp,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER} AND STATUS =1
+  </update>
+  
+  
+  <!-- 分页查询每日提现汇总数据 -->
+  <select id="queryPageCheckRecharge" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd" 
+  resultMap="BaseResultMap">
+  	select * from cw_check_recharge 
+  	where   STATUS = 1
+		<if test="startDate != null and startDate != ''">
+			AND DATE <![CDATA[>=]]> date_format(#{startDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND DATE <![CDATA[<=]]>  date_format(#{endDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="isSuccess != null and isSuccess != ''">
+			AND IS_SUCCESS = #{isSuccess,jdbcType=INTEGER}
+		</if>
+		order by DATE DESC,  TYPE ASC
+  </select>
+   <!-- 查询每日提现汇总数据数量 -->
+<select id="queryPageCheckRechargeCount" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd" 
+  resultType="java.lang.Integer">
+  	select count(*) from cw_check_recharge 
+  	where   STATUS = 1
+		<if test="startDate != null and startDate != ''">
+			AND DATE <![CDATA[>=]]> date_format(#{startDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND DATE <![CDATA[<=]]>  date_format(#{endDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="isSuccess != null and isSuccess != ''">
+			AND IS_SUCCESS = #{isSuccess,jdbcType=INTEGER}
+		</if>
+  </select>
+  
+  <select id="queryByDate" parameterType="com.cxdai.console.finance.virement.vo.QueryPageCheckWithCnd" 
+  resultMap="BaseResultMap">
+  	select * from cw_check_recharge 
+  	where   STATUS = 1 <!-- AND (TYPE = 1 or TYPE = 4 or TYPE = 5 or TYPE = 6) -->
+		<if test="startDate != null and startDate != ''">
+			AND DATE <![CDATA[>=]]> date_format(#{startDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="endDate != null and endDate != ''">
+			AND DATE <![CDATA[<=]]>  date_format(#{endDate},'%Y-%m-%d %H:%i:%s')
+		</if>
+		ORDER BY TYPE ASC
+  </select>
+</mapper>

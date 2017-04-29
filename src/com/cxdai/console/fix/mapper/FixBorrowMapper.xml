@@ -1,0 +1,1103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.fix.mapper.FixBorrowMapper">
+
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.fix.vo.FixBorrowVo" id="fixBorrowResultMap">
+		<id property="id" column="id" />
+		<result property="name" column="NAME" />
+		<result property="status" column="STATUS" />
+		<result property="planAccount" column="PLAN_ACCOUNT" />
+		<result property="lowestAccount" column="LOWEST_ACCOUNT" />
+		<result property="mostAccount" column="MOST_ACCOUNT" />
+		<result property="lockLimit" column="LOCK_LIMIT" />
+		<result property="lockStyle" column="LOCK_STYLE" />
+		<result property="lockEndTime" column="LOCK_ENDTIME" />
+		<result property="successTime" column="SUCCESS_TIME" />
+		<result property="validTime" column="VALID_TIME" />
+		<result property="content" column="CONTENT" />
+		<result property="sendMessage" column="SENDMESSAGE" />
+		<result property="addTime" column="ADDTIME" />
+		<result property="addIp" column="ADDIP" />
+		<result property="lastModifyUser" column="LAST_MODIFY_USER" />
+		<result property="lastModifyTime" column="LAST_MODIFY_TIME" />
+		<result property="lastModifyRemark" column="LAST_MODIFY_REMARK" />
+		<result property="bidPassword" column="BID_PASSWORD" />
+		<result property="remark" column="REMARK" />
+		<result property="publishTime" column="PUBLISH_TIME" />
+		<result property="tenderTimes" column="TENDER_TIMES" />
+		<result property="accountYes" column="ACCOUNT_YES" />
+		<result property="endTime" column="END_TIME" />
+		<result property="sourceFrom" column="SOURCE_FROM" />
+		<result property="contractNo" column="CONTRACT_NO" />
+		<result property="totalInvest" column="totalInvest" />
+		<result property="repaymentMoney" column="repaymentMoney" />
+		<result property="useMoney" column="USE_MONEY" />
+		<result property="defaultPubTime" column="defaultPubTime" />
+		<result property="zrMoney" column="zrMoney" />
+		<result property="tLight" column="tLight" />
+		<result property="capital" column="capital" />
+		<result property="fixAccountUserMoney" column="fixAccountUserMoney" />
+		<result property="areaType" column="AREA_TYPE" />
+		<result property="areaChangeTime" column="AREA_CHANGE_TIME" />
+		<result property="tenderBidFlag" column="tender_bid_flag" />
+		<result property="tenderBidDate" column="tender_bid_date" />
+	</resultMap>
+
+
+
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.fix.vo.FixOperationLogVo"
+		id="fixOpetationLogResultMap">
+		<id property="id" column="id" />
+		<result property="userId" column="USER_ID" />
+		<result property="userType" column="USER_TYPE" />
+		<result property="fixBorrowId" column="FIX_BORROW_ID" />
+		<result property="fixTenderRealId" column="FIX_TENDER_REAL_ID" />
+		<result property="operType" column="OPER_TYPE" />
+		<result property="addTime" column="ADDTIME" />
+		<result property="addIp" column="ADDIP" />
+		<result property="remark" column="REMARK" />
+		<result property="platForm" column="PLATFORM" />
+	    <result property="userName" column="userName" />
+		
+	</resultMap>
+
+	<!--基本列 -->
+	<sql id="fixBorrowBaseColumn">
+		fixBorrow.ID,
+		fixBorrow.NAME,
+		fixBorrow.STATUS,
+		fixBorrow.PLAN_ACCOUNT,
+		fixBorrow.LOWEST_ACCOUNT,
+		fixBorrow.MOST_ACCOUNT,
+		fixBorrow.LOCK_LIMIT,
+		fixBorrow.LOCK_STYLE,
+		fixBorrow.LOCK_ENDTIME,
+		fixBorrow.APR,
+		fixBorrow.SUCCESS_TIME,
+		fixBorrow.VALID_TIME,
+		fixBorrow.CONTENT,
+		fixBorrow.SENDMESSAGE,
+		fixBorrow.ADDTIME,
+		fixBorrow.ADDIP,
+		fixBorrow.LAST_MODIFY_USER,
+		fixBorrow.LAST_MODIFY_TIME,
+		fixBorrow.LAST_MODIFY_REMARK,
+		fixBorrow.CONTRACT_NO,
+		fixBorrow.BID_PASSWORD,
+		fixBorrow.REMARK,
+		fixBorrow.PUBLISH_TIME,
+		fixBorrow.TENDER_TIMES,
+		fixBorrow.ACCOUNT_YES,
+		fixBorrow.END_TIME,
+		fixBorrow.SOURCE_FROM,
+		fixBorrow.AREA_TYPE,
+		fixBorrow.AREA_CHANGE_TIME
+	</sql>
+
+	<!-- 封装查询条件 -->
+	<sql id="fixBorrow_Where_Clause">
+		<if test="useMoneyFlag == 'eq0'">
+			and USE_MONEY = 0
+		</if>
+		<if test="useMoneyFlag == 'gt0'">
+			and USE_MONEY > 0
+		</if>
+		<if test="id != null and id != ''">
+			and fixBorrow.id =#{id}
+		</if>
+		<if test="name != null and name != ''">
+			and fixBorrow.NAME like concat('%',#{name},'%')
+		</if>
+		<if test="beginTime!=null and beginTime != ''">
+			and fixBorrow.PUBLISH_TIME &gt;= #{beginTime}
+		</if>
+		<if test="endTime!=null and endTime != ''">
+			and fixBorrow.PUBLISH_TIME &lt;= #{endTime}
+		</if>
+		<if test="status != null and status != ''">
+			<choose>
+				<when test="status=='定期宝列表'">
+					and fixBorrow.STATUS in (3,5,7,-2,-1)
+				</when>
+
+				<when test="status=='预发中'">
+					and fixBorrow.STATUS = 3 and now() &lt; fixBorrow.PUBLISH_TIME
+				</when>
+				<when test="status=='开放中'">
+					and fixBorrow.STATUS = 3 and now() &gt; fixBorrow.PUBLISH_TIME
+
+				</when>
+				<otherwise>
+					and fixBorrow.STATUS = #{status}
+				</otherwise>
+			</choose>
+		</if>
+
+		<if test="contractNo != null and contractNo != ''">
+			and fixBorrow.contract_No like concat('%',#{contractNo},'%')
+		</if>
+		<if test="validateAdd != null and validateAdd !=''">
+			and (fixBorrow.STATUS = 0 or fixBorrow.STATUS = 1)
+		</if>
+		<if test="areaType != null and areaType != ''">
+			and fixBorrow.AREA_TYPE = #{areaType}
+		</if>
+		<if test="lockLimit != null and lockLimit != ''">
+			and fixBorrow.LOCK_LIMIT = #{lockLimit}
+		</if>
+		<if test="fixType != null and fixType != ''">
+			and fixBorrow.AREA_TYPE = #{fixType}
+		</if>
+	</sql>
+
+
+	<!-- 根据条件查询记录集合  增加三列查询 已获得总利息(元) 已支出用户利息(元) 可用余额(元)  -->
+	<select id="queryFixBorrowList" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+		SELECT
+		DISTINCT 
+		fixBorrow.*
+		,tenderrecord.totalInvest,repayment.repaymentMoney,fixaccount.USE_MONEY
+		FROM t_fix_borrow fixBorrow
+		LEFT JOIN
+		(SELECT USER_id ,SUM(REPAYMENT_YESINTEREST) totalInvest from
+		rocky_b_tenderrecord trecord   group by USER_id ) tenderrecord on
+		(fixBorrow.id=tenderrecord.user_id)
+
+		LEFT JOIN
+		(SELECT FIX_BORROW_ID ,SUM(INTEREST)
+		repaymentMoney from
+		t_fix_repaymentrecord fixrepayment  where STATUS ='1' group by
+		FIX_BORROW_ID ) repayment
+		on (fixBorrow.id=repayment.FIX_BORROW_ID)
+
+		LEFT JOIN
+		(SELECT
+		FIX_BORROW_ID ,USE_MONEY from
+		t_fix_account faccount ) fixaccount on
+		(fixBorrow.id=fixaccount.FIX_BORROW_ID) where 1=1
+		<include refid="fixBorrow_Where_Clause" />
+		<if test="orderSql != null and orderSql != ''">
+			${orderSql}
+		</if>
+		<if test="lockedRecordYn != null and lockedRecordYn == 'yes'">
+			FOR UPDATE
+		</if>
+	</select>
+
+
+
+<!-- 根据定期宝审核查询记录集合  -->
+	<select id="queryAppFixBorrowList" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+		SELECT
+		<include refid="fixBorrowBaseColumn" />
+		FROM t_fix_borrow fixBorrow inner join 
+		(SELECT fix_borrow_id,addtime  from t_fix_operation_log where OPER_TYPE =7 ) tfo 
+		on (fixBorrow.id = tfo.fix_borrow_id )
+		  where 1=1
+		<include refid="fixBorrow_Where_Clause" />
+		 order by tfo.addtime desc 
+		 
+	</select>
+	
+	<!-- 根据定期宝审核查询记录数量  -->
+	<select id="queryAppFixBorrowCount" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultType="java.lang.Integer">
+		SELECT
+		count(*)
+		FROM t_fix_borrow fixBorrow inner join 
+		(SELECT fix_borrow_id,addtime  from t_fix_operation_log where OPER_TYPE =7 ) tfo 
+		on (fixBorrow.id = tfo.fix_borrow_id )
+		  where 1=1
+		<include refid="fixBorrow_Where_Clause" />
+		  
+		 
+	</select>
+
+	<!-- 根据条件查询记录数量 -->
+	<select id="queryFixBorrowCount" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultType="java.lang.Integer">
+		SELECT count(DISTINCT fixBorrow.id)
+		FROM t_fix_borrow fixBorrow
+		LEFT JOIN
+		(SELECT USER_id ,SUM(REPAYMENT_YESINTEREST) totalInvest from
+		rocky_b_tenderrecord trecord   group by USER_id ) tenderrecord on
+		(fixBorrow.id=tenderrecord.user_id)
+
+		LEFT JOIN
+		(SELECT FIX_BORROW_ID ,SUM(INTEREST)
+		repaymentMoney from
+		t_fix_repaymentrecord fixrepayment  where STATUS ='1' group by
+		FIX_BORROW_ID ) repayment
+		on (fixBorrow.id=repayment.FIX_BORROW_ID)
+
+		LEFT JOIN
+		(SELECT
+		FIX_BORROW_ID ,USE_MONEY from
+		t_fix_account faccount ) fixaccount on
+		(fixBorrow.id=fixaccount.FIX_BORROW_ID) where 1=1
+		 
+		 and fixBorrow.STATUS in (3,5,7,-2,-1)
+		<include refid="fixBorrow_Where_Clause" />
+	</select>
+
+
+
+	<!-- 验证条件添加记录，返回主键 -->
+	<insert id="insertFixBorrowWidthCondition" parameterType="com.cxdai.console.fix.vo.FixBorrowVo">
+		INSERT INTO t_fix_borrow
+		(NAME, STATUS, PLAN_ACCOUNT, LOWEST_ACCOUNT,
+		MOST_ACCOUNT, LOCK_LIMIT,
+		LOCK_STYLE, LOCK_ENDTIME, APR, SUCCESS_TIME,
+		VALID_TIME, CONTENT, SENDMESSAGE, ADDTIME, ADDIP, LAST_MODIFY_USER,
+		LAST_MODIFY_TIME,
+		LAST_MODIFY_REMARK,
+		CONTRACT_NO, BID_PASSWORD, REMARK,
+		PUBLISH_TIME, ADDUSER, TENDER_TIMES,
+		ACCOUNT_YES, END_TIME,SOURCE_FROM)
+		VALUES
+		(
+		#{name}, #{status},#{planAccount}, #{lowestAccount}, #{mostAccount},
+		#{lockLimit},
+		#{lockStyle}, #{lockEndTime}, #{apr}, #{successTime},
+		#{validTime}, #{content}, #{sendMessage}, now(), #{addIp},
+		#{lastModifyUser},
+		#{lastModifyTime}, #{lastModifyRemark},
+		#{contractNo}, #{bidPassword}, #{remark},#{publishTime}, #{userId},
+		#{tenderTimes},
+		#{accountYes}, #{endTime}, #{sourceFrom}
+		)
+
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+
+
+	<!-- 验证条件添加记录，返回主键 -->
+	<insert id="insertFixOperationLog" parameterType="com.cxdai.console.fix.vo.FixOperationLogVo">
+		INSERT INTO t_fix_operation_log
+		(USER_ID, USER_TYPE, FIX_BORROW_ID,
+		FIX_TENDER_REAL_ID, OPER_TYPE, ADDTIME,
+		ADDIP, REMARK, PLATFORM)
+		VALUES
+		(
+		#{userId}, #{userType},#{fixBorrowId}, #{fixTenderRealId},
+		#{operType}, now(),
+		#{addIp}, #{remark}, #{platForm}
+		)
+
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+
+	<!-- 验证条件添加记录，返回主键 -->
+	<select id="queryfixBorrowApprList" parameterType="com.cxdai.console.fix.vo.FixOperationLogVo"
+		resultMap="fixOpetationLogResultMap">
+		select USER_ID,
+		(SELECT  name  from rocky_staff  where id =operlog.USER_ID  ) userName,USER_TYPE,FIX_BORROW_ID,FIX_TENDER_REAL_ID,OPER_TYPE,ADDTIME,ADDIP,REMARK,PLATFORM
+		from t_fix_operation_log operlog
+		where OPER_TYPE in (-3,3) and
+		FIX_BORROW_ID=#{id} order by id desc
+
+	</select>
+
+	<!-- 定期宝列表统计信息 待收金额，可用余额，定期宝待支出总额，  定期宝历史已支出利息 -->
+	<select id="queryStaticBorrow" resultType="com.cxdai.console.fix.vo.FixStaticVo">
+		SELECT
+		IfNULL(sum(total.accountCollectMoney),0) accountCollectMoney,
+		IfNULL(SUM(total.accountUserMoney),0) accountUserMoney ,
+		IfNULL(sum(total.accountRepayMentMoney),0) accountRepayMentMoney,
+		IfNULL(SUM(total.accountHistoryInvest),0) accountHistoryInvest
+		from (
+		select
+		IfNULL(SUM(REPAY_ACCOUNT),0) accountCollectMoney,'' accountUserMoney,'' accountRepayMentMoney,'' accountHistoryInvest from
+		rocky_b_collectionrecord where  user_id >=100000000 and status = '0'
+		union all
+		select '',IfNULL(SUM(USE_MONEY),0),'','' from
+		t_fix_account where FIX_BORROW_ID in(SELECT id from t_fix_borrow where STATUS=5)
+		union all
+		select '','',IfNULL(SUM(REPAYMENT_ACCOUNT),0),'' from t_fix_repaymentrecord
+		where status ='0'
+		union all
+		select
+		'','','',IfNULL(SUM(REPAYMENT_YESACCOUNT-CAPITAL),0) from
+		t_fix_repaymentrecord
+		where status ='1'
+		) total
+	</select>
+
+	<!-- 查询最大合同号 -->
+	<select id="queryMaxContractNo" resultType="java.lang.String">
+		SELECT
+		MAX(CONTRACT_NO) from t_fix_borrow where contract_no like
+		concat('%',#{contractNo},'%')
+	</select>
+
+	<!--获取最新定期宝信息 -->
+	<select id="getLatest" resultMap="fixBorrowResultMap">
+		select
+		<include refid="fixBorrowBaseColumn" />
+		from
+		t_fix_borrow fixBorrow
+		where
+		fixBorrow.status in (3,5)
+		order by
+		id DESC
+		limit 1;
+	</select>
+
+	<!--获取最新定期宝信息(用于定期宝修改、审核，排除本id的定期宝) -->
+	<select id="getNewLatestById" parameterType="java.lang.Integer"
+		resultMap="fixBorrowResultMap">
+		select
+		<include refid="fixBorrowBaseColumn" />
+		from
+		t_fix_borrow fixBorrow
+		where
+		fixBorrow.status in (3,5)
+		and fixBorrow.id != #{id}
+		order by
+		id
+		DESC
+		limit 1;
+	</select>
+
+	<!--获取最新定期宝信息(用于定期宝修改、审核，排除本id的定期宝) -->
+	<select id="getFixBorrowByCnd" parameterType="java.lang.Integer" resultMap="fixBorrowResultMap">
+		select *,DATEDIFF(CURDATE(),IFNULL(tender_bid_date,'2999-01-01'))as diffTenderDays
+		from
+		t_fix_borrow fixBorrow
+		where
+		fixBorrow.id = #{id}
+
+	</select>
+
+	<!-- 更新 -->
+	<update id="updatefixBorrowMapper" parameterType="com.cxdai.console.fix.vo.FixBorrowVo">
+		update t_fix_borrow
+		<set>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+
+			<if test="status != null">
+				STATUS = #{status},
+			</if>
+			<if test="planAccount != null">
+				PLAN_ACCOUNT = #{planAccount},
+			</if>
+			<if test="accountYes != null">
+				ACCOUNT_YES = #{accountYes},
+			</if>
+			<if test="lowestAccount != null">
+				LOWEST_ACCOUNT = #{lowestAccount},
+			</if>
+			<if test="mostAccount != null">
+				MOST_ACCOUNT = #{mostAccount},
+			</if>
+			<if test="lockLimit != null">
+				LOCK_LIMIT = #{lockLimit},
+			</if>
+			<if test="lockStyle != null">
+				LOCK_STYLE = #{lockStyle},
+			</if>
+			<if test="lockEndTime != null">
+				LOCK_ENDTIME = #{lockEndTime},
+			</if>
+			<if test="apr != null">
+				apr = #{apr},
+			</if>
+
+			<if test="successTime != null">
+				SUCCESS_TIME = #{successTime},
+			</if>
+			<if test="validTime != null">
+				VALID_TIME = #{validTime},
+			</if>
+			<if test="content != null">
+				CONTENT = #{content},
+			</if>
+			<if test="sendMessage != null">
+				SENDMESSAGE = #{sendMessage},
+			</if>
+			<if test="lastModifyUser != null">
+				LAST_MODIFY_USER = #{lastModifyUser}, LAST_MODIFY_TIME =
+				now(),
+			</if>
+
+			<if test="lastModifyRemark != null">
+				LAST_MODIFY_REMARK = #{lastModifyRemark},
+			</if>
+
+			<if test="contractNo != null">
+				CONTRACT_NO = #{contractNo},
+			</if>
+			<if test="bidPassword != null">
+				BID_PASSWORD = #{bidPassword},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark},
+			</if>
+			<if test="publishTime != null">
+				PUBLISH_TIME = #{publishTime},
+			</if>
+			<if test="tenderTimes != null">
+				TENDER_TIMES = #{tenderTimes},
+			</if>
+			<if test="accountYes != null">
+				ACCOUNT_YES = #{accountYes},
+			</if>
+
+			<if test="cleanPassword !=null">
+				BID_PASSWORD = null,
+			</if>
+
+			<if test="endTime != null">
+				END_TIME = #{endTime},
+			</if>
+			<if test="contractNo != null">
+				CONTRACT_NO = #{contractNo},
+			</if>			
+			<if test="areaType != null">
+				AREA_TYPE = #{areaType},
+			</if>
+			<if test="areaChangeTime != null">
+				AREA_CHANGE_TIME = #{areaChangeTime},
+			</if>
+		</set>
+		where ID = #{id}
+	</update>
+
+
+	<!-- 撤销修改detail表的状态 -->
+	<update id="updateFixTenderCancelById" parameterType="java.lang.Integer">
+
+		update t_fix_tender_detail set STATUS =2 where FIX_BORROW_ID = #{id}
+
+	</update>
+
+
+	<!-- 撤销增加增加被扣的资金情况 -->
+	<update id="updateRockyAccountCancelById" parameterType="java.lang.Integer">
+		update
+		rocky_account account ,t_fix_tender_detail detail set
+		account.total=account.total+IFNULL(detail.ACCOUNT,0),
+		account.use_money
+		=account.use_money+IFNULL(detail.ACCOUNT,0),
+		account.DRAW_MONEY=account.DRAW_MONEY+IFNULL(detail.DRAW_MONEY,0),
+		account.NO_DRAW_MONEY=account.NO_DRAW_MONEY+IFNULL(detail.NO_DRAW_MONEY,0)
+		where
+		account.user_id = detail.user_id and detail.fix_borrow_id =#{id}
+	</update>
+
+	<!-- 查询即将到期的定期宝 , 一键发宝 -->
+	<select id="queryWillExpireFixBorrowList" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+		select
+		fixBorrow.ID,
+		fixBorrow.CONTRACT_NO,
+		fixBorrow.PLAN_ACCOUNT,
+		fixBorrow.LOCK_LIMIT,
+		repayment.INTEREST,
+		fixBorrow.LOCK_ENDTIME,
+		fixAccount.USE_MONEY,
+		case 
+			when  fixBorrow.LOCK_ENDTIME = CURDATE() then  '0'
+	        when  fixBorrow.LOCK_ENDTIME = CURDATE()+1 then  '0'
+			else '1'
+	  	 end 
+	  	 as tLight
+		from t_fix_borrow fixBorrow
+		inner join
+		t_fix_repaymentrecord repayment on repayment.FIX_BORROW_ID =fixBorrow.ID
+		inner join
+		t_fix_account fixAccount on fixAccount.FIX_BORROW_ID = fixBorrow.ID
+		where 1=1
+		and fixBorrow.status = 5
+			<if test="beginDate != null  ">
+				and fixBorrow.LOCK_ENDTIME <![CDATA[ >= ]]> #{beginDate}
+			</if>
+			<if test="endDate != null">
+				and fixBorrow.LOCK_ENDTIME <![CDATA[ <= ]]> #{endDate}
+			</if>
+		order by fixBorrow.LOCK_ENDTIME ASC,fixBorrow.CONTRACT_NO ASC
+	</select>
+	
+	<!-- “定期宝管理>即将到期定期宝”页面增加统计项：到期资金总额，统计选取时间内将到期资金的本金与利息总和。 -->
+	<select id="sumWillExpireFixBorrow" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultType="com.cxdai.console.fix.vo.FixStaticVo">
+		select
+			ifnull(sum(fixBorrow.PLAN_ACCOUNT),0) capital,
+			ifnull(sum(repayment.INTEREST),0)	profit
+		from t_fix_borrow fixBorrow
+			inner join t_fix_repaymentrecord repayment on repayment.FIX_BORROW_ID =fixBorrow.ID
+			inner join t_fix_account fixAccount on fixAccount.FIX_BORROW_ID = fixBorrow.ID
+		where 1=1 
+				and fixBorrow.status = 5
+			<if test="beginDate != null  ">
+				and fixBorrow.LOCK_ENDTIME <![CDATA[ >= ]]> #{beginDate}
+			</if>
+			<if test="endDate != null">
+				and fixBorrow.LOCK_ENDTIME <![CDATA[ <= ]]> #{endDate}
+			</if>
+	</select>
+
+	<!-- 查询即将到期的定期宝记录数 , 一键发宝-->
+	<select id="queryWillExpireFixBorrowCounts" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultType="java.lang.Integer">
+		select count(1)
+		from t_fix_borrow fixBorrow
+		inner join t_fix_repaymentrecord repayment
+			on repayment.FIX_BORROW_ID = fixBorrow.ID
+		inner join t_fix_account fixAccount
+			on fixAccount.FIX_BORROW_ID = fixBorrow.ID
+		where 1=1
+		and fixBorrow.status = 5
+		<if test="beginDate != null  ">
+				and fixBorrow.LOCK_ENDTIME <![CDATA[ >= ]]> #{beginDate}
+		</if>
+		<if test="endDate != null">
+				and fixBorrow.LOCK_ENDTIME <![CDATA[ <= ]]> #{endDate}
+		</if>
+	</select>
+
+	<!-- 调用定期宝投标存储过程 0表示手动 -->
+	<select id="fixTender" parameterType="java.util.Map"
+		statementType="CALLABLE">  
+		<![CDATA[  
+		    {call fix_tender(#{borrowid,mode=IN,jdbcType=INTEGER},#{fixborrowid,mode=IN,jdbcType=INTEGER},#{type,mode=IN,jdbcType=INTEGER}, #{msg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>
+	</select>
+	<!-- 查询可以投标的定期宝 -->
+	<select id="getHandleFixBorrowListTender" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+        SELECT fixBorrow.SUCCESS_TIME,fixBorrow.CONTRACT_NO,fixBorrow.PLAN_ACCOUNT,fixBorrow.LOCK_LIMIT,fixBorrow.ID,tender_bid_flag,tender_bid_date,fixAccount.USE_MONEY,
+			DATEDIFF(CURDATE(),IFNULL(tender_bid_date,'2999-01-01'))as diffTenderDays
+    	from t_fix_borrow fixBorrow,t_fix_account fixAccount,(select FIX_BORROW_ID,ADDTIME  from t_fix_operation_log where OPER_TYPE=3) fixOperation 
+		where fixBorrow.id = fixAccount.fix_borrow_id and fixBorrow.id = fixOperation.FIX_BORROW_ID
+		and 
+		fixBorrow.`STATUS` = 5
+		and fixAccount.USE_MONEY!=0 
+		
+		and DATEDIFF(fixBorrow.LOCK_ENDTIME,now())<![CDATA[>]]>2
+		<if test="contractNo != null and contractNo != ''">
+			and fixBorrow.contract_No like concat('%',#{contractNo},'%')
+		</if>
+		<if test="beginDate!=null">
+			and fixBorrow.PUBLISH_TIME &gt;= #{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and fixBorrow.PUBLISH_TIME &lt;= #{endDate}
+		</if>
+		order by fixOperation.addtime desc
+	</select>
+
+	<!-- 查询可以投标的定期宝记录 -->
+	<select id="getCountHandleFixBorrowListTender" resultType="java.lang.Integer">
+
+		SELECT count(1) from t_fix_borrow fixBorrow,t_fix_account fixAccount
+		where fixBorrow.id =
+		fixAccount.fix_borrow_id
+		and fixBorrow.`STATUS` = 5
+		and fixAccount.USE_MONEY!=0
+		
+	    and DATEDIFF(fixBorrow.LOCK_ENDTIME,now())<![CDATA[>]]>2
+		<if test="contractNo != null and contractNo != ''">
+			and fixBorrow.contract_No like concat('%',#{contractNo},'%')
+		</if>
+		<if test="beginDate!=null">
+			and fixBorrow.PUBLISH_TIME &gt;= #{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and fixBorrow.PUBLISH_TIME &lt;= #{endDate}
+		</if>
+	 
+	</select>
+
+
+	<!-- 查询可以定期宝收益记录 -->
+	<select id="queryPageInterestFixCount" resultType="java.lang.Integer">
+
+		SELECT count(1)
+	 
+		from rocky_b_collectionrecord b_colltion , 
+		t_fix_borrow fixborrow ,
+		rocky_borrow rockyborrow where  b_colltion.BORROW_ID  = rockyborrow.id 
+		and b_colltion.USER_ID = fixborrow.id and b_colltion.status in(1,2)  and   fixBorrow.status in (5,7)
+		<if test="contractNo != null and contractNo != ''">
+			and fixBorrow.contract_No like concat('%',#{contractNo},'%')
+		</if>
+		<if test="status != null and status != ''">
+			and fixBorrow.status =#{status}
+		</if>
+		<if test="beginDate!=null and beginDate != ''">
+			and FROM_UNIXTIME(b_colltion.REPAY_YESTIME) &gt;= #{beginDate}
+		</if>
+		<if test="endDate!=null and endDate != ''">
+			and FROM_UNIXTIME(b_colltion.REPAY_YESTIME) &lt;= #{endDate}
+		</if>
+
+	</select>
+
+
+	<!-- 查询定期宝收益 -->
+	<select id="queryPageInterestFix" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+
+		SELECT fixborrow.contract_No, fixborrow.`STATUS`, fixborrow.PLAN_ACCOUNT, fixborrow.LOCK_LIMIT, fixborrow.LOCK_ENDTIME, b_colltion.REPAY_YESACCOUNT borrowCapital ,
+		(b_colltion.REPAY_YESACCOUNT-b_colltion.CAPITAL ) borrowInterest,
+		 rockyborrow.CONTRACT_NO borrowContractNo, FROM_UNIXTIME(b_colltion.REPAY_YESTIME) borrowRepayTime 
+		from rocky_b_collectionrecord b_colltion , 
+		t_fix_borrow fixborrow ,
+		rocky_borrow rockyborrow where  b_colltion.BORROW_ID  = rockyborrow.id 
+		and b_colltion.USER_ID = fixborrow.id and b_colltion.status in(1,2)   and   fixBorrow.status in (5,7)
+		<if test="contractNo != null and contractNo != ''">
+			and fixborrow.contract_No like concat('%',#{contractNo},'%')
+		</if>
+		<if test="status != null and status != ''">
+			and fixborrow.status =#{status}
+		</if>
+		<if test="beginDate!=null and beginDate != ''">
+			and FROM_UNIXTIME(b_colltion.REPAY_YESTIME) &gt;= #{beginDate}
+		</if>
+		<if test="endDate!=null and endDate != ''">
+			and FROM_UNIXTIME(b_colltion.REPAY_YESTIME) &lt;= #{endDate}
+		</if>
+		order by fixborrow.PUBLISH_TIME desc
+	</select>
+
+
+	<!-- 查询用户收益记录 -->
+	<select id="queryPageInterestUserCount" resultType="java.lang.Integer">
+
+		SELECT count(1)
+		from t_fix_borrow fixBorrow ,
+		rocky_member member,
+		t_fix_collectionrecord collection
+		where
+		fixBorrow.id = collection.fix_borrow_id
+		and collection.user_id =
+		member.id and fixBorrow.status ='7'
+		<if test="contractNo != null and contractNo != ''">
+			and fixBorrow.contract_No like concat('%',#{contractNo},'%')
+		</if>
+		<if test="userName != null and userName != ''">
+			and member.userName like concat('%',#{userName},'%')
+		</if>
+		<if test="beginDate!=null and beginDate != '' ">
+			and collection.REPAY_YESTIME &gt;= #{beginTime}
+		</if>
+		<if test="endDate!=null and endDate != '' ">
+			and collection.REPAY_YESTIME &lt;= #{endTime}
+		</if>
+
+	</select>
+
+
+	<!-- 查询用户收益 -->
+	<select id="queryPageInterestUser" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+
+		SELECT fixBorrow.CONTRACT_NO,member.username ,collection.CAPITAL account, collection.REPAY_YESACCOUNT
+		repaymentMoney,REPAY_YESTIME borrowRepayTime
+		from t_fix_borrow fixBorrow ,
+		rocky_member member,
+		t_fix_collectionrecord collection
+		where
+		fixBorrow.id = collection.fix_borrow_id
+		and collection.user_id =
+		member.id and fixBorrow.status ='7'
+		<if test="contractNo != null and contractNo != ''">
+			and fixBorrow.contract_No like concat('%',#{contractNo},'%')
+		</if>
+		<if test="userName != null and userName != ''">
+			and member.userName like concat('%',#{userName},'%')
+		</if>
+		<if test="beginDate!=null and beginDate != '' ">
+			and collection.REPAY_YESTIME &gt;= #{beginTime}
+		</if>
+		<if test="endDate!=null and endDate != '' ">
+			and collection.REPAY_YESTIME &lt;= #{endTime}
+		</if>
+		order by fixBorrow.PUBLISH_TIME desc,fixBorrow.CONTRACT_NO desc
+	</select>
+
+
+	<!-- 定期宝总利息 -->
+	<select id="queryAccountByContactNo" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+
+		SELECT
+		fixBorrow.CONTRACT_NO,fixBorrow.PLAN_ACCOUNT,ROUND(SUM(collection.REPAY_YESACCOUNT-collection.CAPITAL),2)
+		totalInterest from
+		t_fix_collectionrecord collection ,
+		t_fix_borrow fixBorrow
+		where
+		collection.FIX_BORROW_ID = fixBorrow.ID and fixBorrow.CONTRACT_NO =#{contractNo}
+        <if test="beginTime!=null and beginTime != '' ">
+			and collection.REPAY_YESTIME &gt;= #{beginTime}
+		</if>
+		<if test="endTime!=null and endTime != '' ">
+			and collection.REPAY_YESTIME &lt;= #{endTime}
+		</if>
+
+	</select>
+	<!-- 插入定期宝日志记录 -->
+	<insert id="insertAccountLog" parameterType="com.cxdai.console.statistics.account.entity.AccountLog">
+
+		INSERT into rocky_accountlog
+		(USER_ID,TYPE,TOTAL,MONEY,USE_MONEY,NO_USE_MONEY,COLLECTION,TO_USER,ID_TYPE,REMARK,ADDTIME,ADDIP,DRAW_MONEY,NO_DRAW_MONEY,
+		e_use_money,e_freeze_money,e_collection,IS_CUSTODY)
+		SELECT a.user_id ,'fix_exit',a.total,b.ACCOUNT money ,a.use_money
+		,a.no_use_money,a.collection , #{toUser} ,6,'定期宝撤销', UNIX_TIMESTAMP(),
+		#{addip},a.draw_money,a.no_draw_money,a.e_freeze_money,a.e_collection,0 from rocky_account a,
+		t_fix_tender_detail b where a.USER_ID = b.USER_ID and  b.fix_borrow_id =#{id}
+
+	</insert>
+
+	
+	<!-- 一键发宝,根据id查询对象 -->
+	<select id="getFixBorrowById" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+		select PLAN_ACCOUNT, LOCK_LIMIT, APR,LOWEST_ACCOUNT,MOST_ACCOUNT,SUCCESS_TIME,PUBLISH_TIME,VALID_TIME,END_TIME ,
+		CONCAT( DATE_FORMAT(DATE_ADD(SUCCESS_TIME,INTERVAL LOCK_LIMIT MONTH),'%Y-%m-%d'),DATE_FORMAT(PUBLISH_TIME,' %H:%i:%s')) as defaultPubTime 
+		from t_fix_borrow
+		where id=${id}
+	</select>
+	
+	<!-- 发起转让   count -->
+	<select id="getFixBorrowCountByTransferConn" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultType="java.lang.Integer" >
+			<![CDATA[
+					select count(1)
+					from t_fix_borrow fb 
+					INNER JOIN t_fix_account fa 
+					on fa.FIX_BORROW_ID = fb.id 
+					where 1=1 
+					and fb.LOCK_ENDTIME <= CURDATE() 
+					and fa.COLLECTION>0 
+					and fa.USE_MONEY<fa.CAPITAL 
+					and fb.status = 5 
+			]]>
+	</select>
+	
+	<!-- 发起转让   list -->
+	<select id="getFixBorrowByTransferConn" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultMap="fixBorrowResultMap">
+			<![CDATA[
+				select fb.id,fb.CONTRACT_NO,fb.PLAN_ACCOUNT,fb.LOCK_LIMIT,fb.lock_endtime,fa.capital,
+				(
+					SELECT Ifnull(Sum(rbc.CAPITAL),0) 
+					FROM rocky_b_collectionrecord rbc 
+					INNER JOIN rocky_b_tenderrecord rbt 
+					ON rbc.TENDER_ID = rbt.ID 
+					WHERE rbc.STATUS = 0 
+					AND rbt.USER_ID = fb.ID 
+					AND rbt.STATUS = 1
+				)as zrMoney 
+					from t_fix_borrow fb 
+					INNER JOIN t_fix_account fa 
+					on fa.FIX_BORROW_ID = fb.id 
+					where 1=1 
+					and fb.LOCK_ENDTIME <= CURDATE() 
+					AND NOT EXISTS (SELECT 1 FROM rocky_b_tenderrecord rbt WHERE rbt.USER_ID = fb.ID AND rbt.`STATUS` = 0 LIMIT 0,1)
+					and fa.COLLECTION>0 
+					and fa.USE_MONEY<fa.CAPITAL 
+					and fb.status = 5 
+					order by fb.lock_endtime ASC
+			]]>
+	</select>
+	
+	<!-- 定期宝可用余额 -->
+	<select id="getFixBorrowSumUseMoney" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+		resultType="java.math.BigDecimal">
+			<![CDATA[
+					select IFNULL(SUM(fa.USE_MONEY),0) as sumUseMoney from t_fix_account fa INNER JOIN t_fix_borrow fb
+					on fb.ID = fa.FIX_BORROW_ID
+					where 1=1 
+					and fb.status = 5 
+			]]>
+	</select>
+	
+	<!-- 定期宝可投余额 -->
+	<select id="getFixBorrowSumUseMoneyYes" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"
+			resultType="java.math.BigDecimal">
+				<![CDATA[
+						select IFNULL(SUM(fa.USE_MONEY),0) as sumUseMoneyYes from t_fix_account fa INNER JOIN t_fix_borrow fb
+						on fb.ID = fa.FIX_BORROW_ID										
+						where 1=1 										
+						and fb.status = 5 										
+						and fb.LOCK_ENDTIME > CURDATE() + 2	
+				]]>
+	</select>
+	
+	
+	<!-- 获取所有转让成功的老宝，准备还款给投资人 count   -->
+	<select id ="queryFixBorrowCountForRepayment" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd"  resultType="java.lang.Integer" >
+	<![CDATA[
+		select count(1)    
+		from  t_fix_borrow tfb INNER JOIN t_fix_account tfa 
+		on tfb.ID = tfa.FIX_BORROW_ID 
+		where 1=1 
+		and tfa.COLLECTION=0 
+		and tfa.USE_MONEY = tfa.CAPITAL 
+		and tfb.LOCK_ENDTIME <=  NOW()
+		]]>
+	</select>
+	
+	<!-- 获取所有转让成功的老宝，准备还款给投资人 list   -->
+	<select id ="queryFixBorrowListForRepayment" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd" resultMap="fixBorrowResultMap">
+	<![CDATA[
+		select tfb.id,tfb.CONTRACT_NO,tfb.PLAN_ACCOUNT, tfb.LOCK_LIMIT,tfb.LOCK_ENDTIME, tfb.APR    
+		from  t_fix_borrow tfb INNER JOIN t_fix_account tfa 
+		on tfb.ID = tfa.FIX_BORROW_ID 
+		where 1=1 
+		and tfa.COLLECTION=0 
+		and tfa.USE_MONEY = tfa.CAPITAL 
+		and tfb.LOCK_ENDTIME <=  NOW()
+		]]>
+	</select>
+	
+	
+	<!-- 根据定期宝id查询，锁表 -->
+	<select id="queryFixBorrowByIdForUpdate" parameterType="com.cxdai.console.fix.entity.FixBorrow" resultMap="fixBorrowResultMap">
+		select name,status, last_modify_user,last_modify_time from t_fix_borrow where 1=1 and id = ${id} for update
+	</select>
+	
+	<!-- 更新：定期宝信息表t_fix_borrow.STATUS = 7(还款结束) -->
+	<update id="updateFixBorrowById" parameterType="com.cxdai.console.fix.entity.FixBorrow">
+		update t_fix_borrow set status = ${status}, last_modify_user=${lastModifyUser},last_modify_time=NOW()
+		where 1=1 and id = ${id}
+	</update>
+	
+	<!-- 判断: 还款日期(含逾期还款的情况) t_fix_borrow.LOCK_ENDTIME<= now()  -->
+	<select id="queryFixBorrowCountById" parameterType="com.cxdai.console.fix.entity.FixBorrow"  resultType="java.lang.Integer">
+		select count(1) from t_fix_borrow where 1=1 and LOCK_ENDTIME <![CDATA[ <= ]]> NOW() and id = ${id} 
+	</select>
+
+	<select id="queryMatureFixBorrowById" parameterType="java.lang.Integer" resultMap="fixBorrowResultMap" >
+		SELECT <include refid="fixBorrowBaseColumn"/> 
+			   ,fa.USE_MONEY as fixAccountUserMoney
+			   ,fa.CAPITAL
+		  FROM t_fix_borrow fixBorrow
+		INNER JOIN t_fix_account fa ON fixBorrow.ID = fa.FIX_BORROW_ID
+		 WHERE fixBorrow.`STATUS` = 5
+		   AND NOT EXISTS (SELECT 1 FROM rocky_b_tenderrecord rbt WHERE rbt.USER_ID = fixBorrow.ID AND rbt.`STATUS` = 0 LIMIT 0,1)
+		   AND LOCK_ENDTIME <![CDATA[<= CURDATE()]]>
+			AND fa.USE_MONEY <![CDATA[< fa.CAPITAL]]>
+			AND fa.COLLECTION <![CDATA[> 0]]>
+			AND fixBorrow.ID = #{id}
+		FOR UPDATE;
+	</select>
+	
+	<update id="updateFixBorrowStatusById" parameterType="com.cxdai.console.fix.entity.FixBorrow">
+		UPDATE T_FIX_BORROW 
+		SET STATUS = #{status},
+		    LAST_MODIFY_USER = #{lastModifyUser},
+		    LAST_MODIFY_TIME = CURRENT_TIMESTAMP()
+		WHERE ID= #{id}
+	</update>
+	
+	<select id="querySubscribeFixBorrowList" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd" resultMap="fixBorrowResultMap">
+		SELECT  <include refid="fixBorrowBaseColumn"/>
+				,fa.USE_MONEY as fixAccountUserMoney
+		FROM     t_fix_borrow fixBorrow
+		         INNER JOIN t_fix_account fa
+		           ON fixBorrow.ID = fa.FIX_BORROW_ID
+		WHERE    fixBorrow.`STATUS` = 5
+		         AND fa.USE_MONEY > 0
+		         <if test="isFirstFlag == 0">
+			         AND fixBorrow.ID not in (select FIX_BORROW_ID from t_fix_account_log where `TYPE` = 6 group by FIX_BORROW_ID) 
+		         </if>
+		         <if test="isFirstFlag == 1">
+			         AND fixBorrow.ID in (select FIX_BORROW_ID from t_fix_account_log where `TYPE` = 6 group by FIX_BORROW_ID) 
+		         </if>
+		         AND fixBorrow.LOCK_ENDTIME > DATE_ADD(CURDATE(),INTERVAL 3 DAY )
+		ORDER BY fixBorrow.SUCCESS_TIME ASC 
+		FOR UPDATE;
+	</select>
+	
+	<!-- 根据定期宝id查询，锁表 -->
+	<select id="searchFixBorrowByIdForUpdate" parameterType="java.lang.Integer" resultMap="fixBorrowResultMap">
+		select <include refid="fixBorrowBaseColumn" /> from t_fix_borrow fixBorrow where id = #{id} for update
+	</select>
+	
+	<!-- 定期宝统计分析 -->
+	<select id="queryFixStaticAnalysis" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd" resultType="com.cxdai.console.fix.vo.FixStaticVo">
+		SELECT 
+		(select IFNULL(SUM(PLAN_ACCOUNT),0) from t_fix_borrow
+		where `STATUS` in(3,4,5,7,8,9,10,-1)		 
+		<if test="lockLimit!=null">
+			and LOCK_LIMIT = #{lockLimit}
+		</if>
+		<if test="beginDate!=null">
+			and PUBLISH_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and PUBLISH_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as pubMoney,
+		(select COUNT(*) from t_fix_borrow
+		where `STATUS` in(3,4,5,7,8,9,10,-1)
+		<if test="lockLimit!=null">
+			and LOCK_LIMIT = #{lockLimit}
+		</if>
+		<if test="beginDate!=null">
+			and PUBLISH_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and PUBLISH_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as pubNum,
+		(select IFNULL(SUM(ACCOUNT_YES),0) from t_fix_borrow
+		where `STATUS` in(4,5,7,8,9,10)
+		<if test="lockLimit!=null">
+			and LOCK_LIMIT = #{lockLimit}
+		</if>
+		<if test="beginDate!=null">
+			and SUCCESS_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as sucMoney,
+		(select COUNT(*) from t_fix_tender_detail tftd
+		INNER JOIN t_fix_borrow tfb on tftd.fix_borrow_id=tfb.id
+		where tftd.`STATUS` in(1,3) 
+		<if test="lockLimit!=null">
+			and tfb.LOCK_LIMIT = #{lockLimit}
+		</if>
+		<if test="beginDate!=null">
+			and tfb.SUCCESS_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and tfb.SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as joinNum,
+		(select COUNT(*) FROM (
+		select tftd.user_id from t_fix_tender_detail tftd
+		INNER JOIN t_fix_borrow tfb on tftd.fix_borrow_id=tfb.id
+		where tftd.`STATUS` in(1,3) 
+		<if test="lockLimit!=null">
+			and tfb.LOCK_LIMIT = #{lockLimit}
+		</if>
+		<if test="beginDate!=null">
+			and tfb.SUCCESS_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and tfb.SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+		</if>		  
+		GROUP BY tftd.user_id
+		) t) as joinUser,
+		(select IFNULL(SUM(ACCOUNT_YES),0) from t_fix_borrow
+		where `STATUS` in(4,5,7,8,9,10) and AREA_TYPE = 0		
+			<if test="lockLimit!=null">
+				and LOCK_LIMIT = #{lockLimit}
+			</if>
+			<if test="beginDate!=null">
+				and SUCCESS_TIME>=#{beginDate}
+			</if>
+			<if test="endDate!=null">
+				and SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+			</if>
+		 ) as sucComMoney,
+		(select IFNULL(SUM(ACCOUNT_YES),0) from t_fix_borrow
+		where `STATUS` in(4,5,7,8,9,10) and AREA_TYPE = 1
+			<if test="lockLimit!=null">
+				and LOCK_LIMIT = #{lockLimit}
+			</if>
+			<if test="beginDate!=null">
+				and SUCCESS_TIME>=#{beginDate}
+			</if>
+			<if test="endDate!=null">
+				and SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+			</if>		
+		 ) as sucNewMoney,
+		(select IFNULL(SUM(ACCOUNT_YES),0) from t_fix_borrow
+		where `STATUS` in(4,5,7,8,9,10) and AREA_TYPE = 0 and AREA_CHANGE_TIME is not NULL
+			<if test="lockLimit!=null">
+				and LOCK_LIMIT = #{lockLimit}
+			</if>
+			<if test="beginDate!=null">
+				and SUCCESS_TIME>=#{beginDate}
+			</if>
+			<if test="endDate!=null">
+				and SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+			</if>
+		 ) as sucNewToComMoney
+		FROM dual
+	</select>
+	<!-- 定期宝统计分析 -->
+	<select id="queryNewFixStaticAnalysis" parameterType="com.cxdai.console.fix.vo.FixBorrowCnd" resultType="com.cxdai.console.fix.vo.FixStaticVo">
+		SELECT 
+		(select IFNULL(SUM(PLAN_ACCOUNT),0) from t_fix_borrow
+		where `STATUS` in(3,4,5,7,8,9,10,-1) and AREA_TYPE = 1
+		<if test="beginDate!=null">
+			and PUBLISH_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and PUBLISH_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as pubMoney,
+		(select COUNT(*) from t_fix_borrow 
+		where `STATUS` in(3,4,5,7,8,9,10,-1)  and AREA_TYPE = 1
+		<if test="beginDate!=null">
+			and PUBLISH_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and PUBLISH_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as pubNum,
+		(select IFNULL(SUM(ACCOUNT_YES),0) from t_fix_borrow
+		where `STATUS` in(4,5,7,8,9,10)  and AREA_TYPE = 1
+		<if test="beginDate!=null">
+			and SUCCESS_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as sucMoney,
+		(select COUNT(*) from t_fix_tender_detail tftd
+		INNER JOIN t_fix_borrow tfb on tftd.fix_borrow_id=tfb.id
+		where tftd.`STATUS` in(1,3)  and tfb.AREA_TYPE = 1
+		<if test="beginDate!=null">
+			and tfb.SUCCESS_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and tfb.SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+		</if>
+		 ) as joinNum,
+		(select COUNT(*) FROM (
+		select tftd.user_id from t_fix_tender_detail tftd
+		INNER JOIN t_fix_borrow tfb on tftd.fix_borrow_id=tfb.id
+		where tftd.`STATUS` in(1,3)  and tfb.AREA_TYPE = 1
+		<if test="beginDate!=null">
+			and tfb.SUCCESS_TIME>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			and tfb.SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+		</if>		  
+		GROUP BY tftd.user_id
+		) t) as joinUser,
+		0 as sucComMoney,
+		(select IFNULL(SUM(ACCOUNT_YES),0) from t_fix_borrow
+		where `STATUS` in(4,5,7,8,9,10) and AREA_TYPE = 1
+			<if test="beginDate!=null">
+				and SUCCESS_TIME>=#{beginDate}
+			</if>
+			<if test="endDate!=null">
+				and SUCCESS_TIME<![CDATA[<=]]>#{endDate}
+			</if>		
+		 ) as sucNewMoney,
+		 0 as sucNewToComMoney
+		FROM dual
+	</select>
+</mapper>  

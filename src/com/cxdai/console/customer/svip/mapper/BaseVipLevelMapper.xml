@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.svip.mapper.BaseVipLevelMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.customer.svip.entity.VipLevel" id="vipLevelResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 				column="USER_ID" />
+		<result property="type" 				column="TYPE" />
+		<result property="status" 				column="STATUS" />
+		<result property="order" 				column="ORDER" />
+		<result property="addId" 				column="ADD_ID" />
+		<result property="addTime"	   		 	column="ADDTIME" />
+		<result property="addIp"  				column="ADDIP" />
+		<result property="remark" 				column="REMARK" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="vipLevelBaseColumn">
+		v.ID, 
+		v.USER_ID, 
+		v.TYPE,
+		v.STATUS, 
+		v.ORDER, 
+		v.ADD_ID, 
+		v.ADDTIME, 
+		v.ADDIP, 
+		v.REMARK
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.customer.svip.entity.VipLevel">
+		INSERT INTO rocky_vip_level 
+		(USER_ID, TYPE, STATUS, `ORDER`, ADD_ID, ADDTIME, ADDIP, REMARK)
+		VALUES
+		(#{userId}, #{type}, #{status}, #{order}, #{addId}, #{addTime}, #{addIp}, #{remark})
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="vipLevelResultMap" >
+		select 	
+		   <include refid="vipLevelBaseColumn"/>
+		from
+			rocky_vip_level v
+		where 1=1
+		and v.id=#{id}
+  	</select>
+	
+  <!-- 更新新闻公告类 -->
+  <update id="updateEntity" parameterType="com.cxdai.console.customer.svip.entity.VipLevel" >
+    update rocky_vip_level
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="order != null" >
+        `ORDER` = #{order,jdbcType=INTEGER},
+      </if>
+      <if test="addId != null" >
+        ADD_ID = #{addId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        ADDTIME = #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addIp != null" >
+        ADDIP = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  	
+</mapper>  

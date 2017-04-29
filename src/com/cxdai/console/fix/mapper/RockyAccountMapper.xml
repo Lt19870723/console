@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.fix.mapper.RockyAccountMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.fix.entity.RockyAccount" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="total" property="total" jdbcType="DECIMAL" />
+    <result column="use_money" property="useMoney" jdbcType="DECIMAL" />
+    <result column="no_use_money" property="noUseMoney" jdbcType="DECIMAL" />
+    <result column="collection" property="collection" jdbcType="DECIMAL" />
+    <result column="netvalue" property="netvalue" jdbcType="DECIMAL" />
+    <result column="FIRST_BORROW_USE_MONEY" property="firstBorrowUseMoney" jdbcType="DECIMAL" />
+    <result column="VERSION" property="version" jdbcType="INTEGER" />
+    <result column="DRAW_MONEY" property="drawMoney" jdbcType="DECIMAL" />
+    <result column="NO_DRAW_MONEY" property="noDrawMoney" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USER_ID, total, use_money, no_use_money, collection, netvalue, FIRST_BORROW_USE_MONEY, 
+    VERSION, DRAW_MONEY, NO_DRAW_MONEY
+  </sql>
+  
+  
+  <!-- 根据userId查询账户表rocky_account并锁定  -->
+  <select id="queryRockyAccountByUserIdForUpdate" parameterType="com.cxdai.console.fix.entity.RockyAccount" resultMap="BaseResultMap">
+  	select * from rocky_account where 1=1 
+	and USER_ID = ${userId} FOR UPDATE
+  </select>  
+  
+  <!-- 根据userId更新账户表 rocky_account 的金额 -->
+  <update id="updateRockyAccountByUserId" parameterType="com.cxdai.console.fix.entity.RockyAccount" >
+    update rocky_account set total = #{total}, use_money = #{useMoney}, DRAW_MONEY = #{drawMoney} 
+	where 1=1 
+	and USER_ID = ${userId}
+  </update>
+  
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cxdai.console.finance.virement.mapper.RechargeAnalysisMapper">
+  <resultMap id="BaseResultMap" type="com.cxdai.console.finance.virement.vo.RechargeAnalysisVo">
+    <result column="USER_ID" property="userId"/>
+    <result column="REALNAME" property="realname"/>
+    <result column="RECHARGE_MONEY" property="rechargeAmount"/>
+      <result column="USERNAME" property="username"/>
+    <result column="RANK_NO" property="rankno"/>
+  </resultMap>
+  
+  <sql id="where_serch_sql">
+  	<if test="beginTime != null and beginTime != ''">
+  		<![CDATA[AND FROM_UNIXTIME(r.VERIFY_TIME2, '%Y-%m-%d') >= #{beginTime}]]>
+  	</if>
+  	<if test="endTime != null and endTime != ''">
+  		<![CDATA[AND FROM_UNIXTIME(r.VERIFY_TIME2, '%Y-%m-%d') <= #{endTime}]]>
+  	</if>
+  </sql>
+  <select id="queryListCountByCnd" parameterType="com.cxdai.console.finance.virement.vo.RechargeAnalysisCnd" resultType="int">
+  	SELECT COUNT(*) FROM (<include refid="temp_table_sql" />) tt
+  </select>
+  
+  <sql id="temp_table_sql">
+  	SELECT (@rowNO := @rowNo+1) AS RANK_NO, tt.* FROM (<include refid="temp_table_sql2" />) tt, (SELECT @rowNO :=0) b
+  </sql>
+  
+  <sql id="temp_table_sql2">
+  	SELECT r.USER_ID, m.USERNAME,  ra.REALNAME, IFNULL(SUM(r.MONEY), 0) AS RECHARGE_MONEY 
+	FROM rocky_rechargerecord r, rocky_member m, rocky_realname_appro ra
+    WHERE r.STATUS = 1 AND r.USER_ID = m.ID AND ra.USER_ID = m.ID AND r.TYPE = 1 AND m.IS_FINANCIAL_USER = 1
+	<include refid="where_serch_sql" /> GROUP BY r.USER_ID ORDER BY RECHARGE_MONEY DESC
+  </sql>
+  <select id="queryListByCnd" parameterType="com.cxdai.console.finance.virement.vo.RechargeAnalysisCnd" resultMap="BaseResultMap">
+  	SELECT ttt.* FROM (<include refid="temp_table_sql" />) ttt
+  </select>
+  
+  <select id="queryRechargeAnalysisList" parameterType="com.cxdai.console.finance.virement.vo.RechargeAnalysisCnd" resultMap="BaseResultMap">
+  	<include refid="temp_table_sql" />
+  </select>
+</mapper>

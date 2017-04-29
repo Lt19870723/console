@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.firstborrow.mapper.FirstBorrowApprMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.firstborrow.vo.FirstBorrowApprVo" id="firstBorrowApprResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 				column="USER_ID" />
+		<result property="apprTime" 			column="APPR_TIME" />
+		<result property="status" 				column="STATUS" />
+		<result property="remark" 				column="RAMARK" />
+		<result property="style"	    		column="STYLE" />
+		<result property="firstBorrowId"  		column="FIRST_BORROW_ID" />
+		<result property="firstTenderRealId"  		column="FIRST_TENDER_REAL_ID" />
+		<result property="firstTenderDetailId"  	column="FIRST_TENDER_DETAIL_ID" />
+		<result property="username"             column="username"/>
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="firstBorrowApprBaseColumn">
+		a.ID, 
+		a.USER_ID, 
+		a.APPR_TIME, 
+		a.STATUS, 
+		a.RAMARK, 
+		a.STYLE, 
+		a.FIRST_BORROW_ID,
+		a.FIRST_TENDER_REAL_ID,
+		a.FIRST_TENDER_DETAIL_ID
+	</sql>
+	
+		<!-- 封装查询条件 -->
+	<sql id="firstBorrowAppr_Where_Clause">
+		<if test="id != null and id != ''">
+			and a.id =#{id}
+		</if>
+		<if test="firstBorrowId != null and firstBorrowId != ''">
+			and a.FIRST_BORROW_ID =#{firstBorrowId}
+		</if>
+	</sql>
+	
+	  	<!-- 根据条件查询记录集合 -->
+	<select id="queryfirstBorrowApprList" parameterType="com.cxdai.console.firstborrow.vo.FirstBorrowApprCnd" resultMap="firstBorrowApprResultMap" >
+		SELECT
+			 rs.JOBNUM 	AS username,
+	         <include refid="firstBorrowApprBaseColumn"/>
+		FROM t_first_borrow_appr a
+		     left join rocky_staff rs on a.USER_ID= rs.ID
+		where 1=1
+	     <include refid="firstBorrowAppr_Where_Clause"/>
+	     and a.STYLE in(0,1)
+  	</select>
+  	
+</mapper>  

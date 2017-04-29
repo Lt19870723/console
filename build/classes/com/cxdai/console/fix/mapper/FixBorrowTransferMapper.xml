@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.fix.mapper.FixBorrowTransferMapper">
+	<resultMap id="BaseResultMap" type="com.cxdai.console.fix.vo.FixBorrowTransferVo">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="FIX_BORROW_ID" property="fixBorrowId" jdbcType="INTEGER" />
+		<result column="ACCOUNT" property="account" jdbcType="DECIMAL" />
+		<result column="USE_MONEY" property="useMoney" jdbcType="DECIMAL" />
+		<result column="AWARDS" property="awards" jdbcType="DECIMAL" />
+		<result column="ACCOUNT_REAL" property="accountReal" jdbcType="DECIMAL" />
+		<result column="ACCOUNT_YES" property="accountYes" jdbcType="DECIMAL" />
+		<result column="FIX_LOCK_LIMIT" property="fixLockLimit" jdbcType="TINYINT" />
+		<result column="FIX_LOCK_STYLE" property="fixLockStyle" jdbcType="TINYINT" />
+		<result column="FIX_LOCK_ENDTIME" property="fixLockEndtime" jdbcType="DATE" />
+		<result column="FIX_APR" property="fixApr" jdbcType="DECIMAL" />
+		<result column="FIX_BORROW_NAME" property="fixBorrowName" jdbcType="VARCHAR" />
+		<result column="FIX_CONTRACT_NO" property="fixContractNo" jdbcType="VARCHAR" />
+		<result column="BID_PASSWORD" property="bidPassword" jdbcType="VARCHAR" />
+		<result column="ADDTIME" property="addtime" jdbcType="TIMESTAMP" />
+		<result column="ADDUSER" property="adduser" jdbcType="INTEGER" />
+		<result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="INTEGER" />
+		<result column="SUCCESS_TIME" property="successTime" jdbcType="TIMESTAMP" />
+		<result column="STATUS" property="status" jdbcType="BIT" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="PLATFORM" property="platform" jdbcType="BIT" />
+		<result column="dzcMoney" property="dzcMoney" jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="fixBorrowTransferColumn">
+		fb.ID,
+		fb.FIX_BORROW_ID,
+		fb.ACCOUNT,
+		fb.USE_MONEY,
+		fb.AWARDS,
+		fb.ACCOUNT_REAL,
+		fb.ACCOUNT_YES,
+		fb.FIX_LOCK_LIMIT,
+		fb.FIX_LOCK_STYLE,
+		fb.FIX_LOCK_ENDTIME,
+		fb.FIX_APR,
+		fb.FIX_BORROW_NAME,
+		fb.FIX_CONTRACT_NO,
+		fb.BID_PASSWORD,
+		fb.ADDTIME,
+		fb.ADDUSER,
+		fb.LAST_UPDATE_TIME,
+		fb.LAST_UPDATE_USER,
+		fb.SUCCESS_TIME,
+		fb.`STATUS`,
+		fb.REMARK,
+		fb.PLATFORM
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="fixBorrowTransferColumn" />
+		from t_fix_borrow_transfer fb
+		where fb.ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from t_fix_borrow_transfer
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.cxdai.console.fix.entity.FixBorrowTransfer" useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+		insert into t_fix_borrow_transfer (FIX_BORROW_ID, ACCOUNT,
+		USE_MONEY, AWARDS, ACCOUNT_REAL,
+		ACCOUNT_YES, FIX_LOCK_LIMIT, FIX_LOCK_STYLE,
+		FIX_LOCK_ENDTIME, FIX_APR, FIX_BORROW_NAME,
+		FIX_CONTRACT_NO, BID_PASSWORD, ADDTIME,
+		ADDUSER, LAST_UPDATE_TIME, LAST_UPDATE_USER,
+		SUCCESS_TIME, STATUS, REMARK,
+		PLATFORM)
+		values ( #{fixBorrowId,jdbcType=INTEGER},
+		#{account,jdbcType=DECIMAL},
+		#{useMoney,jdbcType=DECIMAL}, #{awards,jdbcType=DECIMAL}, #{accountReal,jdbcType=DECIMAL},
+		#{accountYes,jdbcType=DECIMAL}, #{fixLockLimit,jdbcType=TINYINT},
+		#{fixLockStyle,jdbcType=TINYINT},
+		#{fixLockEndtime,jdbcType=DATE}, #{fixApr,jdbcType=DECIMAL}, #{fixBorrowName,jdbcType=VARCHAR},
+		#{fixContractNo,jdbcType=VARCHAR}, #{bidPassword,jdbcType=VARCHAR},
+		CURRENT_TIMESTAMP,
+		#{adduser,jdbcType=INTEGER}, #{lastUpdateTime,jdbcType=TIMESTAMP},
+		#{lastUpdateUser,jdbcType=INTEGER},
+		#{successTime,jdbcType=TIMESTAMP}, #{status,jdbcType=BIT}, #{remark,jdbcType=VARCHAR},
+		#{platform,jdbcType=BIT})
+	</insert>
+	<insert id="insertSelective" parameterType="com.cxdai.console.fix.entity.FixBorrowTransfer">
+		insert into t_fix_borrow_transfer
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="fixBorrowId != null">
+				FIX_BORROW_ID,
+			</if>
+			<if test="account != null">
+				ACCOUNT,
+			</if>
+			<if test="useMoney != null">
+				USE_MONEY,
+			</if>
+			<if test="awards != null">
+				AWARDS,
+			</if>
+			<if test="accountReal != null">
+				ACCOUNT_REAL,
+			</if>
+			<if test="accountYes != null">
+				ACCOUNT_YES,
+			</if>
+			<if test="fixLockLimit != null">
+				FIX_LOCK_LIMIT,
+			</if>
+			<if test="fixLockStyle != null">
+				FIX_LOCK_STYLE,
+			</if>
+			<if test="fixLockEndtime != null">
+				FIX_LOCK_ENDTIME,
+			</if>
+			<if test="fixApr != null">
+				FIX_APR,
+			</if>
+			<if test="fixBorrowName != null">
+				FIX_BORROW_NAME,
+			</if>
+			<if test="fixContractNo != null">
+				FIX_CONTRACT_NO,
+			</if>
+			<if test="bidPassword != null">
+				BID_PASSWORD,
+			</if>
+			<if test="addtime != null">
+				ADDTIME,
+			</if>
+			<if test="adduser != null">
+				ADDUSER,
+			</if>
+			<if test="lastUpdateTime != null">
+				LAST_UPDATE_TIME,
+			</if>
+			<if test="lastUpdateUser != null">
+				LAST_UPDATE_USER,
+			</if>
+			<if test="successTime != null">
+				SUCCESS_TIME,
+			</if>
+			<if test="status != null">
+				STATUS,
+			</if>
+			<if test="remark != null">
+				REMARK,
+			</if>
+			<if test="platform != null">
+				PLATFORM,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="fixBorrowId != null">
+				#{fixBorrowId,jdbcType=INTEGER},
+			</if>
+			<if test="account != null">
+				#{account,jdbcType=DECIMAL},
+			</if>
+			<if test="useMoney != null">
+				#{useMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="awards != null">
+				#{awards,jdbcType=DECIMAL},
+			</if>
+			<if test="accountReal != null">
+				#{accountReal,jdbcType=DECIMAL},
+			</if>
+			<if test="accountYes != null">
+				#{accountYes,jdbcType=DECIMAL},
+			</if>
+			<if test="fixLockLimit != null">
+				#{fixLockLimit,jdbcType=TINYINT},
+			</if>
+			<if test="fixLockStyle != null">
+				#{fixLockStyle,jdbcType=TINYINT},
+			</if>
+			<if test="fixLockEndtime != null">
+				#{fixLockEndtime,jdbcType=DATE},
+			</if>
+			<if test="fixApr != null">
+				#{fixApr,jdbcType=DECIMAL},
+			</if>
+			<if test="fixBorrowName != null">
+				#{fixBorrowName,jdbcType=VARCHAR},
+			</if>
+			<if test="fixContractNo != null">
+				#{fixContractNo,jdbcType=VARCHAR},
+			</if>
+			<if test="bidPassword != null">
+				#{bidPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="addtime != null">
+				#{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="adduser != null">
+				#{adduser,jdbcType=INTEGER},
+			</if>
+			<if test="lastUpdateTime != null">
+				#{lastUpdateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateUser != null">
+				#{lastUpdateUser,jdbcType=INTEGER},
+			</if>
+			<if test="successTime != null">
+				#{successTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=BIT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="platform != null">
+				#{platform,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.fix.entity.FixBorrowTransfer">
+		update t_fix_borrow_transfer
+		<set>
+			<if test="fixBorrowId != null">
+				FIX_BORROW_ID = #{fixBorrowId,jdbcType=INTEGER},
+			</if>
+			<if test="account != null">
+				ACCOUNT = #{account,jdbcType=DECIMAL},
+			</if>
+			<if test="useMoney != null">
+				USE_MONEY = #{useMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="awards != null">
+				AWARDS = #{awards,jdbcType=DECIMAL},
+			</if>
+			<if test="accountReal != null">
+				ACCOUNT_REAL = #{accountReal,jdbcType=DECIMAL},
+			</if>
+			<if test="accountYes != null">
+				ACCOUNT_YES = #{accountYes,jdbcType=DECIMAL},
+			</if>
+			<if test="fixLockLimit != null">
+				FIX_LOCK_LIMIT = #{fixLockLimit,jdbcType=TINYINT},
+			</if>
+			<if test="fixLockStyle != null">
+				FIX_LOCK_STYLE = #{fixLockStyle,jdbcType=TINYINT},
+			</if>
+			<if test="fixLockEndtime != null">
+				FIX_LOCK_ENDTIME = #{fixLockEndtime,jdbcType=DATE},
+			</if>
+			<if test="fixApr != null">
+				FIX_APR = #{fixApr,jdbcType=DECIMAL},
+			</if>
+			<if test="fixBorrowName != null">
+				FIX_BORROW_NAME = #{fixBorrowName,jdbcType=VARCHAR},
+			</if>
+			<if test="fixContractNo != null">
+				FIX_CONTRACT_NO = #{fixContractNo,jdbcType=VARCHAR},
+			</if>
+			<if test="bidPassword != null">
+				BID_PASSWORD = #{bidPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="addtime != null">
+				ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="adduser != null">
+				ADDUSER = #{adduser,jdbcType=INTEGER},
+			</if>
+			<if test="lastUpdateTime != null">
+				LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateUser != null">
+				LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=INTEGER},
+			</if>
+			<if test="successTime != null">
+				SUCCESS_TIME = #{successTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=BIT},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="platform != null">
+				PLATFORM = #{platform,jdbcType=BIT},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.cxdai.console.fix.entity.FixBorrowTransfer">
+		update t_fix_borrow_transfer
+		set FIX_BORROW_ID = #{fixBorrowId,jdbcType=INTEGER},
+		ACCOUNT = #{account,jdbcType=DECIMAL},
+		USE_MONEY = #{useMoney,jdbcType=DECIMAL},
+		AWARDS = #{awards,jdbcType=DECIMAL},
+		ACCOUNT_REAL = #{accountReal,jdbcType=DECIMAL},
+		ACCOUNT_YES = #{accountYes,jdbcType=DECIMAL},
+		FIX_LOCK_LIMIT = #{fixLockLimit,jdbcType=TINYINT},
+		FIX_LOCK_STYLE = #{fixLockStyle,jdbcType=TINYINT},
+		FIX_LOCK_ENDTIME = #{fixLockEndtime,jdbcType=DATE},
+		FIX_APR = #{fixApr,jdbcType=DECIMAL},
+		FIX_BORROW_NAME = #{fixBorrowName,jdbcType=VARCHAR},
+		FIX_CONTRACT_NO = #{fixContractNo,jdbcType=VARCHAR},
+		BID_PASSWORD = #{bidPassword,jdbcType=VARCHAR},
+		ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+		ADDUSER = #{adduser,jdbcType=INTEGER},
+		LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+		LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=INTEGER},
+		SUCCESS_TIME = #{successTime,jdbcType=TIMESTAMP},
+		STATUS = #{status,jdbcType=BIT},
+		REMARK = #{remark,jdbcType=VARCHAR},
+		PLATFORM = #{platform,jdbcType=BIT}
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 手动认购 count -->
+	<select id="getFixBorrowCountBySubsConn" parameterType="com.cxdai.console.fix.vo.FixBorrowTransferCnd"
+		resultType="java.lang.Integer">
+			<![CDATA[
+				select count(1)
+					from t_fix_borrow_transfer 
+					where status = 1
+			]]>
+	</select>
+
+	<!-- 手动认购list -->
+	<select id="getFixBorrowBySubsConn" parameterType="com.cxdai.console.fix.vo.FixBorrowTransferCnd"
+		resultMap="BaseResultMap">
+			<![CDATA[
+					select ID,FIX_BORROW_ID,FIX_CONTRACT_NO , ACCOUNT_REAL, FIX_LOCK_LIMIT, (ACCOUNT_REAL - ACCOUNT_yes) as dzcMoney,USE_MONEY
+					from t_fix_borrow_transfer 
+					where status = 1
+					order by fix_lock_endtime ASC
+			]]>
+	</select>
+    
+	<!-- 查询转让中定期宝转让信息 -->
+	<select id="queryTransferingFixBorrowList" parameterType="com.cxdai.console.fix.vo.FixBorrowTransferCnd" resultMap="BaseResultMap">
+		SELECT
+		<include refid="fixBorrowTransferColumn" />
+		FROM t_fix_borrow_transfer fb
+		WHERE fb.`STATUS` = 1
+		and fb.id = #{id}
+		ORDER BY fb.ACCOUNT ASC,fb.FIX_LOCK_LIMIT ASC
+	</select>
+
+	<!-- 根据ID查询定期宝转让信息 -->
+	<select id="queryFixBorrowTransferById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		SELECT
+		<include refid="fixBorrowTransferColumn" />
+		FROM t_fix_borrow_transfer fb
+		WHERE fb.ID = #{id} FOR UPDATE
+	</select>
+	
+	<!-- 根据借款标ID查询定期宝转让信息 -->
+	<select id="queryFixBorrowTransferByBorrowId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select fbt.ID,fbt.FIX_BORROW_ID from t_fix_borrow_transfer fbt 
+		INNER JOIN t_fix_tender_transfer ftt on fbt.ID=ftt.FIX_BORROW_TRANSFER_ID 
+		where ftt.BORROW_ID=#{borrowId} and fbt.`STATUS`=1
+	</select>
+	
+
+</mapper>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.stock.mapper.CapitalAccountMapper" >
+	
+
+<insert id="saveCurAccountlog" parameterType="com.cxdai.console.curaccount.entity.CurAccountlog">
+		insert into t_cur_accountlog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				USER_ID,
+			</if>
+			<if test="money != null">
+				MONEY,
+			</if>
+			<if test="type != null">
+				TYPE,
+			</if>
+			<if test="total != null">
+				TOTAL,
+			</if>
+			<if test="useMoney != null">
+				USE_MONEY,
+			</if>
+			<if test="noUseMoney != null">
+				NO_USE_MONEY,
+			</if>
+			<if test="interestTotal != null">
+				INTEREST_TOTAL,
+			</if>
+			<if test="interestYesterday != null">
+				INTEREST_YESTERDAY,
+			</if>
+			<if test="adduser != null">
+				ADDUSER,
+			</if>
+			<if test="addip != null">
+				ADDIP,
+			</if>
+			<if test="remark != null">
+				REMARK,
+			</if>
+			ADDTIME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="money != null">
+				#{money,jdbcType=DECIMAL},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="total != null">
+				#{total,jdbcType=DECIMAL},
+			</if>
+			<if test="useMoney != null">
+				#{useMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="noUseMoney != null">
+				#{noUseMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="interestTotal != null">
+				#{interestTotal,jdbcType=DECIMAL},
+			</if>
+			<if test="interestYesterday != null">
+				#{interestYesterday,jdbcType=DECIMAL},
+			</if>
+			<if test="adduser != null">
+				#{adduser,jdbcType=INTEGER},
+			</if>
+			<if test="addip != null">
+				#{addip,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			now(),
+		</trim>
+	</insert>
+	
+	
+	<!-- 更新资金账户 -->
+   <update id="updateAccount" parameterType="com.cxdai.console.statistics.account.vo.AccountVo" >
+    update rocky_account
+    <set >
+      <if test="total != null" >
+        TOTAL = #{total},
+      </if>
+      <if test="useMoney != null" >
+        USE_MONEY = #{useMoney},
+      </if>
+      <if test="noUseMoney != null" >
+        NO_USE_MONEY = #{noUseMoney},
+      </if>
+      <if test="drawMoney != null" >
+        DRAW_MONEY = #{drawMoney},
+      </if>
+       <if test="noDrawMoney != null" >
+        NO_DRAW_MONEY = #{noDrawMoney},
+      </if>                                            
+    </set>
+    where user_id = #{userId} and id = #{id}
+  </update>
+  
+	 <!-- 添加 账户日志记录   -->
+	<insert id="saveAccountlog"  parameterType="com.cxdai.console.stock.vo.AccountLogRequest">
+ 		INSERT INTO rocky_accountlog 
+		(USER_ID, 	TYPE,	TOTAL,	MONEY,	USE_MONEY,	NO_USE_MONEY,	COLLECTION,	TO_USER,BORROW_ID,BORROW_NAME,ID_TYPE,REMARK,
+		 ADDTIME,	ADDIP,	FIRST_BORROW_USE_MONEY ,	DRAW_MONEY,	    NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,IS_CUSTODY)
+		
+		SELECT USER_ID,#{type},total,#{money},use_money,no_use_money,collection,#{toUser},#{borrowId},#{borrowName},#{idType},#{remark},
+		UNIX_TIMESTAMP(),#{addip},FIRST_BORROW_USE_MONEY,DRAW_MONEY,NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,#{isCustody}
+		FROM rocky_account WHERE USER_ID=#{userId}
+	</insert>
+  
+  
+  	<select id="queryCapitalAccount" parameterType="com.cxdai.console.stock.vo.CapitalAccountCnd" resultType="com.cxdai.console.statistics.account.vo.AccountVo" >
+		select 	
+		   	a.ID  id, 
+			a.USER_ID userId, 
+			a.TOTAL total, 
+			a.USE_MONEY useMoney, 
+			a.NO_USE_MONEY noUseMoney, 
+			a.COLLECTION collection, 
+			a.NETVALUE netvalue, 
+			a.FIRST_BORROW_USE_MONEY firstBorrowUseMoney,
+			a.VERSION version,
+			a.DRAW_MONEY drawMoney,
+			a.NO_DRAW_MONEY noDrawMoney
+		from
+			rocky_account a
+		where 1=1
+		<if test="id != null">
+			and a.id =#{id}
+		</if>
+		<if test="userId != null ">
+			and a.USER_ID = #{userId}
+		</if>
+		<if test="year != null and year == 'yes'">
+			FOR UPDATE
+		</if>		
+  	</select>
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseMortgageMapper">
+
+<!-- 插入记录，返回主键 -->
+<insert id="insertEntity" parameterType="com.cxdai.console.base.entity.Mortgage">
+	insert into t_mortgage
+		(borrow_id,has_house,has_house_mortgage,house_location,house_area,has_car,has_car_mortgage,car_no,car_value,addtime,addip)
+	values
+		(#{borrowId},#{hasHouse},#{hasHouseMortgage},#{houseLocation},#{houseArea},#{hasCar},#{hasCarMortgage},#{carNo},#{carValue},#{addtime},#{addip})
+		
+	<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+		select last_insert_id() as id
+	</selectKey>
+</insert>
+	
+</mapper>

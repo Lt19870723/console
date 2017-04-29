@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.maintain.xw.mapper.WxPushMapper">
+    
+    <resultMap type="com.cxdai.console.maintain.xw.entity.WxArticles" id="articlesMap">
+	<result property="id" 			column="id" />
+	<result property="title"		column="title" />
+	<result property="description"			column="description" />
+	<result property="picurl"		column="picurl" />
+	<result property="url"		column="url" />
+	<result property="parentId"		column="parent_id" />
+	<result property="sort"			column="sort" />
+	<result property="createTime"			column="create_time" />
+	<result property="createUser"	column="create_user" />
+	<result property="updateTime"			column="update_time" />
+	<result property="updateUser"			column="update_user" />
+	<result property="pushNum"			column="push_num" />
+	<result property="status"			column="status" />
+	<result property="pushTime"			column="push_time" />
+	<result property="removeTag"			column="remove_tag" />
+</resultMap>
+    
+    
+	<select id="searchCount" parameterType="com.cxdai.console.maintain.xw.entity.SearchNews" resultType="java.lang.Integer">
+	    select count(*) from wx_articles where remove_tag =1 and type=#{pushType}  
+	    <if test="isPush !=null  and isPush !=''">
+	    	and status=#{isPush}
+	    </if>
+	    <if test="pushTime !=null">
+	        and push_time <![CDATA[>=]]>#{pushTime}
+	    </if>
+	     <if test="pushTime2 !=null">
+	        and push_time <![CDATA[<=]]> #{pushTime2}
+	    </if>	
+	    and parent_id is null or parent_id =0    
+	</select>
+	
+	<select id="searchAll" parameterType="com.cxdai.console.maintain.xw.entity.SearchNews" resultType="com.cxdai.console.maintain.xw.entity.ShowList">
+	    select id id,picurl picurl,description text,url url,title title,status status,push_num pushNum,
+	    push_time pushTime ,type type,push_num_total pushNumTotal
+	    from wx_articles   where remove_tag =1  and type=#{pushType}  
+	    <if test="isPush !=null and isPush !=''">
+	    	and status=#{isPush}
+	    </if>
+	    <if test="pushTime !=null">
+	        and push_time <![CDATA[>=]]>#{pushTime}
+	    </if>
+	     <if test="pushTime2 !=null">
+	        and push_time <![CDATA[<=]]> #{pushTime2}
+	    </if>
+	   	and parent_id is null or parent_id =0
+		  order by id desc
+	     <if test="pageSize != null">
+			limit ${begin},${pageSize}
+		  </if>	
+	</select>
+	<insert id="insterNews" parameterType="com.cxdai.console.maintain.xw.entity.WxArticles"  useGeneratedKeys="true"  keyProperty="id">
+	insert into wx_articles (title,description,picurl,url,parent_id,
+	   		 sort,create_time,create_user,
+	   		 update_time,update_user,push_num,status,push_time,type,ip,push_user,mac,push_num_total,serial_number) 
+	values (#{title},#{description},#{picurl},#{url},
+	   		#{parentId},#{sort},
+	   		#{createTime},#{createUser},#{updateTime},#{updateUser},
+	   		#{pushNum},#{status},#{pushTime},#{type},#{ip},#{pushUser},#{mac},#{pushNumTotal},#{serialNnumber})
+	</insert>
+	<update id="updateNews" parameterType="com.cxdai.console.maintain.xw.entity.WxArticles">
+		update wx_articles set title=#{title},description=#{description},
+			 picurl=#{picurl},
+			 url=#{url},
+	   		 sort=#{sort},update_time=#{updateTime},
+	   		 parent_id=#{parentId},
+	   		 update_User=#{updateUser}
+	   		 where id=#{id} and status=2
+	</update>
+	
+	<update id="deleteNews" parameterType="java.util.Map">
+		update wx_articles set remove_tag=2 where remove_tag=1 and status=2 and id=#{id}
+		or parent_id =#{id} and type=#{type}
+	</update>
+	<update id="deleteNewsByPid" parameterType="java.lang.String">
+		update wx_articles set remove_tag=2 where remove_tag=1 and status=2 and id in (${ids})
+	</update>
+	
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="articlesMap">
+		select * from wx_articles where id=#{id}
+	</select>
+	<select id="queryTextById" parameterType="java.lang.Integer" resultType="com.cxdai.console.maintain.xw.entity.WxText">
+	    select ID,CONTENT text,PUSH_NUM pushNum,PUSH_TIME pushTime,STATUS status from wx_text where id =#{id}
+	</select>
+	
+	<update id="updateNewsStatus" parameterType="com.cxdai.console.maintain.xw.entity.WxArticles">
+	    update wx_articles set status=#{status},push_num=#{pushNum}+push_num,push_time=#{pushTime}
+	    ,push_num_total=#{pushNumTotal},ip=#{ip},mac=#{mac},push_user=#{pushUser},serial_number=#{serialNnumber}
+	     where id=#{id} or parent_id=#{id}
+ 	</update>
+ 	
+	<update id="updateText" parameterType="com.cxdai.console.maintain.xw.entity.WxText">
+	    update wx_text set CONTENT=#{text}, UPDATE_USER=#{updateUser},UPDATE_TIME=#{updateTime}
+	   	where id=#{id} and status=2;
+	</update>
+	
+	<select id="queryNewsByPid" parameterType="java.lang.Integer" resultMap="articlesMap">
+	    select * from wx_articles where parent_id=#{id} and remove_tag=1 order by sort asc;
+	</select>
+	
+	<insert id="insertByCopy" parameterType="com.cxdai.console.maintain.xw.entity.WxArticles"
+	   useGeneratedKeys="true"  keyProperty="id" >
+	    insert into wx_articles (title,description,picurl,url,
+	   		 sort,create_time,create_user,
+	   		 <if test="parentId !=null and parentId !=0">
+	   		     parent_id,
+	   		 </if>
+	   		 update_time,update_user,push_num,status,type,ip,push_user,mac,push_num_total) 
+	   		 select title,description,picurl,url,
+	   		 sort,create_time,create_user,
+	   		  <if test="parentId !=null and parentId !=0">
+	   		 	'${parentId}',
+	   		 </if>
+	   		 update_time,update_user,0,2,type,'${ip}','${pushUser}','${mac}',0 
+	   		 from wx_articles where remove_tag=1 
+	   		 <if test="parentId ==null">
+	   		     and id=#{id}
+	   		 </if>
+	   		  <if test="parentId !=null and parentId !=0">
+	   		     and parent_id=#{id}
+	   		 </if>
+	</insert>
+	
+	<select id="queryPushIng" resultType="java.lang.Integer">
+	    select count(*) from wx_articles where status=3 and remove_tag=1;
+	</select>
+</mapper>

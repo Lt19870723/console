@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.fix.mapper.FixOperationLogMapper">	
+	<!-- 添加定期宝操作日志 -->
+	<insert id="insertFixOperationLog" parameterType="com.cxdai.console.fix.entity.FixOperationLog">
+		INSERT INTO
+		t_fix_operation_log (
+		USER_ID,
+		USER_TYPE,
+		FIX_BORROW_ID,
+		<if test="fixTenderRealId != null ">
+		FIX_TENDER_REAL_ID,
+		</if>
+		<if test="setautobidTime != null and setautobidTime!='' ">
+		SETAYTOBIDTIME,
+		</if>
+		OPER_TYPE,
+		ADDTIME,
+		ADDIP,
+		<if test="remark != null ">
+		REMARK,
+		</if>
+		PLATFORM
+		) VALUES (
+		#{userId},
+		#{userType},
+		#{fixBorrowId},
+		<if test="fixTenderRealId != null ">
+		#{fixTenderRealId},
+		</if>
+		<if test="setautobidTime != null and setautobidTime!='' ">
+		#{setautobidTime},
+		</if>
+		#{operType},
+		NOW(),
+		#{addip},
+		<if test="remark != null ">
+		#{remark},
+		</if>
+		#{platform}
+		)
+	</insert>
+</mapper>  

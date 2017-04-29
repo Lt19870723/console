@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.system.mapper.MenuMapper">
+	
+	<select id="countMenuList" parameterType="com.cxdai.console.system.vo.MenuCnd" resultType="java.lang.Integer">
+		select count(*) from t_system_menu
+		<include refid="selectMenuList_where" />
+	</select>
+	<select id="selectMenuList" parameterType="com.cxdai.console.system.vo.MenuCnd" resultType="com.cxdai.console.system.entity.Menu">
+		select * from t_system_menu
+		<include refid="selectMenuList_where" />
+	</select>
+	
+	<sql id="selectMenuList_where">
+		<where>
+		<if test="name != null and name != ''">NAME like concat('%', #{name},'%')</if>
+		<if test="level != null">and LEVEL = #{level}</if>
+		<if test="status != null">and STATUS = #{status}</if>
+		</where>
+	</sql>
+	
+	<select id="selectById" resultType="com.cxdai.console.system.vo.MenuVo" parameterType="java.lang.Integer">
+		select `ID`, `NAME`, `URL`, `DESC`, `ORDER`, `LEVEL`, `STATUS`, `PID`, `REMARK`,
+		  case `LEVEL`
+		    when 1 then 0
+		    when 2 then (select p.ID from t_system_menu p where p.ID = m.PID)
+		    when 3 then (select p1.ID from t_system_menu p1, t_system_menu p2 where p1.ID = p2.PID and p2.ID = m.PID)
+		  end as fristMenuId,
+		  case `LEVEL`
+		    when 1 then null
+		    when 2 then ID
+		    when 3 then (select p.ID from t_system_menu p where p.ID = m.PID)
+		  end as secondMenuId
+		from t_system_menu m where id = #{menuId}
+	</select>
+	
+	<select id="selectByPid" parameterType="java.lang.Integer" resultType="com.cxdai.console.system.entity.Menu">
+		select `ID`, `NAME`, `URL`, `DESC`, `ORDER`, `LEVEL`, `STATUS`, `PID`, `REMARK`
+		from t_system_menu m where pid = #{pid} and `STATUS` = 0
+	</select>
+	
+	<insert id="insert" parameterType="com.cxdai.console.system.entity.Menu" useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+		insert into t_system_menu (`NAME`, `URL`, `DESC`, `ORDER`, `LEVEL`, `STATUS`, `PID`, `REMARK`)
+		select #{name}, #{url}, #{desc}, 
+		  ifnull((select max(`ORDER`) + 10 from t_system_menu where pid = #{pid}), 1000),
+		#{level}, #{status}, #{pid}, #{remark}
+	</insert>
+	
+	<update id="update" parameterType="com.cxdai.console.system.entity.Menu">
+		update t_system_menu
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				URL = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="desc != null">
+				`DESC` = #{desc,jdbcType=VARCHAR},
+			</if>
+			<if test="pid != null">
+				PID = #{pid,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateStatus" parameterType="java.lang.Integer">
+		update t_system_menu set STATUS = (case `STATUS` when 0 then 1 else 0 end)  WHERE id=#{menuId} or pid=#{menuId}
+	</update>
+	
+	<delete id="deletePermissionResourcesByMenuId" parameterType="java.lang.Integer">
+		delete from t_system_permission_resources where TYPE = 0 and RESOURCES_ID in (select id from t_system_menu where id=#{menuId} or pid=#{menuId})
+	</delete>
+</mapper>

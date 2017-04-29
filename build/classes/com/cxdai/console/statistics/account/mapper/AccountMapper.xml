@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.statistics.account.mapper.AccountMapper">
+	
+	<!-- 返回的基本结果集 -->
+	<resultMap type="com.cxdai.console.statistics.account.vo.AccountVo" id="accountMapperBaseResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="total" 					column="TOTAL" />
+		<result property="useMoney" 				column="USE_MONEY" />
+		<result property="noUseMoney" 				column="NO_USE_MONEY" />
+		<result property="collection"	    		column="COLLECTION" />
+		<result property="netvalue"  				column="NETVALUE" />
+		<result property="firstBorrowUseMoney" 		column="FIRST_BORROW_USE_MONEY" />
+		<result property="version"					column="VERSION"/>
+		<result property="drawMoney"				column="DRAW_MONEY"/>
+		<result property="noDrawMoney" 				column="NO_DRAW_MONEY"/>	
+		<result property="username" 				column="username"/>
+		<result property="eUseMoney" 				column="e_use_money"/>
+		<result property="eFreezeMoney" 			column="e_freeze_money"/>
+		<result property="eCollection" 				column="e_collection"/>
+	</resultMap>
+	
+	<!-- 返回的结果集 -->
+	<resultMap type="com.cxdai.console.statistics.account.vo.AccountVo" id="accountMapperResultMap" extends="accountMapperBaseResultMap">
+		<result property="username" 				column="username"/>		
+	</resultMap>
+	
+	 <!--基本列 -->
+	<sql id="accountBaseColumn">
+		a.ID, 
+		a.USER_ID, 
+		a.TOTAL, 
+		a.USE_MONEY, 
+		a.NO_USE_MONEY, 
+		a.COLLECTION, 
+		a.NETVALUE, 
+		a.FIRST_BORROW_USE_MONEY,
+		a.DRAW_MONEY,
+		a.NO_DRAW_MONEY,
+		a.VERSION,
+	  	a.e_use_money,
+		a.e_freeze_money,
+		a.e_collection
+	</sql>
+	
+	<!-- 封装查询条件 -->
+	<sql id="account_Where_Clause">
+		<if test="id != null">
+			and a.id =#{id}
+		</if>
+		<if test="userId != null ">
+			and a.USER_ID = #{userId}
+		</if>
+	</sql>
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.statistics.account.entity.Account" id="accountEntityResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="total" 					column="TOTAL" />
+		<result property="useMoney" 				column="USE_MONEY" />
+		<result property="noUseMoney" 				column="NO_USE_MONEY" />
+		<result property="collection"	    		column="COLLECTION" />
+		<result property="netvalue"  				column="NETVALUE" />
+		<result property="firstBorrowUseMoney" 		column="FIRST_BORROW_USE_MONEY" />
+		<result property="version"					column="VERSION"/>
+		<result property="drawMoney"				column="DRAW_MONEY"/>
+		<result property="noDrawMoney" 				column="NO_DRAW_MONEY"/>
+		<result property="eUseMoney" 				column="e_use_money"/>
+		<result property="eFreezeMoney" 			column="e_freeze_money"/>
+		<result property="eCollection" 				column="e_collection"/>
+	</resultMap>
+	
+	
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.statistics.account.entity.Account">
+		INSERT INTO rocky_account 
+		(USER_ID,	TOTAL,	USE_MONEY,	NO_USE_MONEY,	COLLECTION,	NETVALUE,	FIRST_BORROW_USE_MONEY,VERSION	)
+		VALUES
+		(#{userId},#{total},#{useMoney},#{noUseMoney},
+		#{collection},#{netvalue},#{firstBorrowUseMoney},#{version},
+		#{eUseMoney},#{eFreezeMoney},#{eCollection})
+		
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="accountEntityResultMap" >
+		select 	
+		   <include refid="accountBaseColumn"/>
+		from
+			rocky_account a
+		where 1=1
+		and a.id=#{id}
+  	</select>
+  	
+  	<!-- 根据ID查询 -->
+	<select id="queryByUserIdForUpdate" parameterType="java.lang.Integer" resultMap="accountEntityResultMap" >
+		select 	
+		   <include refid="accountBaseColumn"/>
+		from
+			rocky_account a
+		where 1=1
+		and a.user_id=#{userId}
+		FOR UPDATE
+  	</select>
+	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.statistics.account.entity.Account" >
+    update rocky_account
+    <set >
+      <if test="total != null" >
+        TOTAL = #{total},
+      </if>
+      <if test="useMoney != null" >
+        USE_MONEY = #{useMoney},
+      </if>
+      <if test="noUseMoney != null" >
+        NO_USE_MONEY = #{noUseMoney},
+      </if>
+      <if test="collection != null" >
+        COLLECTION = #{collection},
+      </if>
+      <if test="netvalue != null" >
+        NETVALUE = #{netvalue},
+      </if>
+      <if test="drawMoney != null" >
+        DRAW_MONEY = #{drawMoney},
+      </if>
+       <if test="noDrawMoney != null" >
+        NO_DRAW_MONEY = #{noDrawMoney},
+      </if>
+      <if test="firstBorrowUseMoney != null" >
+        FIRST_BORROW_USE_MONEY = #{firstBorrowUseMoney},
+      </if>           
+      <if test="version != null" >
+        VERSION = #{version},
+      </if>
+		<if test="eUseMoney != null" >
+			e_use_money = #{eUseMoney},
+		</if>
+		<if test="eFreezeMoney != null" >
+			e_freeze_money = #{eFreezeMoney},
+		</if>
+		<if test="eCollection != null" >
+			e_collection = #{eCollection},
+		</if>
+	</set>
+    where ID = #{id}
+    <if test="selfVersion != null">
+       and VERSION = #{selfVersion}
+    </if>
+  </update>
+		
+  	<!-- 根据用户ID查询对象并锁定记录 -->
+	<select id="queryAccountByUserIdForUpdate" resultMap="accountMapperBaseResultMap" >
+		select 	
+		   <include refid="accountBaseColumn"/>
+		from
+			rocky_account a
+		where 1=1
+		and a.USER_ID = #{memberId}
+		FOR UPDATE
+  	</select>
+  	<select id="queryAccountByUserId" resultMap="accountMapperBaseResultMap" >
+		select 	
+		   <include refid="accountBaseColumn"/>
+		from
+			rocky_account a
+		where 1=1
+		and a.USER_ID = #{memberId}
+  	</select>
+	
+	
+  	<!-- 根据条件查询记录集合 -->
+	<select id="queryAccountList" parameterType="com.cxdai.console.statistics.account.vo.AccountCnd" resultMap="accountMapperResultMap" >
+		select 	
+		   <include refid="accountBaseColumn"/>,m.username
+		from
+			rocky_account a, rocky_member m
+		where a.user_id = m.id
+		<include refid="account_Where_Clause"/>
+		<if test="username != null">
+			and m.username like concat('%',#{username},'%') 
+		</if>
+		order by m.id asc
+  	</select>
+  	
+  	  	<!-- 根据条件查询记录数量-->
+	<select id="queryAccountCount" parameterType="com.cxdai.console.statistics.account.vo.AccountCnd" resultType="java.lang.Integer" >
+		select count(a.id)
+		from
+			rocky_account a, rocky_member m
+		where a.user_id = m.id
+		<include refid="account_Where_Clause"/>
+		<if test="username != null">
+			and m.username like concat('%',#{username},'%') 
+		</if>
+  	</select>
+  	
+  	<!-- 统计平台数据（资产总额、可用余额、可提现金额、不可提现金额、冻结总额、待收金额、投标直通车余额） -->
+  	<select id="platformAccount"  resultType="java.util.Map" >
+				SELECT
+				  SUM(a.total) sum_total,
+				  SUM(a.use_money+a.e_use_money) sum_use_money,
+				  SUM(a.DRAW_MONEY) sum_draw_money,
+				  SUM(a.NO_DRAW_MONEY) sum_no_draw_money,
+				  SUM(a.no_use_money+a.e_freeze_money) sum_no_use_money,
+				  SUM(a.COLLECTION+a.e_collection) sum_collection,
+				  SUM(a.FIRST_BORROW_USE_MONEY) sum_first_borrow_use_money
+				FROM rocky_account a,
+				     rocky_member m
+				WHERE 1 = 1
+				AND a.user_id = m.id
+				AND m.IS_FINANCIAL_USER = 1
+				AND m.STATUS = 0 
+				AND m.USERNAME != '国诚金融' AND m.USERNAME != '国阳资产'
+				AND m.USERNAME != '国诚投监会基金'
+  	</select>
+  	
+  	<!-- 统计平台数据（可用余额 、可用资金统计，其中账户总额小于50元的不统计) -->
+  	<select id="platformUserMoneyTotal"  resultType="java.math.BigDecimal" >
+				SELECT
+					  IFNULL(ROUND(SUM(a.use_money),2),0) sum_use_money
+				FROM rocky_account a,
+				     rocky_member m
+				WHERE 1 = 1
+				AND a.user_id = m.id
+				AND a.total >= 50
+				AND m.IS_FINANCIAL_USER = 1
+				AND m.STATUS = 0 
+				AND m.USERNAME != '国诚金融' AND m.USERNAME != '国阳资产'
+				AND m.USERNAME != '国诚投监会基金'
+  	</select>  	
+  	
+  	<!-- 查询账户资金异常记录 -->
+  	<select id="queryAccountUnusualForPage" parameterType="com.cxdai.console.statistics.account.vo.AccountCnd" resultMap="accountMapperResultMap" >
+		SELECT 	
+		   <include refid="accountBaseColumn"/>,m.USERNAME 
+		FROM rocky_account a,rocky_member m 
+		WHERE a.USER_ID = m.ID AND (a.TOTAL <![CDATA[< ]]> 0 OR a.USE_MONEY <![CDATA[<]]> 0 OR a.NO_USE_MONEY <![CDATA[<]]> 0 OR a.COLLECTION <![CDATA[<]]> 0 OR a.NETVALUE <![CDATA[<]]> 0 OR a.FIRST_BORROW_USE_MONEY <![CDATA[<]]> 0) 
+  		<if test="username != null and username != '' ">
+			and m.USERNAME like concat('%',#{username},'%') 
+		</if>
+  	</select>
+  	
+  	
+  	<!-- 查询账户资金异常记录数量 -->
+  	<select id="queryAccountUnusualForCounts" parameterType="com.cxdai.console.statistics.account.vo.AccountCnd" resultType="java.lang.Integer" >
+		SELECT 	
+		   count(*)
+		FROM rocky_account a,rocky_member m 
+		  WHERE a.USER_ID = m.ID AND (a.TOTAL <![CDATA[< ]]> 0 OR a.USE_MONEY <![CDATA[<]]> 0 OR a.NO_USE_MONEY <![CDATA[<]]> 0 OR a.COLLECTION <![CDATA[<]]> 0 OR a.NETVALUE <![CDATA[<]]> 0 OR a.FIRST_BORROW_USE_MONEY <![CDATA[<]]> 0) 
+  		<if test="username != null and username != '' ">
+			and m.USERNAME like concat('%',#{username},'%') 
+		</if>
+  	</select>
+  	
+  	<!-- 将定期宝认购金额返回到用户账户 -->
+  	<update id="updateAccountByUserId" parameterType="com.cxdai.console.fix.vo.FixTenderDetailVo">
+  		UPDATE ROCKY_ACCOUNT 
+		SET 
+		TOTAL = TOTAL + #{sumAccount},
+  		USE_MONEY = USE_MONEY + #{sumAccount},
+  		DRAW_MONEY = DRAW_MONEY + #{sumDrawMoney},
+  		NO_DRAW_MONEY = NO_DRAW_MONEY + #{sumNoDrawMoney}
+		WHERE USER_ID = #{userId}
+  	</update>
+  	
+   <select id="findAccountByUserIdForUpdate" parameterType="java.lang.Integer" resultMap="accountMapperResultMap" >
+  	select 	
+		   <include refid="accountBaseColumn"/>
+		from
+			rocky_account a where a.USER_ID = #{userId} FOR UPDATE
+  	
+  	</select>
+  	
+ 	<update id="updateCGAccount" parameterType="com.cxdai.console.statistics.account.vo.AccountVo">
+  		update rocky_account set e_use_money=#{eUseMoney},e_freeze_money=#{eFreezeMoney}  where ID=#{id}
+  	</update>
+  	
+  	
+</mapper>  

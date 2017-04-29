@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.fix.mapper.FixAccountLogMapper">
+	
+		<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.fix.vo.FixAccountLogVo" id="fixAccountLogResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="Type" 					column="TYPE" />
+		<result property="fixBorrowId"	    		column="FIX_BORROW_ID" />
+		<result property="borrowId"	    		    column="BORROW_ID" />
+		<result property="borrowName"	    		column="BORROW_NAME" />
+		<result property="idType"	    		    column="ID_TYPE" />
+		<result property="money"	    		    column="MONEY" />
+		<result property="total"	    			column="TOTAL" />
+		<result property="useMoney"	    			column="USE_MONEY" />
+		<result property="noUseMoney"	    		column="NO_USE_MONEY" />
+		<result property="collection"  				column="COLLECTION" />
+		<result property="addUser" 					column="ADDUSER" />
+		<result property="addTime"					column="ADDTIME"/>
+		<result property="addIp"					column="ADDIP"/>
+		<result property="remark" 					column="REMARK"/>
+		<result property="remark" 					column="REMARK"/>
+		<result property="remark" 					column="REMARK"/>
+	</resultMap>
+	 
+	 
+	 <!-- 新增账户日志 -->
+	<insert id="insertFixAccountLog" parameterType="com.cxdai.console.fix.vo.FixAccountLogVo">
+			INSERT INTO t_fix_account_log ( 
+				FIX_BORROW_ID,
+				TYPE,
+				<if test="borrowId != null ">
+				BORROW_ID,
+				BORROW_NAME,
+				ID_TYPE,
+				</if>
+				MONEY,
+				TOTAL,
+				USE_MONEY,
+				NO_USE_MONEY,
+				COLLECTION,
+				CAPITAL,
+				PROFIT,
+				ADDUSER,
+				ADDTIME,
+				<if test="remark != null">
+				REMARK,
+				</if>
+				ADDIP
+			) VALUES (
+		        #{fixBorrowId},
+		        #{type},
+		        <if test="borrowId != null ">
+		        #{borrowId},
+		        #{borrowName},
+		        #{idType},
+		        </if>
+		        #{money},
+		        #{total},
+		        #{useMoney},
+		        #{noUseMoney},
+		        #{collection},
+		        #{capital},
+		        #{profit},
+		        #{addUser},
+		         now(),
+		        <if test="remark != null">
+		        #{remark},	
+		        </if>
+		        #{addIp}
+			)
+	</insert>
+</mapper>  

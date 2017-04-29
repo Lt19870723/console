@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.information.mapper.ApproModifyLogMapper">
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.customer.information.entity.ApproModifyLog">
+		INSERT INTO t_appro_modify_log 
+		(USER_ID,OLD_CONTENT, 	NEW_CONTENT,	TYPE,	ADDTIME, STAFF_ID,	ADD_IP,	ADD_MAC,	REMARK,isPassed,PLATFORM)
+		VALUES
+		(#{userId},#{oldContent},#{newContent},#{type},#{addtime},#{staffId},#{addIp},#{addMac},#{remark},#{isPassed},#{platform})
+		
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+</mapper>  

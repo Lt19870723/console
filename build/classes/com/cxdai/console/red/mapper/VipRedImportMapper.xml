@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.red.mapper.VipRedImportMapper">
+
+	<resultMap type="com.cxdai.console.red.entity.VipRedImport"
+		id="vipRedImportMap">
+		<id property="id" column="id" />
+		<id property="optName" column="OPTNAME" />
+		<id property="addTime" column="ADDTIME" />
+		<id property="number" column="NUMBER" />
+		<id property="optTime" column="OPTTIME" />
+		<id property="status" column="STATUS" />
+		<id property="remark" column="REMARK" />
+		<id property="remarkInfo" column="REMARKINFO" />
+	</resultMap>
+
+	<!-- 新增，返回ID -->
+	<insert id="add" parameterType="com.cxdai.console.red.entity.VipRedImport">
+		insert into
+		t_red_envelop_inviter_log(NUMBER,OPTNAME,OPTTIME,REMARK,ADDTIME,ADDNAME,STATUS,REMARKINFO)
+		values(#{number},#{optName},#{optTime},#{remark},#{addTime},#{addName},#{status},#{remarkInfo})
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+	<sql id="redImport_Where_Clause">
+		<if test="optName != null and optName != ''">
+			AND inviterlog.OPTNAME like concat('%',#{optName},'%')
+		</if>
+		<if test="remark != null and remark != ''">
+			AND inviterlog.REMARK like concat('%',#{remark},'%')
+		</if>
+	</sql>
+	<!-- 根据条件查询记录集合 -->
+	<select id="queryVipRedImportVoList" parameterType="com.cxdai.console.red.vo.VipRedImportCnd"
+		resultMap="vipRedImportMap">
+		select
+		inviterlog.ID,inviterlog.OPTNAME,inviterlog.ADDTIME,inviterlog.NUMBER,inviterlog.OPTTIME,inviterlog.STATUS,inviterlog.REMARK,inviterlog.REMARKINFO
+		from t_red_envelop_inviter_log inviterlog
+		<!-- left join t_red_envelop_inviter inviter on inviterlog.ID = inviter.OPTID -->
+		where 1= 1 and inviterlog.`ACTIVE`=1
+		<if test="optName != null and optName != ''">
+			AND inviterlog.OPTNAME like concat('%',#{optName},'%')
+		</if>
+		<if test="remark != null and remark != ''">
+			AND inviterlog.REMARKINFO like concat('%',#{remark},'%')
+		</if>
+		order by inviterlog.ADDTIME DESC 
+	</select>
+	<!-- 根据条件查询记录数量 -->
+	<select id="queryVipRedImportVoCount" parameterType="com.cxdai.console.red.vo.VipRedImportCnd"
+		resultType="java.lang.Integer">
+		select
+		count(*)
+		from t_red_envelop_inviter_log inviterlog
+		<!-- left join t_red_envelop_inviter inviter on inviterlog.ID = inviter.OPTID -->
+		where 1= 1 and inviterlog.`ACTIVE`=1
+		<if test="optName != null and optName != ''">
+			AND inviterlog.OPTNAME like concat('%',#{optName},'%')
+		</if>
+		<if test="remark != null and remark != ''">
+			AND inviterlog.REMARKINFO like concat('%',#{remark},'%')
+		</if>
+	</select>
+	<update id="updateRedStatus" parameterType="java.lang.String">
+		update t_red_envelop_inviter_log set STATUS = 1,OPTTIME=now() where ID=
+		#{_parameter}
+	</update>
+	
+	<select id="queryVipRedImportById" parameterType="java.lang.Integer" resultMap="vipRedImportMap">		
+		select inviterlog.ID,inviterlog.OPTNAME,inviterlog.ADDTIME,inviterlog.NUMBER,inviterlog.OPTTIME,inviterlog.STATUS,inviterlog.REMARK
+		from t_red_envelop_inviter_log inviterlog
+		where 1= 1 and inviterlog.`ACTIVE`=1 and ID=#{id}
+	</select>
+	
+</mapper>

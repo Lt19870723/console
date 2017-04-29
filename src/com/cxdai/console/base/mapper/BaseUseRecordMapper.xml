@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.base.mapper.BaseUseRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.lottery.entity.BaseUseRecord" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="LOTTERY_ID" property="lotteryId" jdbcType="INTEGER" />
+    <result column="LOTTERY_GOODS_ID" property="lotteryGoodsId" jdbcType="INTEGER" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="AWARD_TYPE" property="awardType" jdbcType="INTEGER" />
+    <result column="LOTTERY_GOODS_NAME" property="lotteryGoodsName" jdbcType="VARCHAR" />
+    <result column="AWARD_NUM" property="awardNum" jdbcType="INTEGER" />
+    <result column="AWARD_MONEY" property="awardMoney" jdbcType="DECIMAL" />
+    <result column="OVERDUE_TIME" property="overdueTime" jdbcType="TIMESTAMP" />
+    <result column="DRAW_TIME" property="drawTime" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="PLATFORM" property="platform" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USER_ID, LOTTERY_ID, LOTTERY_GOODS_ID, STATUS, ADD_TIME, AWARD_TYPE, LOTTERY_GOODS_NAME, 
+    AWARD_NUM, AWARD_MONEY, OVERDUE_TIME, DRAW_TIME, REMARK, PLATFORM
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_lottery_use_record
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_lottery_use_record
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.lottery.entity.BaseUseRecord" >
+    insert into t_lottery_use_record (ID, USER_ID, LOTTERY_ID, 
+      LOTTERY_GOODS_ID, STATUS, ADD_TIME, 
+      AWARD_TYPE, LOTTERY_GOODS_NAME, AWARD_NUM, 
+      AWARD_MONEY, OVERDUE_TIME, DRAW_TIME, 
+      REMARK, PLATFORM)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{lotteryId,jdbcType=INTEGER}, 
+      #{lotteryGoodsId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{awardType,jdbcType=INTEGER}, #{lotteryGoodsName,jdbcType=VARCHAR}, #{awardNum,jdbcType=INTEGER}, 
+      #{awardMoney,jdbcType=DECIMAL}, #{overdueTime,jdbcType=TIMESTAMP}, #{drawTime,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR}, #{platform,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.lottery.entity.BaseUseRecord" >
+    insert into t_lottery_use_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="lotteryId != null" >
+        LOTTERY_ID,
+      </if>
+      <if test="lotteryGoodsId != null" >
+        LOTTERY_GOODS_ID,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME,
+      </if>
+      <if test="awardType != null" >
+        AWARD_TYPE,
+      </if>
+      <if test="lotteryGoodsName != null" >
+        LOTTERY_GOODS_NAME,
+      </if>
+      <if test="awardNum != null" >
+        AWARD_NUM,
+      </if>
+      <if test="awardMoney != null" >
+        AWARD_MONEY,
+      </if>
+      <if test="overdueTime != null" >
+        OVERDUE_TIME,
+      </if>
+      <if test="drawTime != null" >
+        DRAW_TIME,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="platform != null" >
+        PLATFORM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryId != null" >
+        #{lotteryId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryGoodsId != null" >
+        #{lotteryGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="awardType != null" >
+        #{awardType,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryGoodsName != null" >
+        #{lotteryGoodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="awardNum != null" >
+        #{awardNum,jdbcType=INTEGER},
+      </if>
+      <if test="awardMoney != null" >
+        #{awardMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="overdueTime != null" >
+        #{overdueTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="drawTime != null" >
+        #{drawTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        #{platform,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.lottery.entity.BaseUseRecord" >
+    update t_lottery_use_record
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryId != null" >
+        LOTTERY_ID = #{lotteryId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryGoodsId != null" >
+        LOTTERY_GOODS_ID = #{lotteryGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="awardType != null" >
+        AWARD_TYPE = #{awardType,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryGoodsName != null" >
+        LOTTERY_GOODS_NAME = #{lotteryGoodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="awardNum != null" >
+        AWARD_NUM = #{awardNum,jdbcType=INTEGER},
+      </if>
+      <if test="awardMoney != null" >
+        AWARD_MONEY = #{awardMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="overdueTime != null" >
+        OVERDUE_TIME = #{overdueTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="drawTime != null" >
+        DRAW_TIME = #{drawTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        PLATFORM = #{platform,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.lottery.entity.BaseUseRecord" >
+    update t_lottery_use_record
+    set USER_ID = #{userId,jdbcType=INTEGER},
+      LOTTERY_ID = #{lotteryId,jdbcType=INTEGER},
+      LOTTERY_GOODS_ID = #{lotteryGoodsId,jdbcType=INTEGER},
+      STATUS = #{status,jdbcType=INTEGER},
+      ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      AWARD_TYPE = #{awardType,jdbcType=INTEGER},
+      LOTTERY_GOODS_NAME = #{lotteryGoodsName,jdbcType=VARCHAR},
+      AWARD_NUM = #{awardNum,jdbcType=INTEGER},
+      AWARD_MONEY = #{awardMoney,jdbcType=DECIMAL},
+      OVERDUE_TIME = #{overdueTime,jdbcType=TIMESTAMP},
+      DRAW_TIME = #{drawTime,jdbcType=TIMESTAMP},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      PLATFORM = #{platform,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

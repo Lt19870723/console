@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.system.mapper.RoleMapper">
+
+	<select id="countRoleList" parameterType="com.cxdai.console.system.vo.RoleCnd" resultType="java.lang.Integer">
+		select count(*) from t_system_role <include refid="selectRoleList_where" />
+	</select>
+	<select id="selectRoleList" parameterType="com.cxdai.console.system.vo.RoleCnd" resultType="com.cxdai.console.system.entity.Role">
+		select * from t_system_role <include refid="selectRoleList_where" /> order by ID
+	</select>
+	<sql id="selectRoleList_where">
+		<where>
+			<if test="name != null and name != ''">NAME like concat('%', #{name},'%')</if>
+			<if test="status != null">and STATUS = #{status}</if>
+		</where>
+	</sql>
+
+	<select id="selectById" parameterType="java.lang.Integer" resultType="com.cxdai.console.system.vo.RoleVo">
+		select r.*,
+		  (select group_concat(rp.PERMISSION_ID) from t_system_role_permission rp where rp.ROLE_ID = r.ID) permissionIds
+		from t_system_role r where r.ID = #{roleId}
+	</select>
+	
+	<insert id="insert" parameterType="com.cxdai.console.system.entity.Role" useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+		insert into t_system_role (NAME, `DESC`, STATUS, REMARK)
+		values (#{name}, #{desc}, #{status}, #{remark})
+	</insert>
+	
+	<insert id="insertRolePermission" parameterType="java.util.Map">
+		insert into t_system_role_permission (PERMISSION_ID, ROLE_ID)
+		values<foreach collection="permissionIds" item="permissionId" separator=",">(#{permissionId}, #{roleId})</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.cxdai.console.system.entity.Role">
+		update t_system_role
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="desc != null">
+				`DESC` = #{desc,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateStatus" parameterType="java.lang.Integer">
+		update t_system_role set STATUS = (case `STATUS` when 0 then 1 else 0 end) WHERE ID = #{roleId}
+	</update>
+	
+	<delete id="deleteUserPermissionByRoleId" parameterType="java.lang.Integer">
+		delete from t_system_user_permission where PERMISSION_ID in (select PERMISSION_ID from t_system_role_permission where ROLE_ID = #{roleId})
+	</delete>
+	
+	<delete id="deleteRolePermissionByRoleId" parameterType="java.lang.Integer">
+		delete from t_system_role_permission where ROLE_ID = #{roleId}
+	</delete>
+	
+	<delete id="deleteUserRoleByRoleId" parameterType="java.lang.Integer">
+		delete from t_system_user_role where ROLE_ID = #{roleId}
+	</delete>
+</mapper>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.maintain.xw.mapper.WxBlackListMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.maintain.xw.entity.WxBlackListVo" id="blackListVoResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 				column="USER_ID" />
+		<result property="type" 				column="TYPE" />
+		<result property="status" 				column="STATUS" />
+		<result property="addId" 				column="ADD_ID" />
+		<result property="addTime"	   		 	column="ADDTIME" />
+		<result property="addIp"  				column="ADDIP" />
+		<result property="remark" 				column="REMARK" />
+		<result property="updateId" 			column="update_id" />
+		<result property="uptime"	   		 	column="uptime" />
+		<result property="updateIp"  			column="update_ip" />
+		<result property="updateRemark" 		column="update_remark" />
+		<result property="username" 			column="username" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="blackListVoBaseColumn">
+		b.ID, 
+		b.USER_ID, 
+		b.TYPE,
+		b.STATUS, 
+		b.ADD_ID, 
+		b.ADDTIME, 
+		b.ADDIP, 
+		b.REMARK,
+		b.uptime,
+		b.update_id,
+		b.update_ip,
+		b.update_remark
+	</sql>
+	
+	<!-- 封装查询条件 -->
+	<sql id="blacklistVo_Where_Clause">
+		<if test="id != null">
+			and b.id = #{id}
+		</if>
+		<if test="type != null">
+			and b.type = #{type}
+		</if>
+		<if test="status != null">
+			and b.status = #{status}
+		</if>	
+	</sql>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="blackListVoResultMap" >
+		select 	
+		   <include refid="blackListVoBaseColumn"/>,m.username as username
+		from
+			rocky_black_list b, rocky_member m
+		where b.user_id = m.id
+		and b.id=#{id}
+  	</select>
+  	
+  	<!-- 根据ID查询对象并锁定 -->
+  	<select id="queryByIdForUpdate" parameterType="java.lang.Integer" resultMap="blackListVoResultMap" >
+		select 	
+		   <include refid="blackListVoBaseColumn"/>,m.username as username
+		from
+			rocky_black_list b, rocky_member m
+		where b.user_id = m.id
+		and b.id=#{id} for update
+  	</select>
+	
+  	<select id="queryBlackListForWeiXin" parameterType="com.cxdai.console.maintain.xw.entity.WxBlackListCnd" resultMap="blackListVoResultMap" >
+		select r1.*,ifnull(m.username,'未知用户') as username 
+		from 
+			(select b.*,w.u_id from rocky_black_list b  
+			left join  wx_bind w ON w.w_id=b.user_id and w.status=1 
+		where b.status in (1,2)
+		<include refid="blacklistVo_Where_Clause"/>
+			) r1 
+		left join rocky_member m ON m.id=r1.u_id 
+		<if test="username != null and username != ''">
+			where m.USERNAME like concat('%',#{username},'%')
+		</if>
+		ORDER BY r1.addtime desc
+  	</select>
+  	
+	<select id="queryBlackListCountForWeiXin" parameterType="com.cxdai.console.maintain.xw.entity.BlackListCnd" resultType="java.lang.Integer" >
+		select count(r1.id) as username 
+		from 
+			(select b.id,w.u_id from rocky_black_list b  
+			left join  wx_bind w ON w.w_id=b.user_id and w.status=1 
+		where b.status in (1,2)
+		<include refid="blacklistVo_Where_Clause"/>
+			) r1 
+		left join rocky_member m ON m.id=r1.u_id 
+		<if test="username != null and username != ''">
+			where m.USERNAME like concat('%',#{username},'%')
+		</if>
+  	</select>
+  	
+  	<!-- 根据userId和type查询是否已存在禁止中的记录-->
+	<select id="queryCountByUserIdAndType" resultType="java.lang.Integer" >
+		select count(b.id)
+		from
+			rocky_black_list b
+		where b.status in(1,2) and b.user_id = #{userId} and b.type = #{type}
+  	</select>
+  	
+  <update id="updateEntity" parameterType="com.cxdai.console.maintain.xw.entity.BlackList" >
+    update rocky_black_list
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addId != null" >
+        ADD_ID = #{addId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        ADDTIME = #{addTime,jdbcType=DATE},
+      </if>
+      <if test="addIp != null" >
+        ADDIP = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="uptime != null" >
+         uptime = #{uptime,jdbcType=DATE},
+      </if>
+      <if test="updateIp != null" >
+        update_ip = #{updateIp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateRemark != null" >
+        update_remark = #{updateRemark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+</mapper>  

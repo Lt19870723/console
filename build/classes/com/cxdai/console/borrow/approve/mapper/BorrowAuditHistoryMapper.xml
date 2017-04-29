@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.borrow.approve.mapper.BorrowAuditHistoryMapper">
+
+	<resultMap type="com.cxdai.console.borrow.approve.vo.BorrowAuditHistoryVo"
+		id="borrowAuditHistoryVoResultMap">
+		<id property="id" column="id" />
+		<result property="userId" column="USER_ID" />
+		<result property="userName" column="USERNAME" />
+		<result property="name" column="NAME" />
+		<result property="status" column="STATUS" />
+		<result property="apprstatus" column="APPRSTATUS" />
+		<result property="borrowtype" column="BORROWTYPE" />
+		<result property="account" column="ACCOUNT" />
+		<result property="apr" column="APR" />
+		<result property="validTime" column="VALID_TIME" />
+		<result property="addtime" column="ADDTIME" />
+		<result property="style" column="STYLE" />
+		<result property="publishTime" column="PUBLISH_TIME" />
+		<result property="successTime" column="SUCCESS_TIME" />
+		<result property="repaymentAccount" column="REPAYMENT_ACCOUNT" />
+		<result property="jobNum" column="JOBNUM" />
+		<result property="verifyUser" column="VERIFY_USER" />
+		<result property="verifyRemark" column="VERIFY_REMARK" />
+		<result property="verifyTime" column="VERIFY_TIME"/>
+		<result property="auditType" column="auditType"/>
+		<result column="is_custody" 			property="isCustody"/>
+	</resultMap>
+
+	<sql id="borrowRecord_Where_Clause">
+
+		<if test="status != null and status =='over'">
+			AND RB.status <![CDATA[=]]>
+			5
+		</if>
+		<if test="status != null and status == 'fail'">
+			AND RB.status <![CDATA[<]]>
+			0
+		</if>
+		<if test="name != null and name != ''">
+			and RB.NAME like concat('%',#{name},'%')
+		</if>
+		<if test="userName != null and userName != ''">
+			and RM.USERNAME like concat('%',#{userName},'%')
+		</if>
+		<if test="borrowtype != null and borrowtype != ''">
+			and RB.BORROWTYPE =#{borrowtype}
+		</if>
+
+		<if test="beginPublicTimeStr != null and beginPublicTimeStr != ''">
+			and RB.PUBLISH_TIME <![CDATA[>=]]>
+			#{beginPublicTimeStr}
+		</if>
+		<if test="endPublicTimeStr != null and endPublicTimeStr != ''">
+			and RB.PUBLISH_TIME <![CDATA[<=]]>
+			#{endPublicTimeStr}
+		</if>
+
+
+
+
+	</sql>
+
+
+	<!-- 根据条件查询审核日志记录数量 -->
+	<select id="countBorrowAuditHistory" parameterType="com.cxdai.console.borrow.approve.vo.BorrowAuditHistoryCnd"
+		resultType="java.lang.Integer">
+
+		SELECT count(*) FROM (
+		<include refid="temporaryTable"/>
+		) AS temp WHERE temp.VERIFY_USER IS NOT NULL 
+		ORDER BY temp.id DESC 
+	</select>
+
+
+	<select id="queryBorrowAuditHistoryList" parameterType="com.cxdai.console.borrow.approve.vo.BorrowAuditHistoryCnd"
+		resultMap="borrowAuditHistoryVoResultMap">
+
+		SELECT * FROM (
+		<include refid="temporaryTable"/>
+		) AS temp WHERE temp.VERIFY_USER IS NOT NULL 
+		ORDER BY temp.id DESC 
+	</select>
+<sql id="temporaryTable">
+SELECT
+		  rb.id,
+		  rba.id AS rbid,
+		  rb.name,
+		  rb.BORROWTYPE,
+		  '初审' AS auditType,
+		  (SELECT
+		      rs.JOBNUM
+		    FROM rocky_staff rs
+		    WHERE rs.id = rba.VERIFY_USER) AS
+		  VERIFY_USER,
+		  rba.VERIFY_REMARK,
+		  FROM_UNIXTIME(rba.VERIFY_TIME) AS VERIFY_TIME,
+		  rb.STATUS,
+		  rb.user_id,
+		  rm.USERNAME,
+		  rb.ACCOUNT,
+		  rb.APR,
+		  rb.STYLE,
+		  rb.ADDTIME,
+		  rb.VALID_TIME,
+		  rb.APPRSTATUS,
+		  rb.PUBLISH_TIME,
+		  SUCCESS_TIME,
+		  REPAYMENT_ACCOUNT,
+		  rb.is_custody
+		FROM rocky_borrow_approved rba
+		  INNER JOIN rocky_borrow
+		  rb
+		    ON rba.BORROW_ID = rb.id
+		  INNER JOIN rocky_member rm
+		    ON rb.user_id =
+		    rm.id
+		
+		
+		WHERE 1 = 1
+		AND (rba.VERIFY_USER > 0 AND rba.VERIFY_USER IS NOT NULL) AND rb.BORROWTYPE IN (1,2,5 )
+		<include refid="borrowRecord_Where_Clause"/>
+		<if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (rb.is_custody=0 or rb.is_custody is null)
+	  	</if>
+	  	<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and rb.is_custody=1
+	  	</if>  
+		UNION 
+		
+		SELECT
+		  rb.id,
+		  rba.id AS rbid,
+		  rb.name,
+		  rb.BORROWTYPE,
+		  '反欺诈' AS auditType,
+		  (SELECT rs.JOBNUM FROM rocky_staff rs
+				WHERE rs.ID = rba.VERIFY_USER2) AS
+				VERIFY_USER,
+				rba.VERIFY_REMARK2 AS VERIFY_REMARK,
+		   FROM_UNIXTIME(rba.VERIFY_TIME2) AS VERIFY_TIME,
+		  rb.STATUS,
+		  rb.user_id,
+		  rm.USERNAME,
+		  rb.ACCOUNT,
+		  rb.APR,
+		  rb.STYLE,
+		  rb.ADDTIME,
+		  rb.VALID_TIME,
+		  rb.APPRSTATUS,
+		  rb.PUBLISH_TIME,
+		  SUCCESS_TIME,
+		  REPAYMENT_ACCOUNT,
+		  rb.is_custody
+		FROM rocky_borrow_approved rba
+		  INNER JOIN rocky_borrow
+		  rb
+		    ON rba.BORROW_ID = rb.id
+		  INNER JOIN rocky_member rm
+		    ON rb.user_id =
+		    rm.id
+		
+		
+		WHERE 1 = 1
+		AND (rba.VERIFY_USER2 > 0 AND rba.VERIFY_USER2 IS NOT NULL) AND rb.BORROWTYPE IN (1,2,5 )
+		  <include refid="borrowRecord_Where_Clause"/>
+		 <if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (rb.is_custody=0 or rb.is_custody is null)
+	  	</if>
+	  	<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and rb.is_custody=1
+	  	</if>  
+		UNION 
+		SELECT
+		  rb.id,
+		  rba.id AS rbid,
+		  rb.name,
+		  rb.BORROWTYPE,
+		  '终审' AS auditType,
+		  (SELECT rs.JOBNUM FROM rocky_staff rs WHERE rs.ID = rba.VERIFY_USER3)
+				AS
+				VERIFY_USER,
+				rba.VERIFY_REMARK3 AS VERIFY_REMARK,
+		   FROM_UNIXTIME(rba.VERIFY_TIME3) AS VERIFY_TIME,
+		  rb.STATUS,
+		  rb.user_id,
+		  rm.USERNAME,
+		  rb.ACCOUNT,
+		  rb.APR,
+		  rb.STYLE,
+		  rb.ADDTIME,
+		  rb.VALID_TIME,
+		  rb.APPRSTATUS,
+		  rb.PUBLISH_TIME,
+		  SUCCESS_TIME,
+		  REPAYMENT_ACCOUNT,
+		  rb.is_custody
+		FROM rocky_borrow_approved rba
+		  INNER JOIN rocky_borrow
+		  rb
+		    ON rba.BORROW_ID = rb.id
+		  INNER JOIN rocky_member rm
+		    ON rb.user_id =
+		    rm.id
+		
+		
+		WHERE 1 = 1
+		AND  (rba.VERIFY_USER3 > 0 AND rba.VERIFY_USER3 IS NOT NULL) AND rb.BORROWTYPE IN (1,2,5 )
+		  <include refid="borrowRecord_Where_Clause"/>
+		  <if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (rb.is_custody=0 or rb.is_custody is null)
+	  	</if>
+	  	<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and rb.is_custody=1
+	  	</if>  
+		UNION 
+		
+		SELECT
+		  rb.id,
+		  rba.id AS rbid,
+		  rb.name,
+		  rb.BORROWTYPE,
+		  '复审' AS auditType,
+		  (SELECT rs.JOBNUM FROM rocky_staff
+				rs WHERE rs.ID = rba.VERIFY_USER4) AS
+				VERIFY_USER,
+				rba.VERIFY_REMARK4 AS VERIFY_REMARK,
+		   FROM_UNIXTIME(rba.VERIFY_TIME4) AS VERIFY_TIME,
+		  rb.STATUS,
+		  rb.user_id,
+		  rm.USERNAME,
+		  rb.ACCOUNT,
+		  rb.APR,
+		  rb.STYLE,
+		  rb.ADDTIME,
+		  rb.VALID_TIME,
+		  rb.APPRSTATUS,
+		  rb.PUBLISH_TIME,
+		  SUCCESS_TIME,
+		  REPAYMENT_ACCOUNT,
+		  rb.is_custody
+		FROM rocky_borrow_approved rba
+		  INNER JOIN rocky_borrow
+		  rb
+		    ON rba.BORROW_ID = rb.id
+		  INNER JOIN rocky_member rm
+		    ON rb.user_id =
+		    rm.id
+		
+		
+		WHERE 1 = 1
+		AND  (rba.VERIFY_USER4 > 0 AND rba.VERIFY_USER4 IS NOT NULL) AND rb.BORROWTYPE IN (1,2,5 )
+		  <include refid="borrowRecord_Where_Clause"/>
+		  <if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (rb.is_custody=0 or rb.is_custody is null)
+	  	</if>
+	  	<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and rb.is_custody=1
+	  	</if>  
+		  
+</sql>
+
+
+</mapper>  

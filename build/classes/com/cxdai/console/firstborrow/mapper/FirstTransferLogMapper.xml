@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.firstborrow.mapper.FirstTransferLogMapper">
+  	<!-- 保存直通车转让明细信息 -->
+  	<insert id="saveFirstTransferLog" parameterType="com.cxdai.console.base.entity.FirstTransferLog">
+		INSERT INTO t_first_transfer_log(
+			FIRST_TRANSFER_ID,			USER_ID,			ADD_TIME,			ADD_IP,			ADD_MAC, 
+			ADD_NAME, 					ADD_REMARK,			LOG_TYPE,			SYSTEM,			PLATFORM
+		 )
+		VALUES ( 
+			#{firstTransferId},			#{userId},			#{addtime},			#{addip},		#{addmac},
+			#{addname},					#{addRemark},	    #{logType},         #{system},      #{platform}
+		)
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+		  SELECT LAST_INSERT_ID() AS ID    
+	    </selectKey>
+	</insert>
+  	
+</mapper>  

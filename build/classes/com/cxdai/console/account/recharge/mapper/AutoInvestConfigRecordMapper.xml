@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.account.recharge.mapper.AutoInvestConfigRecordMapper">
+	<!-- AutoInvestConfigRecord结果集 -->
+	<resultMap type="com.cxdai.console.account.recharge.vo.AutoInvestConfigRecordVo" id="autoInvestConfigRecordVoResultMap">
+		<id property="id" column="id" />
+		<result property="auto_tender_id" 		column="AUTO_TENDER_ID" />
+		<result property="user_id" 				column="USER_ID" />
+		<result property="status" 				column="STATUS" />
+		<result property="tender_type" 			column="TENDER_TYPE" />
+		<result property="borrow_type" 			column="BORROW_TYPE" />
+		<result property="timelimit_status"	    column="TIMELIMIT_STATUS" />
+		<result property="min_time_limit"  		column="MIN_TIME_LIMIT" />
+		<result property="max_time_limit" 		column="MAX_TIME_LIMIT" />
+		<result property="min_day_limit" 		column="MIN_DAY_LIMIT" />
+		<result property="max_day_limit" 		column="MAX_DAY_LIMIT" />
+		<result property="min_tender_account" 	column="MIN_TENDER_ACCOUNT" />
+		<result property="tender_account_auto" 	column="TENDER_ACCOUNT_AUTO" />
+		<result property="tender_scale" 		column="TENDER_SCALE" />
+		<result property="award_flag" 			column="AWARD_FLAG" />
+		<result property="balance_not_enough" 	column="BALANCE_NOT_ENOUGH" />
+		<result property="settime" 				column="SETTIME" />
+		<result property="setip" 				column="SETIP" />
+		<result property="min_apr" 				column="MIN_APR" />
+		<result property="max_apr" 				column="MAX_APR" />
+		<result property="borrow_type1_status" 	column="BORROW_TYPE1_STATUS" />
+		<result property="borrow_type2_status" 	column="BORROW_TYPE2_STATUS" />
+		<result property="borrow_type3_status" 	column="BORROW_TYPE3_STATUS" />
+		<result property="borrow_type4_status" 	column="BORROW_TYPE4_STATUS" />
+		<result property="uptime" 				column="UPTIME" />
+		<result property="rownum" 				column="ROWNUM" />
+		<result property="addtime" 				column="ADDTIME" />
+		<result property="record_type" 			column="RECORD_TYPE" />
+		<result property="remark" 				column="REMARK" />
+		<result property="tender_record_id" 	column="tender_record_id" />
+		<result property="tender_record_accout" column="tender_record_accout" />
+		<result property="borrow_type5_status" 	column="BORROW_TYPE5_STATUS" />
+		<result property="borrowId" 			column="BORROW_ID" />
+		<result property="borrowName" 			column="BORROW_NAME" />
+		<result property="borrowType" 			column="borrowType" />
+		<result property="useMoney" 			column="use_money" />
+		<result property="username" 			column="username" />
+	</resultMap>
+	
+	<!--自动投标规则基本列 -->
+	<sql id="autoInvestConfigRecordBaseColumn">
+		n.ID, 
+		n.AUTO_TENDER_ID, 
+		n.USER_ID, 
+		n.STATUS, 
+		n.TENDER_TYPE, 
+		n.BORROW_TYPE, 
+		n.TIMELIMIT_STATUS, 
+		n.MIN_TIME_LIMIT, 
+		n.MAX_TIME_LIMIT, 
+		n.MIN_DAY_LIMIT, 
+		n.MAX_DAY_LIMIT, 
+		n.MIN_TENDER_ACCOUNT, 
+		n.TENDER_ACCOUNT_AUTO,
+		n.TENDER_SCALE,
+		n.AWARD_FLAG,
+		n.BALANCE_NOT_ENOUGH,
+		n.SETTIME,
+		n.SETIP,
+		n.MIN_APR,
+		n.MAX_APR,
+		n.BORROW_TYPE1_STATUS,
+		n.BORROW_TYPE2_STATUS,
+		n.BORROW_TYPE3_STATUS,
+		n.BORROW_TYPE4_STATUS,
+		n.UPTIME,
+		n.rownum,
+		n.addtime,
+		n.record_type,
+		n.REMARK,
+		n.tender_record_id,
+		n.BORROW_TYPE5_STATUS,
+		n.BORROW_ID,
+		n.BORROW_NAME
+	</sql>
+	
+  	<!-- 封装查询条件 -->
+	<sql id="autoInvestConfig_record_Where_Clause">
+		<if test="user_id != null">
+			and n.user_id = #{user_id}
+		</if>
+		<if test="autoTenderType != null and autoTenderType !=''">
+			and n.tender_type = #{autoTenderType}
+		</if>
+		<if test="status != null and status !=''">
+			and n.status = #{status}
+		</if>
+		<if test="borrowName != null and borrowName !=''">
+			and n.BORROW_NAME = #{borrowName}
+		</if>
+		<if test="record_type != null and record_type !=''">
+			and n.record_type = #{record_type}
+		</if>
+		<if test="addtimeBegin != null">
+			and n.addtime <![CDATA[>=]]> #{addtimeBegin}
+		</if>
+		<if test="addtimeEnd != null">
+			and n.addtime <![CDATA[<=]]> #{addtimeEnd}
+		</if>
+	</sql>
+	
+	<!-- 根据条件查询自动投标规则日志记录集合（分页） -->
+	<select id="queryAutoInvestConfigRecordListForPage" parameterType="com.cxdai.console.account.recharge.vo.AutoInvestConfigRecordCnd" resultMap="autoInvestConfigRecordVoResultMap" >
+		select 	
+		   <include refid="autoInvestConfigRecordBaseColumn"/>,t.ACCOUNT tender_record_accout, a.use_money, m.username
+		from
+			rocky_account_auto_invest_config_record n LEFT JOIN rocky_b_tenderrecord t on(n.tender_record_id = t.ID ), rocky_account a, rocky_member m
+		where n.user_id = a.user_id and n.user_id = m.id
+		<include refid="autoInvestConfig_record_Where_Clause"/>
+		<if test="username != null and username != ''">
+			and m.USERNAME = #{username}
+		</if>
+		ORDER BY n.ADDTIME DESC
+  	</select>
+  	
+	<!--  根据条件查询自动投标规则日志数量 -->
+	<select id="queryAutoInvestConfigRecordCount" parameterType="com.cxdai.console.account.recharge.vo.AutoInvestConfigRecordCnd" resultType="java.lang.Integer" >
+		select count(n.id)
+		from
+			rocky_account_auto_invest_config_record n,rocky_member m
+		where n.user_id = m.id
+		<include refid="autoInvestConfig_record_Where_Clause"/>
+		<if test="username != null and username != ''">
+			and m.USERNAME = #{username}
+		</if>
+  	</select>
+  	
+  	<!--根据ID查询日志信息 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="autoInvestConfigRecordVoResultMap" >
+		select 	
+		   <include refid="autoInvestConfigRecordBaseColumn"/>,t.ACCOUNT tender_record_accout,b.BORROWTYPE as borrowType, a.use_money, m.username
+		from
+			rocky_account_auto_invest_config_record n 
+			LEFT JOIN rocky_b_tenderrecord t on(n.tender_record_id = t.ID )
+			LEFT JOIN rocky_borrow b on(n.BORROW_ID = b.id)
+			left join rocky_account a on(n.user_id = a.user_id),rocky_member m
+		where n.user_id = m.id
+		and n.id = #{id}
+  	</select>
+  	
+  	
+<select id="findAutoInvestRecord" parameterType="java.lang.Integer" resultMap="autoInvestConfigRecordVoResultMap">
+SELECT <include refid="autoInvestConfigRecordBaseColumn"/> from rocky_account_auto_invest_config_record n where n.tender_record_id = #{recordId} and n.record_type = 2 FOR UPDATE;
+</select>
+
+<update id="updateInvestConfigRecord" parameterType="java.lang.Integer">
+UPDATE rocky_account_auto_invest_config_record SET REMARK = '本次自动投标被取消，还原投标前的排队时间' WHERE ID = #{id};
+</update>
+</mapper>  

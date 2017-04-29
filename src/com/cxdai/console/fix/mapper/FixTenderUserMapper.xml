@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.fix.mapper.FixTenderUserMapper">
+ 	<!-- 查询结果 -->
+ 	<resultMap id="fixTenderUserMap" type="com.cxdai.console.fix.vo.FixTenderUserVo">
+ 		<result property="fixBorrowId" 				column="FIX_BORROW_ID"/>
+ 		<result property="fixContractNo" 			column="FIX_CONTRACT_NO"/>
+ 		<result property="lockEndtime" 				column="LOCK_ENDTIME"/>
+ 		<result property="borrowName" 				column="BORROW_NAME"/>
+ 		<result property="contractNo" 				column="CONTRACT_NO"/>
+		<result property="parentContractNo" 		column="PARENT_CONTRACT_NO"/>
+		<result property="account" 					column="ACCOUNT"/>
+		<result property="addtime" 					column="ADDTIME"/>
+		<result property="userId" 					column="USER_ID"/>
+		<result property="borrowId" 				column="BORROW_ID"/>
+		<result property="tenderId" 				column="TENDER_ID"/>
+ 	</resultMap>
+ 	
+ 	<!-- 查询定期宝投标列表 -->
+ 	<select id="queryFixTenerUserVoList" parameterType="com.cxdai.console.fix.vo.FixTenderUserCnd" resultMap="fixTenderUserMap">
+ 		select 
+ 		tenderUser.FIX_BORROW_ID,
+		fixBorrow.CONTRACT_NO as FIX_CONTRACT_NO,
+		fixBorrow.LOCK_ENDTIME,
+		tenderUser.BORROW_NAME,
+		tenderUser.CONTRACT_NO,
+		(select fixBrw.CONTRACT_NO  from t_fix_borrow fixBrw where fixBrw.id= tenderReal.PARENT_ID)  PARENT_CONTRACT_NO,
+		tenderUser.ACCOUNT,
+		tenderUser.ADDTIME
+		from t_fix_tender_user tenderUser
+		INNER JOIN t_fix_tender_real tenderReal on tenderReal.ID=tenderUser.FIX_TENDER_REAL_ID
+		INNER JOIN t_fix_borrow fixBorrow on fixBorrow.ID=tenderUser.FIX_BORROW_ID
+		where 1=1
+		<if test="fixBorrowId != null and fixBorrowId != '' ">
+			and tenderUser.FIX_BORROW_ID = #{fixBorrowId}
+		</if>
+		<if test="fixContractNo!= null and fixContractNo!='' ">
+			and fixBorrow.CONTRACT_NO like concat('%',#{fixContractNo},'%')
+		</if>
+		<if test="borrowName!= null and borrowName!='' ">
+			and tenderUser.BORROW_NAME like concat('%',#{borrowName},'%')
+		</if>
+		<if test="contractNo!= null and contractNo!='' ">
+			and tenderUser.CONTRACT_NO like concat('%',#{contractNo},'%')
+		</if>
+ 	</select>
+ 	
+ 	<!-- 查询定期宝投标记录数分页使用 -->
+ 	<select id="queryFixTenerUserVoCounts" parameterType="com.cxdai.console.fix.vo.FixTenderUserCnd" resultType="java.lang.Integer">
+ 		select count(1) from t_fix_tender_user tenderUser
+		INNER JOIN t_fix_tender_real tenderReal on tenderReal.ID=tenderUser.FIX_TENDER_REAL_ID
+		INNER JOIN t_fix_borrow fixBorrow on fixBorrow.ID=tenderUser.FIX_BORROW_ID
+		where 1=1
+		<if test="fixBorrowId != null and fixBorrowId != '' ">
+			and tenderUser.FIX_BORROW_ID = #{fixBorrowId}
+		</if>
+		<if test="fixContractNo!= null and fixContractNo!='' ">
+			and fixBorrow.CONTRACT_NO like concat('%',#{fixContractNo},'%')
+		</if>
+		<if test="borrowName!= null and borrowName!='' ">
+			and tenderUser.BORROW_NAME like concat('%',#{borrowName},'%')
+		</if>
+		<if test="contractNo!= null and contractNo!='' ">
+			and tenderUser.CONTRACT_NO like concat('%',#{contractNo},'%')
+		</if>
+ 	</select>
+ 	
+ 	<select id="queryFixTenerUserByCnd" parameterType="com.cxdai.console.fix.vo.FixTenderUserCnd" resultMap="fixTenderUserMap">
+ 		SELECT USER_ID,
+ 			   FIX_BORROW_ID,
+ 			   BORROW_ID,
+ 			   TENDER_ID,
+ 			   ACCOUNT
+ 		  FROM t_fix_tender_user 
+		 WHERE `STATUS`  = 1
+		  and FIX_BORROW_ID = #{fixBorrowId}
+		  and BORROW_ID = #{borrowId} and TENDER_ID  = #{tenderId}
+ 	</select>
+</mapper>  

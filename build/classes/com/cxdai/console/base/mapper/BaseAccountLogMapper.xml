@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseAccountLogMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.statistics.account.entity.AccountLog" id="accountLogResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="type" 					column="TYPE" />
+		<result property="total" 					column="TOTAL" />
+		<result property="money" 					column="MONEY" />
+		<result property="useMoney"	    			column="USE_MONEY" />
+		<result property="noUseMoney"  				column="NO_USE_MONEY" />
+		<result property="collection" 				column="COLLECTION" />
+		<result property="toUser" 					column="TO_USER" />
+		<result property="borrowId" 				column="BORROW_ID" />
+		<result property="borrowName" 				column="BORROW_NAME" />
+		<result property="idType"					column="ID_TYPE"/>
+		<result property="remark" 					column="REMARK" />
+		<result property="addtime" 					column="ADDTIME" />
+		<result property="addip" 					column="ADDIP" />
+		<result property="firstBorrowUseMoney" 		column="FIRST_BORROW_USE_MONEY" />
+		<result property="drawMoney"				column="DRAW_MONEY"/>
+		<result property="noDrawMoney" 				column="NO_DRAW_MONEY"/>		
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="accountlogBaseColumn">
+		a.ID, 
+		a.USER_ID,
+		a.TYPE, 
+		a.TOTAL,
+		a.MONEY,
+		a.USE_MONEY, 
+		a.NO_USE_MONEY, 
+		a.COLLECTION, 
+		a.TO_USER,
+		a.BORROW_ID,
+		a.BORROW_NAME,
+		a.ID_TYPE,
+		a.REMARK,
+		a.ADDTIME,
+		a.ADDIP,
+		a.DRAW_MONEY,
+		a.NO_DRAW_MONEY,		
+		a.FIRST_BORROW_USE_MONEY
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.statistics.account.entity.AccountLog">
+		INSERT INTO rocky_accountlog 
+		(USER_ID, 	TYPE,	TOTAL,	MONEY,	USE_MONEY,	NO_USE_MONEY,	COLLECTION,	TO_USER,BORROW_ID,BORROW_NAME,ID_TYPE,REMARK,
+		 ADDTIME,	ADDIP,	FIRST_BORROW_USE_MONEY ,	DRAW_MONEY,	    NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,IS_CUSTODY)
+		SELECT USER_ID,#{type},total,#{money},use_money,no_use_money,collection,#{toUser},#{borrowId},#{borrowName},#{idType},#{remark},
+		UNIX_TIMESTAMP(),#{addip},FIRST_BORROW_USE_MONEY,DRAW_MONEY,NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,ifnull(#{isCustody},0)
+		FROM rocky_account WHERE USER_ID=#{userId}
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="accountLogResultMap" >
+		select 	
+		   <include refid="accountlogBaseColumn"/>
+		from
+			rocky_accountlog a
+		where 1=1
+		and a.id=#{id}
+  	</select>
+	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.statistics.account.entity.AccountLog" >
+    update rocky_accountlog
+    <set >
+      <if test="type != null" >
+        TYPE = #{type},
+      </if>
+      <if test="total != null" >
+        TOTAL = #{total},
+      </if>
+      <if test="money != null" >
+        MONEY = #{money},
+      </if>
+      <if test="useMoney != null" >
+        USE_MONEY = #{useMoney},
+      </if>
+      <if test="noUseMoney != null" >
+        NO_USE_MONEY = #{noUseMoney},
+      </if>
+      <if test="collection != null" >
+        COLLECTION = #{collection},
+      </if>
+      <if test="toUser != null" >
+        TO_USER = #{toUser},
+      </if>
+      <if test="borrowId != null" >
+        BORROW_ID = #{borrowId},
+      </if>
+      <if test="borrowName != null" >
+        BORROW_NAME = #{borrowName},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark},
+      </if>
+      <if test="addtime != null" >
+        ADDTIME = #{addtime},
+      </if>
+      <if test="addip != null" >
+        ADDIP = #{addip},
+      </if>
+      <if test="drawMoney != null" >
+        DRAW_MONEY = #{drawMoney},
+      </if>
+       <if test="noDrawMoney != null" >
+        NO_DRAW_MONEY = #{noDrawMoney},
+      </if>      
+      <if test="firstBorrowUseMoney != null" >
+        FIRST_BORROW_USE_MONEY = #{firstBorrowUseMoney},
+      </if>                        
+    </set>
+    where ID = #{id}
+  </update>
+  	
+  	<insert id="insertAccountLog"  parameterType="com.cxdai.console.statistics.account.entity.AccountLog">
+ 		INSERT INTO rocky_accountlog 
+		(USER_ID, 	TYPE,	TOTAL,	MONEY,	USE_MONEY,	NO_USE_MONEY,	COLLECTION,	TO_USER,BORROW_ID,BORROW_NAME,ID_TYPE,REMARK,
+		 ADDTIME,	ADDIP,	FIRST_BORROW_USE_MONEY ,	DRAW_MONEY,	    NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,IS_CUSTODY)
+		
+		SELECT USER_ID,#{type},total,#{money},use_money,no_use_money,collection,#{toUser},#{borrowId},#{borrowName},#{idType},#{remark},
+		UNIX_TIMESTAMP(),#{addip},FIRST_BORROW_USE_MONEY,DRAW_MONEY,NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,#{isCustody}
+		FROM rocky_account WHERE USER_ID=#{userId}
+	</insert>
+  	
+</mapper>  

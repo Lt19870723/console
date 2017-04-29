@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.feedback.mapper.BaseFeedbackInfoMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.customer.feedback.entity.FeedbackInfo" id="feedbackInfoResultMap">
+		<id property="id" column="id" />
+		<result property="status" 						column="STATUS" />
+		<result property="mobileNum" 					column="MOBILENUM" />
+		<result property="userName" 					column="USERNAME" />
+		<result property="realName" 					column="REALNAME" />
+		<result property="staffId" 						column="STAFF_ID" />
+		<result property="contactTime"	    			column="CONTACT_TIME" />
+		<result property="contactContent"  				column="CONTACT_CONTENT" />
+		<result property="addTime" 						column="ADDTIME" />
+		<result property="version" 						column="VERSION" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="feedbackInfoBaseColumn">
+		f.ID, 
+		f.STATUS,
+		f.MOBILENUM,
+		f.USERNAME, 
+		f.REALNAME,
+		f.STAFF_ID,
+		f.CONTACT_TIME, 
+		f.CONTACT_CONTENT, 
+		f.ADDTIME, 
+		f.VERSION
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.customer.feedback.entity.FeedbackInfo">
+		INSERT INTO rocky_feedback_info 
+		(STATUS, MOBILENUM, USERNAME, REALNAME,	STAFF_ID, CONTACT_TIME,	CONTACT_CONTENT, ADDTIME, VERSION)
+		VALUES
+		(#{status}, #{mobileNum}, #{userName}, #{realName}, #{staffId}, #{contactTime}, #{contactContent}, #{addTime}, #{version})
+		
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="feedbackInfoResultMap" >
+		select 	
+		   <include refid="feedbackInfoBaseColumn"/>
+		from
+			rocky_feedback_info f
+		where 1=1
+		and f.id=#{id}
+  	</select>
+	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.customer.feedback.entity.FeedbackInfo" >
+    update rocky_feedback_info
+    <set >
+      <if test="status != null" >
+        STATUS = #{status},
+      </if>
+      <if test="mobileNum != null and mobileNum != ''" >
+        MOBILENUM = #{mobileNum},
+      </if>
+      <if test="userName != null and userName != ''" >
+        USERNAME = #{userName},
+      </if>
+      <if test="realName != null and realName != ''" >
+        REALNAME = #{realName},
+      </if>
+      <if test="staffId != null" >
+        STAFF_ID = #{staffId},
+      </if>
+      <if test="contactTime != null" >
+        CONTACT_TIME = #{contactTime},
+      </if>
+      <if test="contactContent != null and contactContent != ''" >
+        CONTACT_CONTENT = #{contactContent},
+      </if>
+      <if test="version != null" >
+        VERSION = #{version},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  	
+</mapper>  

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseConfigurationMapper">
+	
+	<!-- 返回的结果集 -->
+	<resultMap type="com.cxdai.console.system.entity.Configuration" id="BaseResultMap">
+		<id property="id" column="ID" />
+		<result property="type" column="TYPE" />
+		<result property="order" column="ORDER" />
+		<result property="name" column="NAME" />
+		<result property="value" column="VALUE" />
+		<result property="status" column="STATUS" />
+		<result property="desc" column="DESC" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="configurationColumn">
+		c.ID, 
+		c.TYPE, 
+		c.order, 
+		c.name,
+		c.value, 
+		c.status		
+	</sql>
+
+  	<!-- 根据类型查询字典配置 -->
+  	<select id="queryConfigurationListByType" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
+		SELECT <include refid="configurationColumn"/> FROM ROCKY_CONFIGURATION c WHERE c.`TYPE` = #{type}
+  	</select>
+  	
+ </mapper>  

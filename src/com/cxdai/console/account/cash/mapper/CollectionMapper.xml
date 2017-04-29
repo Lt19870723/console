@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.account.cash.mapper.CollectionMapper">
+	
+	 <!--查询某个用户ID下待收利息的总计-->
+	<select id="queryUnReceiveInterstTotalByMemberId" parameterType="java.lang.Integer" resultType="java.math.BigDecimal" >
+		SELECT SUM(c.INTEREST) 
+		FROM rocky_b_collectionrecord c,
+			 rocky_b_tenderrecord t 
+	    WHERE c.status=0 
+	    AND c.TENDER_ID = t.id 
+	    AND t.USER_ID = #{memberId}
+  	</select>
+</mapper>  

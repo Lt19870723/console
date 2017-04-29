@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.maintain.cms.mapper.CmsArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.maintain.cms.entity.CmsArticleVo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="CHANNEL_ID" property="channelId" jdbcType="INTEGER" />
+    <result column="TITLE" property="title" jdbcType="VARCHAR" />
+    <result column="AUTHOR" property="author" jdbcType="VARCHAR" />
+    <result column="THUMBNAIL" property="thumbnail" jdbcType="VARCHAR" />
+    <result column="IS_TOP" property="isTop" jdbcType="TINYINT" />
+    <result column="SUMMARY" property="summary" jdbcType="VARCHAR" />
+    <result column="HITS" property="hits" jdbcType="INTEGER" />
+    <result column="COMMENTS" property="comments" jdbcType="INTEGER" />
+    <result column="SEO_TITLE" property="seoTitle" jdbcType="VARCHAR" />
+    <result column="SEO_DESCRIPTION" property="seoDescription" jdbcType="VARCHAR" />
+    <result column="SEO_KEYWORDS" property="seoKeywords" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="TINYINT" />
+    <result column="CREATE_BY" property="createBy" jdbcType="INTEGER" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_BY" property="updateBy" jdbcType="INTEGER" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="NAME" property="channelName" jdbcType="VARCHAR" />
+    <result column="tags" property="tags" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.cxdai.console.maintain.cms.entity.CmsArticle" extends="BaseResultMap" >
+    <result column="CONTENT" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CHANNEL_ID, TITLE, AUTHOR, THUMBNAIL, IS_TOP, SUMMARY, HITS, COMMENTS, SEO_TITLE, 
+    SEO_DESCRIPTION, SEO_KEYWORDS, STATUS, CREATE_BY, CREATE_TIME, UPDATE_BY, UPDATE_TIME
+  </sql>
+  <sql id="Blob_Column_List" >
+    CONTENT
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    , (SELECT GROUP_CONCAT(tct.NAME)  FROM  t_cms_article_tag tcat LEFT JOIN t_cms_tag tct  ON tcat.TAG_ID =tct .ID   WHERE tcat.ARTICLE_ID  =#{id,jdbcType=INTEGER})  tags
+    from t_cms_article
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_cms_article
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticle" >
+    insert into t_cms_article (ID, CHANNEL_ID, TITLE, 
+      AUTHOR, THUMBNAIL, IS_TOP, 
+      SUMMARY, HITS, COMMENTS, 
+      SEO_TITLE, SEO_DESCRIPTION, SEO_KEYWORDS, 
+      STATUS, CREATE_BY, CREATE_TIME, 
+      UPDATE_BY, UPDATE_TIME, CONTENT
+      )
+    values (#{id,jdbcType=INTEGER}, #{channelId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{author,jdbcType=VARCHAR}, #{thumbnail,jdbcType=VARCHAR}, #{isTop,jdbcType=TINYINT}, 
+      #{summary,jdbcType=VARCHAR}, #{hits,jdbcType=INTEGER}, #{comments,jdbcType=INTEGER}, 
+      #{seoTitle,jdbcType=VARCHAR}, #{seoDescription,jdbcType=VARCHAR}, #{seoKeywords,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{createBy,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR}
+      )
+       <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticle" >
+    insert into t_cms_article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="channelId != null" >
+        CHANNEL_ID,
+      </if>
+      <if test="title != null" >
+        TITLE,
+      </if>
+      <if test="author != null" >
+        AUTHOR,
+      </if>
+      <if test="thumbnail != null" >
+        THUMBNAIL,
+      </if>
+      <if test="isTop != null" >
+        IS_TOP,
+      </if>
+      <if test="summary != null" >
+        SUMMARY,
+      </if>
+      <if test="hits != null" >
+        HITS,
+      </if>
+      <if test="comments != null" >
+        COMMENTS,
+      </if>
+      <if test="seoTitle != null" >
+        SEO_TITLE,
+      </if>
+      <if test="seoDescription != null" >
+        SEO_DESCRIPTION,
+      </if>
+      <if test="seoKeywords != null" >
+        SEO_KEYWORDS,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="channelId != null" >
+        #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbnail != null" >
+        #{thumbnail,jdbcType=VARCHAR},
+      </if>
+      <if test="isTop != null" >
+        #{isTop,jdbcType=TINYINT},
+      </if>
+      <if test="summary != null" >
+        #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="hits != null" >
+        #{hits,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=INTEGER},
+      </if>
+      <if test="seoTitle != null" >
+        #{seoTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="seoDescription != null" >
+        #{seoDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="seoKeywords != null" >
+        #{seoKeywords,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+     <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticle" >
+    update t_cms_article
+    <set >
+      <if test="channelId != null" >
+        CHANNEL_ID = #{channelId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        TITLE = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        AUTHOR = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbnail != null" >
+        THUMBNAIL = #{thumbnail,jdbcType=VARCHAR},
+      </if>
+      <if test="isTop != null" >
+        IS_TOP = #{isTop,jdbcType=TINYINT},
+      </if>
+      <if test="summary != null" >
+        SUMMARY = #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="hits != null" >
+        HITS = #{hits,jdbcType=INTEGER},
+      </if>
+      <if test="comments != null" >
+        COMMENTS = #{comments,jdbcType=INTEGER},
+      </if>
+      <if test="seoTitle != null" >
+        SEO_TITLE = #{seoTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="seoDescription != null" >
+        SEO_DESCRIPTION = #{seoDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="seoKeywords != null" >
+        SEO_KEYWORDS = #{seoKeywords,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        UPDATE_BY = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticle" >
+    update t_cms_article
+    set CHANNEL_ID = #{channelId,jdbcType=INTEGER},
+      TITLE = #{title,jdbcType=VARCHAR},
+      AUTHOR = #{author,jdbcType=VARCHAR},
+      THUMBNAIL = #{thumbnail,jdbcType=VARCHAR},
+      IS_TOP = #{isTop,jdbcType=TINYINT},
+      SUMMARY = #{summary,jdbcType=VARCHAR},
+      HITS = #{hits,jdbcType=INTEGER},
+      COMMENTS = #{comments,jdbcType=INTEGER},
+      SEO_TITLE = #{seoTitle,jdbcType=VARCHAR},
+      SEO_DESCRIPTION = #{seoDescription,jdbcType=VARCHAR},
+      SEO_KEYWORDS = #{seoKeywords,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=INTEGER},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_BY = #{updateBy,jdbcType=INTEGER},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      CONTENT = #{content,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.maintain.cms.entity.CmsArticle" >
+    update t_cms_article
+    set CHANNEL_ID = #{channelId,jdbcType=INTEGER},
+      TITLE = #{title,jdbcType=VARCHAR},
+      AUTHOR = #{author,jdbcType=VARCHAR},
+      THUMBNAIL = #{thumbnail,jdbcType=VARCHAR},
+      IS_TOP = #{isTop,jdbcType=TINYINT},
+      SUMMARY = #{summary,jdbcType=VARCHAR},
+      HITS = #{hits,jdbcType=INTEGER},
+      COMMENTS = #{comments,jdbcType=INTEGER},
+      SEO_TITLE = #{seoTitle,jdbcType=VARCHAR},
+      SEO_DESCRIPTION = #{seoDescription,jdbcType=VARCHAR},
+      SEO_KEYWORDS = #{seoKeywords,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=TINYINT},
+      CREATE_BY = #{createBy,jdbcType=INTEGER},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      UPDATE_BY = #{updateBy,jdbcType=INTEGER},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+   <delete id="deleteByIds"    >
+	    update   t_cms_article  set status=1 
+		    where id in 
+		     <foreach collection="cmsArticleIds" item="id"  open="(" separator="," close=")">  
+			        #{id}  
+			  </foreach>  
+  </delete>
+  
+  
+  <select id="queryCmsArticleListByCnd"   parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleCnd"  resultMap="BaseResultMap">
+	  SELECT   tca.* ,tcc.NAME       FROM   t_cms_article  tca  LEFT  JOIN  t_cms_channel tcc ON tca.CHANNEL_ID = tcc.ID 
+	  <include refid="whereSql"/>   order by tca.update_time desc
+  </select>
+  
+  
+  <select id="getCountCmsArticleListByCnd"  parameterType="com.cxdai.console.maintain.cms.entity.CmsArticleCnd"  resultType="java.lang.Integer">
+	   SELECT   count(1)    FROM   t_cms_article    tca
+		 <include refid="whereSql"/>  
+  </select>
+  
+  <sql id="whereSql">
+	  where  1=1   and   tca.STATUS =0
+	   <if test="channelId != null and channelId !=0 ">
+	    and   CHANNEL_ID =#{channelId}
+	   </if>
+	   <if test="title != null and  title != ''">
+	    and   TITLE like concat('%',#{title},'%')  
+	   </if>
+	    <if test="author != null and  author != ''">
+	    and   AUTHOR =#{author}
+	   </if>
+  </sql>
+  
+  
+  <update   id="updateTopById"  parameterType="java.util.Map" >
+	 update  t_cms_article   set  IS_TOP = #{status}  where  id =#{id}
+  </update>
+  
+ 
+</mapper>

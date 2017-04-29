@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.base.mapper.BaseGoodLimitMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.lottery.entity.BaseGoodLimit" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="LOTTERY_GOODS_ID" property="lotteryGoodsId" jdbcType="INTEGER" />
+    <result column="START_TIME" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="END_TIME" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="SUM_NUM" property="sumNum" jdbcType="INTEGER" />
+    <result column="USED_NUM" property="usedNum" jdbcType="INTEGER" />
+    <result column="ADD_USER_ID" property="addUserId" jdbcType="INTEGER" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, LOTTERY_GOODS_ID, START_TIME, END_TIME, STATUS, SUM_NUM, USED_NUM, ADD_USER_ID, 
+    ADD_TIME, ADD_IP, REMARK
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_lottery_goods_limit
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    update t_lottery_goods_limit set status =1 
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.lottery.entity.BaseGoodLimit" >
+    insert into t_lottery_goods_limit (ID, LOTTERY_GOODS_ID, START_TIME, 
+      END_TIME, STATUS, SUM_NUM, 
+      USED_NUM, ADD_USER_ID, ADD_TIME, 
+      ADD_IP, REMARK)
+    values (#{id,jdbcType=INTEGER}, #{lotteryGoodsId,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{sumNum,jdbcType=INTEGER}, 
+      #{usedNum,jdbcType=INTEGER}, #{addUserId,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addIp,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.lottery.entity.BaseGoodLimit" >
+    insert into t_lottery_goods_limit
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="lotteryGoodsId != null" >
+        LOTTERY_GOODS_ID,
+      </if>
+      <if test="startTime != null" >
+        START_TIME,
+      </if>
+      <if test="endTime != null" >
+        END_TIME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="sumNum != null" >
+        SUM_NUM,
+      </if>
+      <if test="usedNum != null" >
+        USED_NUM,
+      </if>
+      <if test="addUserId != null" >
+        ADD_USER_ID,
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME,
+      </if>
+      <if test="addIp != null" >
+        ADD_IP,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryGoodsId != null" >
+        #{lotteryGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="sumNum != null" >
+        #{sumNum,jdbcType=INTEGER},
+      </if>
+      <if test="usedNum != null" >
+        #{usedNum,jdbcType=INTEGER},
+      </if>
+      <if test="addUserId != null" >
+        #{addUserId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.lottery.entity.BaseGoodLimit" >
+    update t_lottery_goods_limit
+    <set >
+      <if test="lotteryGoodsId != null" >
+        LOTTERY_GOODS_ID = #{lotteryGoodsId,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="sumNum != null" >
+        SUM_NUM = #{sumNum,jdbcType=INTEGER},
+      </if>
+      <if test="usedNum != null" >
+        USED_NUM = #{usedNum,jdbcType=INTEGER},
+      </if>
+      <if test="addUserId != null" >
+        ADD_USER_ID = #{addUserId,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        ADD_IP = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.lottery.entity.BaseGoodLimit" >
+    update t_lottery_goods_limit
+    set LOTTERY_GOODS_ID = #{lotteryGoodsId,jdbcType=INTEGER},
+      START_TIME = #{startTime,jdbcType=TIMESTAMP},
+      END_TIME = #{endTime,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=INTEGER},
+      SUM_NUM = #{sumNum,jdbcType=INTEGER},
+      USED_NUM = #{usedNum,jdbcType=INTEGER},
+      ADD_USER_ID = #{addUserId,jdbcType=INTEGER},
+      ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      ADD_IP = #{addIp,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

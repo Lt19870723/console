@@ -1,0 +1,71 @@
+<Finance>
+    <Message id="MSG201607011317111077638">
+        <FRRes id="FRRes">
+            <version>1.0.0</version>
+            <instId>CZBANK</instId>
+            <certId>0001</certId>
+            <succount>0</succount>
+            <sucsum>0</sucsum>
+            <failcount>9</failcount>
+            <failsum>13415</failsum>
+            <extension>本息还款：1467350231</extension>
+            <List>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A96BFFFFFFAE3C91820BFDB6</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A977FFFFFFAE3C919C21E54E</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A980FFFFFFAE3C916689C02A</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A989FFFFFFAE3C91850DEA03</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A993FFFFFFAE3C9120E252C3</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A99BFFFFFFAE3C91020783D0</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A9A5FFFFFFAE3C912917E341</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A9AFFFFFFFAE3C913162BD48</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+                <Record>
+                    <P2PserialNo>FR2-A4E3A9B8FFFFFFAE3C9158B4977A</P2PserialNo>
+                    <RepaymentStatus>30</RepaymentStatus>
+                </Record>
+            </List>
+        </FRRes>
+        <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            <ds:SignedInfo>
+                <ds:CanonicalizationMethod
+                        Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></ds:CanonicalizationMethod>
+                <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
+                <ds:Reference URI="#FRRes">
+                    <ds:Transforms>
+                        <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+                    </ds:Transforms>
+                    <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+                    <ds:DigestValue>HByeoFZtkYWXDHrjacsTrk0uPM0=</ds:DigestValue>
+                </ds:Reference>
+            </ds:SignedInfo>
+            <ds:SignatureValue>
+                Szye2N1d2EAvTrjeBspGMpqgcBexSDQyKNW+82FYGldVhoT0L0gLPMHM3UHGkIetC98/2uSE+L64
+                gBrDBMr1mP+oAOZBjrrdf6RfDTLjI3elhpjxMTazostyz99ypiwj2EN56P+8CgogdBeP9ilnB5T/
+                psHB6yCsGGgnkgdVE3Q=
+            </ds:SignatureValue>
+        </ds:Signature>
+    </Message>
+</Finance>

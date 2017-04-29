@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.lottery.mapper.GoodsLimitMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.lottery.vo.GoodsLimit"  extends="com.cxdai.console.base.mapper.BaseGoodLimitMapper.BaseResultMap"   >
+    <result   property="goodName"  column="goodName"/>
+  </resultMap>
+   
+    
+   
+   <select id="queryGoodLimitList"   resultMap="BaseResultMap">
+	     SELECT  tlgl.*, tlg.NAME goodName  FROM  t_lottery_goods_limit  tlgl   LEFT JOIN  t_lottery_goods tlg ON tlgl.LOTTERY_GOODS_ID  = tlg.ID
+	     where  tlgl.status = 0  order  by  add_time  desc   
+   </select>
+   
+   <select id="getGoodsLimitById"   parameterType="java.lang.Integer"     resultMap="BaseResultMap">
+	     SELECT  tlgl.*, tlg.NAME goodName  FROM  t_lottery_goods_limit  tlgl   LEFT JOIN  t_lottery_goods tlg ON tlgl.LOTTERY_GOODS_ID  = tlg.ID
+	     where  tlgl.id =#{id}
+   </select>
+   
+    <select id="queryCountGoodLimitList"   resultType="java.lang.Integer">
+	     SELECT  count(1)  FROM  t_lottery_goods_limit  tlgl     where  tlgl.status = 0
+    </select>
+   
+   
+    <select id="existsGoodsLimitByGoodId"   parameterType="java.util.Map"   resultType="java.lang.Integer">
+	     SELECT  count(1)  FROM  t_lottery_goods_limit  tlgl     where  tlgl.status = 0 and  tlgl.LOTTERY_GOODS_ID =#{goodsId} 
+	      AND ( tlgl.START_TIME  &lt; #{endTime}  and tlgl.END_TIME  > #{startTime}  )
+	     <if test="id != null">
+     	      and  id  != #{id}
+	     </if>
+    </select>
+   
+   
+   
+   
+</mapper>

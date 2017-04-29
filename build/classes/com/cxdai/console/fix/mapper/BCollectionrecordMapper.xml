@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.fix.mapper.BCollectionrecordMapper">	
+
+	<resultMap type="com.cxdai.console.fix.vo.BCollectionRecordVo" id="bCollectionRecordResultMap">
+		<id property="id" 						column="ID"/>
+		<result property="status"				column="STATUS"/>
+		<result property="order"				column="ORDER"/>
+		<result property="tenderId"				column="TENDER_ID"/>
+		<result property="repayTime"			column="REPAY_TIME"/>
+		<result property="repayYestime"			column="REPAY_YESTIME"/>
+		<result property="repayAccount"			column="REPAY_ACCOUNT"/>
+		<result property="repayYesaccount"		column="REPAY_YESACCOUNT"/>
+		<result property="interest"				column="INTEREST"/>
+		<result property="capital"				column="CAPITAL"/>
+		<result property="lateDays"				column="LATE_DAYS"/>
+		<result property="lateInterest"			column="LATE_INTEREST"/>
+		<result property="addtime"				column="ADDTIME"/>
+		<result property="addip"				column="ADDIP"/>
+		<result property="advancetime"			column="ADVANCETIME"/>
+		<result property="advanceYesaccount"	column="ADVANCE_YESACCOUNT"/>
+		<result property="firstBorrowId"		column="FIRST_BORROW_ID"/>
+		<result property="isFirstBorrow"		column="IS_FIRST_BORROW"/>
+		<result property="userId"				column="USER_ID"/>
+		<result property="borrowId"				column="BORROW_ID"/>
+		<result property="firstTenderRealId"	column="FIRST_TENDER_REAL_ID"/>
+		<result property="repayAccountSum"		column="repayAccountSum"/>
+		<result property="capitalSum"			column="capitalSum"/>
+		
+		<result property="eRepayMentNo"			column="E_REPAYMENT_NO"/>
+		<result property="eRepayMentStatus"		column="E_REPAYMENT_STATUS"/>
+		<result property="eRepayMentDate"		column="E_REPAYMENT_DATE"/>
+		<result property="eBankInfoNo"			column="E_BANKINFO_ID"/>
+		<result property="bizRepayMentNo"		column="BIZ_REPAYMENT_NO"/>
+		<result property="isCustody"		    column="IS_CUSTODY"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+	    bc.`id`,
+		bc.`STATUS`,
+		bc.`ORDER`,
+		bc.`TENDER_ID`,
+		bc.`REPAY_TIME`,
+		bc.`REPAY_YESTIME`,
+		bc.`REPAY_ACCOUNT`,
+		bc.`REPAY_YESACCOUNT`,
+		bc.`INTEREST`,
+		bc.`CAPITAL`,
+		bc.`LATE_DAYS`,
+		bc.`LATE_INTEREST`,
+		bc.`ADDTIME`,
+		bc.`ADDIP`,
+		bc.`ADVANCETIME`,
+		bc.`ADVANCE_YESACCOUNT`,
+		bc.`FIRST_BORROW_ID`,
+		bc.`IS_FIRST_BORROW`,
+		bc.`USER_ID`,
+		bc.`BORROW_ID`,
+		bc.`FIRST_TENDER_REAL_ID`,
+		bc.E_REPAYMENT_NO,
+		bc.E_REPAYMENT_STATUS,
+		bc.E_REPAYMENT_DATE,
+		bc.E_BANKINFO_ID,
+		bc.BIZ_REPAYMENT_NO,
+		bc.IS_CUSTODY
+	</sql>
+
+
+	<select id="selectByPrimaryKey" resultMap="bCollectionRecordResultMap"
+			parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rocky_b_collectionrecord bc
+		where bc.ID = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 根据定期宝ID查询投标记录表中待收本金总和 -->
+	<select id="queryCollectionrecordSum" parameterType="java.lang.Integer" resultType="java.math.BigDecimal">
+		SELECT Ifnull(Sum(rbc.CAPITAL),0)
+		FROM   rocky_b_collectionrecord rbc
+		       INNER JOIN rocky_b_tenderrecord rbt
+		         ON rbc.TENDER_ID = rbt.ID
+		WHERE  rbc.`STATUS` = 0
+		       AND rbt.USER_ID = #{fixBorrowId}
+		       AND rbt.`STATUS` = 1;
+	</select>
+	
+	<!-- 根据投标ID查询待收记录 -->
+	<select id="queryCollectionrecordListByTenderId" parameterType="com.cxdai.console.fix.vo.BCollectionRecordCnd" resultMap="bCollectionRecordResultMap" >
+		SELECT <include refid="Base_Column_List"/>
+		  FROM rocky_b_collectionrecord bc
+		 where bc.TENDER_ID = #{tenderId} 
+		   and bc.`STATUS` = 0 
+		order by bc.`ORDER` asc
+		for update
+	</select>
+	
+	<insert id="insert" parameterType="com.cxdai.console.fix.vo.BCollectionRecordVo">
+		insert into rocky_b_collectionrecord (
+			`STATUS`,`ORDER`,TENDER_ID,REPAY_TIME, REPAY_YESTIME, REPAY_ACCOUNT,
+			REPAY_YESACCOUNT, INTEREST, CAPITAL,
+			LATE_DAYS, LATE_INTEREST, ADDTIME,
+			ADDIP, ADVANCETIME, ADVANCE_YESACCOUNT,
+			FIRST_BORROW_ID, IS_FIRST_BORROW, USER_ID, BORROW_ID, FIRST_TENDER_REAL_ID,E_BANKINFO_ID,IS_CUSTODY)
+		values (
+			#{status}, #{order},#{tenderId},#{repayTime},#{repayYestime},#{repayAccount},
+			#{repayYesaccount},#{interest},#{capital},
+			#{lateDays},#{lateInterest},unix_timestamp(),
+			#{addip},#{advancetime},#{advanceYesaccount},
+			#{firstBorrowId},#{isFirstBorrow},#{userId},#{borrowId},#{firstTenderRealId},#{eBankInfoNo},#{isCustody})
+	</insert>
+	
+	<insert id="insertCollectionrecord" parameterType="com.cxdai.console.fix.vo.BCollectionRecordVo">
+	  insert into rocky_b_collectionrecord(
+	  `ORDER`,TENDER_ID,REPAY_TIME,REPAY_ACCOUNT,INTEREST,CAPITAL,ADDTIME,ADDIP,FIRST_BORROW_ID,IS_FIRST_BORROW,BORROW_ID,USER_ID,FIRST_TENDER_REAL_ID,E_BANKINFO_ID,IS_CUSTODY,E_REPAYMENT_STATUS) 
+      values (
+      #{order},#{tenderId},#{repayTime},#{repayAccount},#{interest},#{capital},UNIX_TIMESTAMP(),#{addip},#{firstBorrowId},#{isFirstBorrow},#{borrowId},#{userId},#{firstTenderRealId},#{eBankInfoNo},#{isCustody},0)
+	</insert>
+	
+	<!-- 根据投标ID和期数查询预还总和，本金总和 -->
+	<select id="queryRepayAccountAndCapitalSum" parameterType="com.cxdai.console.fix.vo.BCollectionRecordCnd" resultMap="bCollectionRecordResultMap">
+		SELECT Ifnull(Sum(rbc.REPAY_ACCOUNT),0) as repayAccountSum ,Ifnull(Sum(rbc.CAPITAL),0) as capitalSum
+		from rocky_b_collectionrecord rbc, rocky_b_tenderrecord t
+		WHERE  rbc.TENDER_ID = t.ID and t.PARENT_ID = #{tenderId} and rbc.`ORDER` = #{order}
+	</select>
+	
+	<update id="updateStatusById" parameterType="java.lang.Integer" >
+		update rocky_b_collectionrecord set `STATUS` = -3 where TENDER_ID = #{tenderId} and `STATUS` = 0 ;
+	</update>
+	
+	<!-- 根据定期宝ID查询投标记录表中待收总和 -->
+	<select id="queryRepayAccountSum" parameterType="com.cxdai.console.fix.vo.BCollectionRecordCnd" resultType="java.math.BigDecimal">
+		SELECT Ifnull(Sum(rbc.REPAY_ACCOUNT),0)
+		FROM   rocky_b_collectionrecord rbc
+		WHERE  rbc.`STATUS` = 0
+		       AND rbc.USER_ID = #{fixBorrowId}
+		       AND rbc.TENDER_ID = #{tenderId};
+	</select>
+	
+    <!-- 根据借款标ID和期数查询尚未还款的待收记录 -->
+	<select id="queryCollectionForRepay" parameterType="com.cxdai.console.fix.vo.BCollectionRecordCnd" resultMap="bCollectionRecordResultMap">
+		SELECT <include refid="Base_Column_List"/>
+		FROM rocky_b_collectionrecord bc
+		WHERE  bc.`STATUS` = 0
+		       AND bc.BORROW_ID = #{borrowId}
+		       AND bc.ORDER = #{order}
+		FOR UPDATE
+	</select>
+	
+	<!-- 更新平台交易流水号 -->
+	<update id="updateBizNoByID" parameterType="com.cxdai.console.fix.vo.BCollectionRecordCnd" >
+		update rocky_b_collectionrecord set `BIZ_REPAYMENT_NO` = #{bizNo} where ID = #{id} and `STATUS` = 0 ;
+	</update>
+
+    <!-- 更新银行交易流水号,状态更新为4银行还款中 -->
+    <update id="updateByResponse" parameterType="com.cxdai.console.borrow.manage.vo.EFundRepayMentCnd" >
+		UPDATE rocky_b_collectionrecord set E_REPAYMENT_NO=#{eRepaymentNo},E_REPAYMENT_STATUS=#{result},STATUS =4
+		where BIZ_REPAYMENT_NO=#{bizNo}  and STATUS=0
+	</update>
+
+
+
+	<!-- 查询本息还款对账处理后的待收记录 -->
+	<select id="queryCollectionList" resultMap="bCollectionRecordResultMap">
+		SELECT <include refid="Base_Column_List"/>
+		FROM rocky_b_collectionrecord bc
+		WHERE  bc.`STATUS` = 4
+		      AND bc.E_REPAYMENT_STATUS = 20
+		      AND bc.BORROW_ID= #{borrowId}
+		      AND bc.`ORDER` = (SELECT `ORDER` FROM rocky_b_repaymentrecord WHERE ID = #{repaymentId})
+	</select>
+
+	<!-- 本息还款对账后更新 -->
+	<update id="updateAfterRecon" parameterType="java.util.Map" >
+		UPDATE rocky_b_collectionrecord set STATUS = 1,REPAY_YESACCOUNT = #{repayment_money},REPAY_YESTIME=UNIX_TIMESTAMP()
+		WHERE ID = #{collectionId} AND STATUS=4
+	</update>
+
+
+	<!-- 本息还款对账后更新 -->
+	<update id="updateStatusAfterRecon" parameterType="java.util.Map" >
+		UPDATE rocky_b_collectionrecord set STATUS = #{newStatus},REPAY_YESTIME=UNIX_TIMESTAMP()
+		WHERE ID = #{collectionId} AND STATUS=#{oldStatus}
+	</update>
+
+	
+	<select id="findSumRepyAccount" resultType="java.math.BigDecimal" parameterType="com.cxdai.console.fix.vo.BCollectionRecordVo">
+		SELECT SUM(REPAY_ACCOUNT) from rocky_b_collectionrecord where USER_ID = #{userId} and BORROW_ID =#{borrowId} AND TENDER_ID = #{tenderId} 
+	</select>
+	
+	<!-- 根据待收记录计算待还金额 -->
+	<select id="findCollectionAccount" resultType="com.cxdai.console.borrow.check.vo.BorrowCheckVo">
+		select IFNULL(sum(REPAY_ACCOUNT),0) as sumRepayAccount,IFNULL(sum(INTEREST),0) as sumInterest,IFNULL(sum(CAPITAL),0) as sumCapital from rocky_b_collectionrecord WHERE BORROW_ID = #{borrowId} and `ORDER`=#{order}
+	</select>
+	
+
+
+	<!-- 查询本息还款总待收金额 -->
+	<select id="queryCollectionCount" resultType="java.math.BigDecimal">
+		SELECT SUM(bc.REPAY_ACCOUNT)
+		FROM rocky_b_collectionrecord bc
+		WHERE  bc.`STATUS` = 4
+		AND bc.E_REPAYMENT_STATUS = 20
+		AND bc.BORROW_ID= #{borrowId}
+		AND bc.`ORDER` = (SELECT `ORDER` FROM rocky_b_repaymentrecord WHERE ID = #{repaymentId})
+	</select>
+
+
+
+
+    <!-- 关联借款标结果集 -->
+    <resultMap type="com.cxdai.console.fix.vo.BCollectionEfendRecord" id="efendRecordResultMap" extends="bCollectionRecordResultMap">
+        <result property="username"                    column="USERNAME"/>
+    </resultMap>
+
+    <!-- 根据借款标ID和期数查询尚未还款的待收记录 -->
+    <select id="queryCollectionByRepayMentId"  resultMap="efendRecordResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        b.USERNAME
+        FROM rocky_b_collectionrecord bc  LEFT JOIN rocky_member b on bc.USER_ID = b.ID
+        WHERE  bc.`STATUS` = 4 and bc.IS_CUSTODY=1 AND bc.E_REPAYMENT_STATUS is NOT null and bc.E_REPAYMENT_STATUS not in(20)
+        AND bc.BORROW_ID = (SELECT BORROW_ID FROM rocky_b_repaymentrecord WHERE ID = #{repaymentId})
+        AND bc.`ORDER` = (SELECT `ORDER` FROM rocky_b_repaymentrecord WHERE ID = #{repaymentId})
+    </select>
+
+    <!-- 根据借款标ID和期数查询尚未还款的待收记录 -->
+    <select id="queryCollectionCountByRepayMentId"  resultType="java.lang.Integer">
+        SELECT count(bc.ID)
+        FROM rocky_b_collectionrecord bc
+        WHERE  bc.`STATUS` = 4 and bc.IS_CUSTODY=1 AND bc.E_REPAYMENT_STATUS is NOT null and bc.E_REPAYMENT_STATUS not in(20)
+        AND bc.BORROW_ID = (SELECT BORROW_ID FROM rocky_b_repaymentrecord WHERE ID = #{repaymentId})
+        AND bc.`ORDER` = (SELECT `ORDER` FROM rocky_b_repaymentrecord WHERE ID = #{repaymentId})
+    </select>
+
+
+	<!-- 查询应收总额 -->
+	<select id="queryCollectionTotalByBorrowId" resultType="java.math.BigDecimal">
+		SELECT
+			IFNULL(SUM(REPAY_ACCOUNT), 0)
+		FROM rocky_b_collectionrecord
+		WHERE `STATUS` = 0 AND BORROW_ID = #{borrowId}
+	</select>
+
+
+	<!-- 查询某期尚未还款的待收记录-->
+	<select id="queryCurrentCollectionRecord" resultMap="bCollectionRecordResultMap">
+		SELECT
+			<include refid="Base_Column_List"/>
+		FROM rocky_b_collectionrecord bc
+	    WHERE bc.BORROW_ID = #{borrowId} AND bc.`ORDER` = #{order} AND bc.`STATUS` = 0
+	</select>
+
+	<!-- 投资者某笔投标对应的当期之后应收利息总额 -->
+	<select id="queryAmountAfterCurrent" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+		SELECT
+			IFNULL(SUM(INTEREST), 0)
+		FROM rocky_b_collectionrecord
+		WHERE `ORDER` > #{order}
+			AND `STATUS` = 0
+			AND USER_ID = #{userId}
+			AND BORROW_ID = #{borrowId}
+			AND TENDER_ID = #{tendId}
+	</select>
+
+
+	<!-- 投资者累计待收总额，累计待收本金总额，累计待收利息总额-->
+	<select id="queryAmountAll" parameterType="java.util.Map" resultType="com.cxdai.console.fix.vo.BCollectionAmountVo">
+		SELECT
+			IFNULL(SUM(REPAY_ACCOUNT), 0) AS total_repay_account,
+			IFNULL(SUM(CAPITAL),0) AS total_capital,
+			IFNULL(SUM(INTEREST),0) AS total_interest
+		FROM rocky_b_collectionrecord
+		WHERE `STATUS` = 0
+			AND USER_ID = #{userId}
+			AND BORROW_ID = #{borrowId}
+			AND TENDER_ID = #{tendId}
+	</select>
+
+	<!-- 更新某期待收记录 -->
+	<update id="updateCollectionByMap" parameterType="java.util.Map" >
+		UPDATE
+			rocky_b_collectionrecord
+		SET `STATUS` = 1, REPAY_YESACCOUNT = REPAY_ACCOUNT, REPAY_YESTIME = UNIX_TIMESTAMP()
+		WHERE BORROW_ID = #{borrowId}
+			AND USER_ID =  #{userId}
+			AND `STATUS` = 0
+			AND `ORDER` = #{lastOrder}
+			AND TENDER_ID = #{tendId}
+	</update>
+
+	<!-- 更新某期待收记录 -->
+	<update id="updateCollectionById" parameterType="java.util.Map" >
+		UPDATE
+			rocky_b_collectionrecord
+		SET `STATUS` = 1, REPAY_YESACCOUNT = #{repayment_money}, REPAY_YESTIME = UNIX_TIMESTAMP()
+		WHERE id = #{id}
+	</update>
+
+	<!-- 更新某期之后的待收记录 -->
+	<update id="updateCollectionAfterorderByMap" parameterType="java.util.Map" >
+		UPDATE
+			rocky_b_collectionrecord
+		SET `STATUS` = 1, REPAY_YESACCOUNT = CAPITAL, REPAY_YESTIME = UNIX_TIMESTAMP()
+		WHERE  BORROW_ID = #{borrowId}
+			  AND USER_ID =  #{userId}
+			  AND `STATUS` = 0
+			  AND `ORDER` > #{order}
+			  AND TENDER_ID =  #{tendId}
+	</update>
+
+
+	<!-- 查询本息还款对账处理后的待收记录 -->
+	<select id="queryCollectionListByBizNo" resultMap="bCollectionRecordResultMap">
+		SELECT <include refid="Base_Column_List"/>
+		FROM rocky_b_collectionrecord bc
+		WHERE  bc.BIZ_REPAYMENT_NO IN
+			<foreach item="item" collection="noList" separator="," open="(" close=")" index="">
+				#{item}
+			</foreach>
+	</select>
+
+</mapper>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.base.mapper.BaseFirstBorrowMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.base.entity.FirstBorrow" id="firstBorrowResultMap">
+		<id property="id" column="id" />
+		<result property="name" 					column="NAME" />
+		<result property="periods" 					column="PERIODS" />
+		<result property="periodsDesc" 				column="PERIODS_DESC" />
+		<result property="status" 					column="STATUS" />
+		<result property="planAccount"	    		column="PLAN_ACCOUNT" />
+		<result property="realAccount"	    		column="REAL_ACCOUNT" />
+		<result property="lowestAccount"  			column="LOWEST_ACCOUNT" />
+		<result property="mostAccount" 				column="MOST_ACCOUNT" />
+		<result property="lockLimit"				column="LOCK_LIMIT"/>
+		<result property="lockStyle"				column="LOCK_STYLE"/>
+		<result property="lockEndtime" 				column="LOCK_ENDTIME"/>
+		<result property="perceivedRate" 			column="PERCEIVED_RATE" />
+		<result property="addRate" 					column="ADD_RATE" />
+		<result property="serviceRate" 				column="SERVICE_RATE" />
+		<result property="exitRate" 				column="EXIT_RATE" />
+		<result property="successTime"	    		column="SUCCESS_TIME" />
+		<result property="validTime"  				column="VALID_TIME" />
+		<result property="content" 					column="CONTENT" />
+		<result property="sendMessage"				column="SENDMESSAGE"/>
+		<result property="addtime"					column="ADDTIME"/>
+		<result property="addIp" 					column="ADDIP"/>
+		<result property="cancelUser" 				column="CANCEL_USER" />
+		<result property="cancelTime" 				column="CANCEL_TIME" />
+		<result property="cancelRemark"  			column="CANCEL_REMARK" />
+		<result property="uuid" 					column="UUID" />
+		<result property="contractNo"				column="CONTRACT_NO"/>
+		<result property="bidPassword"				column="BID_PASSWORD"/>
+		<result property="remark" 					column="REMARK"/>		
+		<result property="publishTime" 				column="PUBLISH_TIME" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="tenderTimes"	    		column="TENDER_TIMES" />
+		<result property="accountYes"  				column="ACCOUNT_YES" />
+		<result property="passwordSource" 			column="PASSWORD_SOURCE" />
+		<result property="version"					column="VERSION"/>
+		<result property="endTime"					column="END_TIME"/>
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="firstBorrowBaseColumn">
+		f.ID, 
+		f.NAME, 
+		f.PERIODS, 
+		f.PERIODS_DESC, 
+		f.STATUS, 
+		f.PLAN_ACCOUNT, 
+		f.REAL_ACCOUNT,
+		f.LOWEST_ACCOUNT, 
+		f.MOST_ACCOUNT,
+		f.LOCK_LIMIT,
+		f.LOCK_STYLE,
+		f.LOCK_ENDTIME,
+		f.PERCEIVED_RATE,
+		f.ADD_RATE,
+		f.SERVICE_RATE,
+		f.EXIT_RATE,
+		f.SUCCESS_TIME,
+		f.VALID_TIME,
+		f.CONTENT,
+		f.SENDMESSAGE,
+		f.ADDTIME,
+		f.ADDIP,
+		f.CANCEL_USER,
+		f.CANCEL_TIME,
+		f.CANCEL_REMARK,
+		f.UUID,
+		f.CONTRACT_NO,
+		f.BID_PASSWORD,
+		f.REMARK,
+		f.PUBLISH_TIME,
+		f.USER_ID,
+		f.TENDER_TIMES,
+		f.ACCOUNT_YES,
+		f.PASSWORD_SOURCE,
+		f.VERSION,
+		f.END_TIME
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.base.entity.FirstBorrow">
+		INSERT INTO t_first_borrow 
+		(NAME,	PERIODS,	PERIODS_DESC,	STATUS,	PLAN_ACCOUNT, REAL_ACCOUNT,	LOWEST_ACCOUNT,	MOST_ACCOUNT,	LOCK_LIMIT,
+		 LOCK_STYLE, 	LOCK_ENDTIME,	PERCEIVED_RATE,	ADD_RATE,	SERVICE_RATE, 	EXIT_RATE, 	SUCCESS_TIME, 
+		 VALID_TIME, 	CONTENT,	SENDMESSAGE,	ADDTIME,	ADDIP,	CANCEL_USER,	CANCEL_TIME,	CANCEL_REMARK, 
+		 UUID,	CONTRACT_NO,	BID_PASSWORD,	REMARK,	PUBLISH_TIME,	USER_ID,	TENDER_TIMES,	ACCOUNT_YES,PASSWORD_SOURCE,VERSION, END_TIME)
+		VALUES
+		( #{name},	#{periods},	#{periodsDesc},	#{status},#{planAccount},#{realAccount}, #{lowestAccount},	#{mostAccount},   #{lockLimit}, 
+		 #{lockStyle},	   #{lockEndtime},	#{perceivedRate},	#{addRate},	#{serviceRate},	#{exitRate},	#{successTime}, 
+		 #{validTime},	   #{content},	#{sendMessage},	#{addtime}, 	#{addIp},	#{cancelUser},	#{cancelTime},	#{cancelRemark}, 
+		 #{uuid},	#{contractNo},	#{bidPassword},	#{remark},#{publishTime},	#{userId},	#{tenderTimes},	#{accountYes},#{passwordSource},#{version}, #{endTime})		
+		
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="firstBorrowResultMap" >
+		select 	
+		   <include refid="firstBorrowBaseColumn"/>
+		from
+			t_first_borrow f
+		where 1=1
+		and f.id=#{id}
+  	</select>
+	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.base.entity.FirstBorrow" >
+    update t_first_borrow
+    <set >
+      <if test="name != null" >
+        NAME = #{name},
+      </if>
+      <if test="periods != null" >
+        PERIODS = #{periods},
+      </if>
+      <if test="periodsDesc != null" >
+        PERIODS_DESC = #{periodsDesc},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status},
+      </if>
+      <if test="planAccount != null" >
+        PLAN_ACCOUNT = #{planAccount},
+      </if>
+      <if test="realAccount != null" >
+        REAL_ACCOUNT = #{realAccount},
+      </if>      
+      <if test="lowestAccount != null" >
+        LOWEST_ACCOUNT = #{lowestAccount},
+      </if>
+       <if test="mostAccount != null" >
+        MOST_ACCOUNT = #{mostAccount},
+      </if>
+      <if test="lockLimit != null" >
+        LOCK_LIMIT = #{lockLimit},
+      </if>     
+      <if test="lockStyle != null" >
+        LOCK_STYLE = #{lockStyle},
+      </if> 
+      <if test="lockEndtime != null" >
+        LOCK_ENDTIME = #{lockEndtime},
+      </if>             
+      <if test="perceivedRate != null" >
+        PERCEIVED_RATE = #{perceivedRate},
+      </if>       
+      <if test="addRate != null" >
+        ADD_RATE = #{addRate},
+      </if> 
+      <if test="serviceRate != null" >
+        SERVICE_RATE = #{serviceRate},
+      </if> 
+      <if test="exitRate != null" >
+        EXIT_RATE = #{exitRate},
+      </if>             
+      <if test="successTime != null" >
+        SUCCESS_TIME = #{successTime},
+      </if> 
+      <if test="validTime != null" >
+        VALID_TIME = #{validTime},
+      </if> 
+      <if test="content != null" >
+        CONTENT = #{content},
+      </if> 
+      <if test="sendMessage != null" >
+        SENDMESSAGE = #{sendMessage},
+      </if> 
+      <if test="cancelUser != null" >
+        CANCEL_USER = #{cancelUser},
+      </if> 
+      <if test="cancelTime != null" >
+        CANCEL_TIME = #{cancelTime},
+      </if> 
+      <if test="cancelRemark != null" >
+        CANCEL_REMARK = #{cancelRemark},
+      </if> 
+      <if test="uuid != null" >
+        UUID = #{uuid},
+      </if>                                           
+      <if test="contractNo != null" >
+        CONTRACT_NO = #{contractNo},
+      </if>       
+      <if test="bidPassword != null" >
+        BID_PASSWORD = #{bidPassword},
+      </if> 
+      <if test="remark != null" >
+        REMARK = #{remark},
+      </if> 
+      <if test="publishTime != null" >
+        PUBLISH_TIME = #{publishTime},
+      </if>             
+       <if test="tenderTimes != null" >
+        TENDER_TIMES = #{tenderTimes},
+      </if>
+      <if test="accountYes != null" >
+        ACCOUNT_YES = #{accountYes},
+      </if>
+      <if test="passwordSource != null" >
+        PASSWORD_SOURCE = #{passwordSource},
+      </if> 
+      <if test="cleanPassword !=null">
+      	PASSWORD_SOURCE = null,BID_PASSWORD = null,
+      </if>                
+      <if test="version != null" >
+        VERSION = #{version},
+      </if>      
+      <if test="endTime != null" >
+        END_TIME = #{endTime},
+      </if>                                         
+    </set>
+    where ID = #{id}
+    <if test="selfVersion != null">
+       and VERSION = #{selfVersion}
+    </if>
+  </update>
+  	
+</mapper>  

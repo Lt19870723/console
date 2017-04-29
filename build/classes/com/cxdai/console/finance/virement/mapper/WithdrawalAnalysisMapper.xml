@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cxdai.console.finance.virement.mapper.WithdrawalAnalysisMapper">
+  <resultMap id="BaseResultMap" type="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisVo">
+    <result column="USER_ID" property="userId"/>
+    <result column="REALNAME" property="realname"/>
+    <result column="USERNAME" property="username"/>
+    <result column="SUM_CREDITED" property="withdrawalAmount"/>
+    <result column="WITHDRAWAL_TYPE" property="withdrawalType"/>
+    <result column="WITHDRAWAL_RATE" property="withdrawalRate"/>
+    <result column="TOTAL" property="assetAmount"/>
+    <result column="RANK_NO" property="rankno"/>
+  </resultMap>
+  
+  <sql id="where_serch_sql">
+  	<if test="beginTime != null and beginTime != ''">
+  		<![CDATA[AND FROM_UNIXTIME(c.VERIFY_TIME2, '%Y-%m-%d') >= #{beginTime}]]>
+  	</if>
+  	<if test="endTime != null and endTime != ''">
+  		<![CDATA[AND FROM_UNIXTIME(c.VERIFY_TIME2, '%Y-%m-%d') <= #{endTime}]]>
+  	</if>
+  </sql>
+  <select id="queryListCountByCnd" parameterType="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisCnd" resultType="int">
+  	SELECT COUNT(*) FROM (<include refid="temp_table_sql" />) ttt
+  </select>
+  
+  <select id="queryListByCnd" parameterType="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisCnd" resultMap="BaseResultMap">
+  	SELECT ttt.* FROM (<include refid="temp_table_sql" />) ttt
+  </select>
+  
+  <select id="getTotalAssetByUserId" resultType="java.math.BigDecimal">
+  	SELECT
+	(
+		a.DRAW_MONEY + a.NO_DRAW_MONEY + a.NO_USE_MONEY + a.COLLECTION + a.FIRST_BORROW_USE_MONEY + IFNULL(cur.TOTAL, 0) + IFNULL(fix.fixCapitalTotal, 0) + IFNULL(coll.fixInvestNoTotal, 0)
+	) AS TOTAL
+	FROM rocky_account a 
+	LEFT JOIN t_cur_account cur ON a.USER_ID = cur.USER_ID
+	LEFT JOIN (SELECT USER_ID, SUM(c.ACCOUNT) AS fixCapitalTotal FROM t_fix_tender_detail c WHERE c. STATUS IN (0, 1) GROUP BY USER_ID) fix ON a.USER_ID = fix.USER_ID
+	LEFT JOIN (SELECT USER_ID, SUM(co.INTEREST) AS fixInvestNoTotal FROM t_fix_collectionrecord co WHERE co. STATUS = 0 GROUP BY USER_ID) coll ON a.USER_ID = coll.USER_ID
+	WHERE a.USER_ID = #{userId}
+  </select>
+  
+  <sql id="temp_table_sql">
+  	SELECT (@rowNO := @rowNo+1) AS RANK_NO, tr.*, TRUNCATE(IFNULL(tr.SUM_CREDITED / tr.TOTAL, 0) * 100, 2) AS WITHDRAWAL_RATE,
+  		CASE 
+  			WHEN IFNULL(tr.SUM_CREDITED / tr.TOTAL, 0) <![CDATA[>=]]> 5 AND IFNULL(tr.TOTAL, 0) <![CDATA[>=]]> 100 THEN '撤资倾向' 
+  			WHEN IFNULL(tr.TOTAL, 0) <![CDATA[<]]> 100 THEN '撤资' 
+  			ELSE '正常提现' 
+  		END AS WITHDRAWAL_TYPE 
+  		FROM (
+	  		SELECT c.USER_ID, m.USERNAME, ra.REALNAME, SUM(c.CREDITED) AS SUM_CREDITED, tal.TOTAL
+			FROM rocky_cashrecord c LEFT JOIN rocky_realname_appro ra ON ra.USER_ID = c.USER_ID 
+			LEFT JOIN rocky_member m ON m.ID = c.USER_ID
+			LEFT JOIN (
+				SELECT a.USER_ID,
+			(
+				a.DRAW_MONEY + a.NO_DRAW_MONEY + a.NO_USE_MONEY + a.COLLECTION + a.FIRST_BORROW_USE_MONEY + IFNULL(cur.TOTAL, 0) + IFNULL(fix.fixCapitalTotal, 0) + IFNULL(coll.fixInvestNoTotal, 0)
+			) AS TOTAL
+			FROM rocky_account a 
+			LEFT JOIN t_cur_account cur ON a.USER_ID = cur.USER_ID
+			LEFT JOIN (SELECT USER_ID, SUM(c.ACCOUNT) AS fixCapitalTotal FROM t_fix_tender_detail c WHERE c. STATUS IN (0, 1) GROUP BY USER_ID) fix ON a.USER_ID = fix.USER_ID
+			LEFT JOIN (SELECT USER_ID, SUM(co.INTEREST) AS fixInvestNoTotal FROM t_fix_collectionrecord co WHERE co. STATUS = 0 GROUP BY USER_ID) coll ON a.USER_ID = coll.USER_ID
+			GROUP BY a.USER_ID
+			) tal ON tal.USER_ID = c.USER_ID
+			WHERE c.STATUS = '2' <include refid="where_serch_sql" /> 
+			GROUP BY c.USER_ID ORDER BY SUM_CREDITED DESC) tr, (SELECT @rowNO :=0) b
+  </sql>
+  <select id="queryWithdrawalAnalysisList" parameterType="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisCnd" resultMap="BaseResultMap">
+  	<include refid="temp_table_sql" />
+  </select>
+  
+ 	<select id="getTotalWithdrawalAccount" parameterType="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisCnd" resultType="java.math.BigDecimal">
+ 		SELECT IFNULL(SUM(ttt.SUM_CREDITED), 0) FROM (<include refid="temp_table_sql" />) ttt
+ 	</select> 
+ 
+ 	<select id="getTotalNomalWithdrawal" parameterType="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisCnd" resultType="java.math.BigDecimal">
+ 		SELECT IFNULL(SUM(ttt.SUM_CREDITED), 0) FROM (<include refid="temp_table_sql" />) ttt WHERE ttt.WITHDRAWAL_TYPE = '正常提现'
+ 	</select>
+ 	
+ 	<select id="getTotalDisinvestment" parameterType="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisCnd" resultType="java.math.BigDecimal">
+ 		SELECT IFNULL(SUM(ttt.SUM_CREDITED), 0) FROM (<include refid="temp_table_sql" />) ttt WHERE ttt.WITHDRAWAL_TYPE = '撤资'
+ 	</select>
+ 	
+ 	<select id="getTotalDivestmentTendency" parameterType="com.cxdai.console.finance.virement.vo.WithdrawalAnalysisCnd" resultType="java.math.BigDecimal">
+ 		SELECT IFNULL(SUM(ttt.SUM_CREDITED), 0) FROM (<include refid="temp_table_sql" />) ttt WHERE ttt.WITHDRAWAL_TYPE = '撤资倾向'
+ 	</select>
+</mapper>

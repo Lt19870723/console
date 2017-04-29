@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.statistics.reconciliation.mapper.AccountCheckMapper">
+	
+	<!--根据查询条件统计线上充值总额-->
+	<select id="queryOnlineRechargeMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(r.MONEY) 
+		FROM rocky_rechargerecord r 
+		WHERE r.STATUS = 1 
+		AND r.type = 1
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and r.VERIFY_TIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and r.VERIFY_TIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select> 
+  	
+	<!--根据查询条件统计线下充值总额-->
+	<select id="queryOfflineRechargeMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(r.MONEY) 
+		FROM rocky_rechargerecord r 
+		WHERE r.STATUS = 1 
+		AND r.type = 2
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and r.VERIFY_TIME2 <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and r.VERIFY_TIME2 <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>	
+  	
+	<!--根据查询条件统计网站充值入账总额-->
+	<select id="queryWebRechargeMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND (a.type = 'online_recharge' OR a.type = 'offline_recharge')
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>  	
+  	
+	<!--根据查询条件统计网站所有投资者的投标支出-->
+	<select id="queryInvestorTenderMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT 
+		(
+		SELECT IFNULL(SUM(a.MONEY),0) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND a.type = 'tender_success'
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+		and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+		and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+		)
+		+
+		(
+		 
+		SELECT IFNULL(sum(tendrecord.account ),0)  from t_fix_account_log fixaccount join ( 
+		SELECT user_id ,sum(account) account,borrow_id from rocky_b_tenderrecord where user_id > 10000000 group by user_id, borrow_id 
+		) tendrecord on(fixaccount.fix_borrow_id =tendrecord.USER_ID and fixaccount.BORROW_ID = tendrecord.BORROW_ID ) 
+		
+		where type=5 
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+		AND ADDTIME <![CDATA[>=]]> FROM_UNIXTIME(#{beginTimeStr}, '%Y-%m-%d %H:%i:%s')
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+		AND ADDTIME <![CDATA[<=]]> FROM_UNIXTIME(#{endTimeStr}, '%Y-%m-%d %H:%i:%s')
+		</if>
+		)
+		FROM DUAL
+  	</select>  	 	
+  	
+	<!--根据查询条件统计网站所有借款者的借款入账金额-->
+	<select id="queryBorrowerSuccuessMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND a.type = 'borrow_success'
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>  	
+  	
+	<!--根据查询条件统计网站所有借款标的借款总额-->
+	<select id="queryBorrowMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(b.ACCOUNT) 
+		FROM rocky_borrow b
+		WHERE 1=1
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and b.SUCCESS_TIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and b.SUCCESS_TIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>   	
+  	
+ 	<!--根据查询条件统计网站所有投资者的回款入账-->
+	<select id="queryRepaymentBackMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT IFNULL((
+		SELECT SUM(a.MONEY) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND a.type = 'repayment_back'
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+		AND a.ID_TYPE = 0  
+		AND a.BORROW_ID IN (
+			SELECT DISTINCT(r.BORROW_ID) FROM rocky_b_repaymentrecord r
+			WHERE 1=1
+			AND r.STATUS = 1
+			AND r.WEBSTATUS !=1
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>		
+		)
+		),0) + IFNULL(
+			(
+			SELECT SUM(c.REPAY_YESACCOUNT) FROM rocky_b_tenderrecord t, rocky_b_collectionrecord c
+			WHERE t.TENDER_TYPE = 3 AND t.id = c.TENDER_ID AND c.`STATUS` in(1,2,3) 
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				AND c.REPAY_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				AND c.REPAY_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>
+			)
+	    ,0) FROM DUAL
+  	</select>   	
+
+ 	<!--根据查询条件统计回款的小账户进出资金-->
+	<select id="queryWebSiteMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM t_websitelog a
+		WHERE 1=1
+		AND a.type in ('website_income','website_pay')
+		<if test="beginTime != null and endTime != null ">
+			and a.ADDTIME between #{beginTime} and #{endTime}
+		</if>
+		AND a.BORROW_ID IN (
+			SELECT DISTINCT(r.BORROW_ID) FROM rocky_b_repaymentrecord r
+			WHERE 1=1
+			AND r.STATUS = 1
+			AND r.WEBSTATUS !=1
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>		
+		)		
+  	</select>   
+ 
+  	<!--根据查询条件统计网站所有借款者的还款支出-->
+	<select id="queryBorrowerPayMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND type = 'repayment_deduct'
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+		AND a.ID_TYPE = 0  
+		AND a.BORROW_ID IN (
+			SELECT DISTINCT(r.BORROW_ID) FROM rocky_b_repaymentrecord r
+			WHERE 1=1
+			AND r.STATUS = 1
+			AND r.WEBSTATUS !=1
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>		
+		)		
+  	</select> 
+ 
+  	<!--根据查询条件统计网站应还总额-->
+	<select id="queryWebMustPayMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+			SELECT sum(r.REPAYMENT_ACCOUNT) FROM rocky_b_repaymentrecord r
+			WHERE 1=1
+			AND r.STATUS = 1
+			AND r.WEBSTATUS !=1
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>		
+  	</select>  
+  	
+  		<!--根据查询条件统计网站的提现记录总额-->
+	<select id="queryPaymentSuccessMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND type = 'payment_success'
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select> 
+
+  		<!--根据查询条件统计网站的提现作废总额-->
+	<select id="queryPaymentFailedMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND TYPE='cash_faild' AND REMARK in('提现作废')
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>  
+  	
+  		<!--根据查询条件统计网站提现支出总额（包括作废金额）-->
+	<select id="queryTakeCashMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(c.TOTAL) 
+		FROM rocky_cashrecord c
+		WHERE 1=1
+		AND c.STATUS in (2,4)
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and c.VERIFY_TIME2 <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and c.VERIFY_TIME2 <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>
+  	
+  		<!--根据查询条件统计公司实际打款总额（包括作废金额）-->
+	<select id="queryActualCashMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(c.CREDITED+c.FEE) 
+		FROM rocky_cashrecord c
+		WHERE 1=1
+		AND c.STATUS in (2,4)
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and c.VERIFY_TIME2 <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and c.VERIFY_TIME2 <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>   
+  
+  		<!--根据查询条件统计网站的实际提现作废总额-->
+	<select id="queryPaymentActualFailedMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(c.TOTAL) 
+		FROM rocky_cashrecord c
+		WHERE 1=1
+		AND c.STATUS = 4
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and c.VERIFY_TIME3 <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and c.VERIFY_TIME3 <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>  	
+  	
+  		<!--根据查询条件统计网站当天垫付总额-->
+	<select id="queryWebPayRepaymentMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(r.ADVANCE_YESACCOUNT) FROM rocky_b_repaymentrecord r
+		WHERE r.WEBSTATUS = 1
+		<if test="beginTime != null and endTime != null ">
+			and r.ADVANCETIME between #{beginTime} and #{endTime}
+		</if>
+  	</select>  
+  	
+  		<!--根据查询条件网站垫付入帐总额-->
+	<select id="queryWebPayCollectionMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(c.ADVANCE_YESACCOUNT) FROM rocky_b_collectionrecord c
+		WHERE 1=1
+		<if test="beginTime != null and endTime != null ">
+			and c.ADVANCETIME between #{beginTime} and #{endTime}
+		</if>
+  	</select>
+  	
+  	 <!--根据查询网站当天所有垫付回款入帐总额-->
+	<select id="queryWebPayRepaymentBackMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(money) FROM rocky_accountlog a,rocky_b_repaymentrecord r
+		WHERE a.BORROW_ID = r.BORROW_ID
+		AND a.TYPE='repayment_back'
+		AND r.WEBSTATUS = 1
+		<if test="beginTime != null and endTime != null ">
+			and r.advancetime between #{beginTime} and #{endTime}
+		</if>
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>		
+		AND a.ADDTIME - UNIX_TIMESTAMP(r.ADVANCETIME)<![CDATA[<=]]>120;	
+  	</select>  
+  	
+  		<!--根据查询根据查询借款者垫付后还款总额-->
+	<select id="queryAfterWebPayMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM rocky_accountlog a
+		WHERE 1=1
+		AND type = 'after_web_repay'
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if>
+  	</select>   
+  	
+  	<!--根据查询借款者实际垫付还款总额-->
+	<select id="queryAfterWebPayRepaymentMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+			SELECT sum(r.REPAYMENT_YESACCOUNT) FROM rocky_b_repaymentrecord r
+			WHERE 1=1
+			AND r.STATUS = 1
+			AND r.WEBSTATUS =1
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>		
+  	</select>
+  	
+  		<!--根据查询待收表中状态为垫付后还款的实际收款金额之和-->
+	<select id="queryAfterWebPayCollectionMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(c.REPAY_YESACCOUNT) FROM rocky_b_collectionrecord c
+		WHERE c.STATUS = 3
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and c.REPAY_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and c.REPAY_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>
+  	</select>
+  	
+  		<!--根据查询非VIP非当天垫付后还款的应收利息之和-->
+	<select id="queryAfterWebPayNoVipInterestMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(c.INTEREST) FROM rocky_b_collectionrecord c,rocky_b_tenderrecord t,rocky_borrow b
+		WHERE 1=1
+	    and c.TENDER_ID = t.ID
+	    and b.ID = t.BORROW_ID
+	    and b.BORROWTYPE!=3	    
+	    and t.IS_VIP=0
+	    and c.STATUS = 3
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and c.REPAY_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and c.REPAY_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>
+	    and TO_DAYS(FROM_UNIXTIME(c.REPAY_YESTIME,'%y-%m-%d'))-TO_DAYS(FROM_UNIXTIME(c.REPAY_TIME,'%y-%m-%d'))>0
+  	</select>  	  	
+  	
+	<!--根据查询条件统计垫付后还款小帐号-->
+	<select id="queryAfterWebPaySiteMoneyByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd" resultType="java.math.BigDecimal" >
+		SELECT SUM(a.MONEY) 
+		FROM t_websitelog a
+		WHERE 1=1
+		AND a.type in ('website_income','website_pay')
+		<if test="beginTime != null and endTime != null ">
+			and a.ADDTIME between #{beginTime} and #{endTime}
+		</if>
+		AND a.BORROW_ID IN (
+			SELECT DISTINCT(r.BORROW_ID) FROM rocky_b_repaymentrecord r
+			WHERE 1=1
+			AND r.STATUS = 1
+			AND r.WEBSTATUS =1
+			<if test="beginTimeStr != null and beginTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+			</if>
+			<if test="endTimeStr != null and endTimeStr != '' ">
+				and r.REPAYMENT_YESTIME <![CDATA[<=]]> #{endTimeStr}
+			</if>
+		)		
+  	</select>     
+  	
+  		    		
+	<!--查询最新直通车信息统计-->
+	<select id="queryNewThroughTrainInformationStatisticsData"    parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd"  resultType="com.cxdai.console.statistics.firstborrow.entity.NewThroughTrainInformationStatisticsVO" >
+		 select  
+			  (select    ifnull(SUM(ACCOUNT),0)   from t_first_tender_real  WHERE  `STATUS` in(0,2,3,5))   stockTotalAmount,
+			  (SELECT ifnull(SUM(USE_MONEY),0) FROM t_first_tender_real  WHERE STATUS  in(0,2,3,5))   firstUseMoney,
+			  (   select ifnull(SUM(ACCOUNT),0) from t_first_tender_real where id IN ( 
+                  select ua.FIRST_TENDER_REAL_ID from t_first_unlock_appr ua 
+				   where 1=1 and ua.status=1 
+				   <if test="beginTimeStr != null and beginTimeStr != '' ">
+				      and   DATE_FORMAT(ua.APPR_TIME,'%Y-%m-%d') <![CDATA[>=]]> FROM_UNIXTIME(#{beginTimeStr}) 
+				   </if>
+				   <if test="endTimeStr != null and endTimeStr != '' ">
+				       and DATE_FORMAT(ua.APPR_TIME,'%Y-%m-%d') <![CDATA[<=]]> FROM_UNIXTIME(#{endTimeStr})
+				   </if>
+					)  )  getoffTotalAmount,
+		     (select ifnull(SUM(ACCOUNT_YES),0)  from t_first_borrow where `STATUS` in(3, 5) 
+		      <if test="beginTimeStr != null and beginTimeStr != '' ">
+		      and  DATE_FORMAT(PUBLISH_TIME,'%Y-%m-%d') <![CDATA[>=]]> FROM_UNIXTIME(#{beginTimeStr}) 
+		      </if>
+		      <if test="endTimeStr != null and endTimeStr != '' ">
+		      and  DATE_FORMAT(PUBLISH_TIME,'%Y-%m-%d')<![CDATA[<=]]> FROM_UNIXTIME(#{endTimeStr})
+		      </if>
+		      ) publishTotalAmount,
+		      (select  ifnull(SUM(ACCOUNT),0)  from t_first_tender_real where FIRST_TENDER_TYPE = 2  
+		       <if test="beginTimeStr != null and beginTimeStr != '' "> 
+		      and DATE_FORMAT(ADDTIME,'%Y-%m-%d') <![CDATA[>=]]> FROM_UNIXTIME(#{beginTimeStr})
+		      </if>
+		       <if test="endTimeStr != null and endTimeStr != '' ">
+		       and DATE_FORMAT(ADDTIME,'%Y-%m-%d')<![CDATA[<=]]> FROM_UNIXTIME(#{endTimeStr})  
+		        </if>
+		         ) newgetonTotalAmount
+		  FROM   dual 
+  	</select>     	    	
+
+	<!--根据查询条件统计提前还款对账数据-->
+	<select id="queryRepayEarlyCheckByCnd" parameterType="com.cxdai.console.statistics.reconciliation.entity.AccountCheckCnd"  resultType="com.cxdai.console.statistics.reconciliation.vo.RepayEarlyCheckVO" >
+		 select  
+		      (
+		        SELECT ifnull(SUM(money),0) FROM rocky_accountlog a	
+				WHERE a.type='subtract_early_interest'
+                <if test="beginTimeStr != null and beginTimeStr != '' ">
+					and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+				</if>
+				<if test="endTimeStr != null and endTimeStr != '' ">
+					and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+				</if>
+              )	AS subtractInterestTotal,	
+		      (
+		        SELECT ifnull(SUM(REPAY_ACCOUNT),0)-ifnull(SUM(REPAY_YESACCOUNT),0) FROM rocky_b_collectionrecord c
+			    WHERE c.STATUS=1
+                <if test="beginTimeStr != null and beginTimeStr != '' ">
+					and c.REPAY_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+				</if>
+				<if test="endTimeStr != null and endTimeStr != '' ">
+					and c.REPAY_YESTIME <![CDATA[<=]]> #{endTimeStr}
+				</if>
+				AND DATEDIFF(FROM_UNIXTIME(c.REPAY_TIME,'%Y-%m-%d'),FROM_UNIXTIME(c.REPAY_YESTIME,'%Y-%m-%d'))>3			    
+			  ) AS collectionSubtractTotal,
+			  (
+			  		SELECT ifnull(SUM(a.MONEY),0) 
+					FROM t_websitelog a
+					WHERE 1=1
+					AND a.type in ('website_early_income','website_early_pay')
+					<if test="beginTime != null and endTime != null ">
+						and a.ADDTIME between #{beginTime} and #{endTime}
+					</if>
+			  ) AS websiteEarlyTotal,
+			  (
+		        SELECT ifnull(SUM(money),0) FROM rocky_accountlog a	
+				WHERE a.type='add_early_interest'
+                <if test="beginTimeStr != null and beginTimeStr != '' ">
+					and a.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+				</if>
+				<if test="endTimeStr != null and endTimeStr != '' ">
+					and a.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+				</if>
+			  ) AS addInterestTotal,	
+		      (
+		        SELECT ifnull(SUM(REPAYMENT_ACCOUNT),0)-ifnull(SUM(REPAYMENT_YESACCOUNT),0) FROM rocky_b_repaymentrecord r
+			    WHERE r.STATUS=1
+                <if test="beginTimeStr != null and beginTimeStr != '' ">
+					and r.REPAYMENT_YESTIME <![CDATA[>=]]> #{beginTimeStr}
+				</if>
+				<if test="endTimeStr != null and endTimeStr != '' ">
+					and r.REPAYMENT_YESTIME <![CDATA[<=]]> #{endTimeStr}
+				</if>			    
+				AND DATEDIFF(FROM_UNIXTIME(r.REPAYMENT_TIME,'%Y-%m-%d'),FROM_UNIXTIME(r.REPAYMENT_YESTIME,'%Y-%m-%d'))>3
+			  ) AS repaymentAddTotal			  		  
+		  FROM   dual 
+  	</select>   
+  	
+	<!--根据查询条件统计提前还款对账数据-->
+	<select id="queryRealtimeUserAccount"  resultType="com.cxdai.console.statistics.reconciliation.vo.RealtimeUserAccountVO" >
+		select 
+          truncate(sum(a.TOTAL),2)												AS total, 
+		  truncate(sum(ifnull(b.SUM_ACCOUNT, 0)),2) 							AS repayNetMoney, 
+          truncate(sum((a.TOTAL - ifnull(b.SUM_ACCOUNT, 0))),2) 				AS actualMoney, 
+		  truncate(sum(USE_MONEY),2) 											AS userMoney, 
+          truncate(sum(NO_USE_MONEY),2)											AS noUserMoney, 
+          truncate(sum(COLLECTION),2) 											AS collection, 
+		  truncate(sum(DRAW_MONEY),2)											AS drawMoney, 
+          truncate(sum(NO_DRAW_MONEY),2) 										AS noDrawMoney 
+		from rocky_account a 
+		inner join rocky_member m on m.ID = a.USER_ID and m.`STATUS` = 0 
+		left join ( 
+					select b.USER_ID, sum(r.REPAYMENT_ACCOUNT) as SUM_ACCOUNT 
+					from rocky_borrow b, rocky_b_repaymentrecord r 
+					where b.ID = r.BORROW_ID 
+					and b.BORROWTYPE = 3 
+					and b.`STATUS` = 4 
+					and r.`STATUS` = 0 
+					GROUP BY b.USER_ID 
+		) b on a.USER_ID = b.USER_ID 
+		where a.TOTAL > 0 
+  	</select>  	 
+  	
+	<!--查询实时用户资金情况集合-->
+	<select id="queryRealtimeUserAccountList"  resultType="com.cxdai.console.statistics.reconciliation.vo.RealtimeUserAccountVO" >
+		select 
+				 case 
+						when USERNAME is null then null 
+						when IS_FINANCIAL_USER = 1 then '理财用户' 
+				    when IS_FINANCIAL_USER = 0 then '借款用户' 
+				 end 																												 AS userType,
+				 t.*
+		from ( 
+				select 
+		          m.IS_FINANCIAL_USER,
+		          m.USERNAME																	AS userName,
+		          truncate(sum(a.TOTAL),2)														AS total, 
+				  truncate(sum(ifnull(b.SUM_ACCOUNT, 0)),2) 									AS repayNetMoney, 
+		          truncate(sum((a.TOTAL - ifnull(b.SUM_ACCOUNT, 0))),2) 						AS actualMoney, 
+				  truncate(sum(USE_MONEY),2) 													AS userMoney, 
+		          truncate(sum(NO_USE_MONEY),2)													AS noUserMoney, 
+		          truncate(sum(COLLECTION),2) 													AS collection, 
+				  truncate(sum(DRAW_MONEY),2)												    AS drawMoney, 
+		          truncate(sum(NO_DRAW_MONEY),2) 												AS noDrawMoney 
+				from rocky_account a 
+				inner join rocky_member m on m.ID = a.USER_ID and m.`STATUS` = 0 
+				left join ( 
+							select b.USER_ID, sum(r.REPAYMENT_ACCOUNT) as SUM_ACCOUNT 
+							from rocky_borrow b, rocky_b_repaymentrecord r 
+							where b.ID = r.BORROW_ID 
+							and b.BORROWTYPE = 3 
+							and b.`STATUS` = 4 
+							and r.`STATUS` = 0 
+							GROUP BY b.USER_ID 
+				) b on a.USER_ID = b.USER_ID 
+				where a.TOTAL > 0 
+				group by m.USERNAME 
+				with rollup 
+		) t 
+		order by t.TOTAL desc
+  	</select>  	  	
+  	 
+</mapper>  

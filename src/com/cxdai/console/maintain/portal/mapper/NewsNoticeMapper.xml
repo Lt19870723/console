@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.maintain.portal.mapper.NewsNoticeMapper">
+	
+	<!-- NewsNoticeVo结果集 -->
+	<resultMap type="com.cxdai.console.maintain.portal.entity.NewsNoticeVo" id="newsNoticeVoResultMap">
+		<id property="id" column="id" />
+		<result property="type" 				column="TYPE" />
+		<result property="status" 				column="STATUS" />
+		<result property="hits" 				column="HITS" />
+		<result property="source" 				column="SOURCE" />
+		<result property="title"	    		column="TITLE" />
+		<result property="author"  				column="AUTHOR" />
+		<result property="context" 				column="CONTEXT" />
+		<result property="addtime" 				column="ADDTIME" />
+		<result property="addip" 				column="ADDIP" />
+		<result property="updatetime" 			column="UPDATETIME" />
+		<result property="upip" 				column="UPIP" />
+	</resultMap>
+	
+	<!--新闻公告类基本列 -->
+	<sql id="newsNoticeVoColumn">
+		n.ID, 
+		n.TYPE, 
+		n.STATUS, 
+		n.HITS, 
+		n.SOURCE, 
+		n.TITLE, 
+		n.AUTHOR, 
+		n.CONTEXT, 
+		n.ADDTIME, 
+		n.ADDIP, 
+		n.UPDATETIME, 
+		n.UPIP
+	</sql>
+	
+	<!-- 封装查询条件 -->
+	<sql id="news_notice_Where_Clause">
+		<if test="id != null">
+			and n.id =#{id}
+		</if>
+		<if test="type != null">
+			and n.type = #{type}
+		</if>
+		<if test="status != null">
+			and n.status = #{status}
+		</if>
+		<if test="title != null and title != ''">
+			and n.title like '%' #{title} '%' 
+		</if>
+		
+		<if test="beginTime != null and beginTime != ''">
+			and n.ADDTIME &gt;= #{beginTime} 
+		</if>
+		
+		<if test="endTime != null and endTime != ''">
+			and n.ADDTIME &lt;= #{endTime} 
+		</if>
+		
+		<if test="hits != null">
+			and n.HITS &gt;= #{hits} 
+		</if>
+	</sql>
+  	
+  	<!-- 根据条件查询新闻公告记录集合 -->
+	<select id="queryNewsNoticeList" parameterType="com.cxdai.console.maintain.portal.entity.NewsNoticeCnd" resultMap="newsNoticeVoResultMap" >
+		select 	
+		   <include refid="newsNoticeVoColumn"/>
+		from
+			rocky_news_notice n
+		where 1=1
+		<include refid="news_notice_Where_Clause"/>
+		ORDER BY n.UPDATETIME DESC,n.ADDTIME DESC
+  	</select>
+  	
+  	  	<!-- 根据条件查询新闻公告记录数量-->
+	<select id="queryNewsNoticeCount" parameterType="com.cxdai.console.maintain.portal.entity.NewsNoticeCnd" resultType="java.lang.Integer" >
+		select count(n.id)
+		from
+			rocky_news_notice n
+		where 1=1
+		<include refid="news_notice_Where_Clause"/>
+  	</select>
+  	
+  	<!-- 根据条件查询新闻公告记录集合（分页） -->
+	<select id="queryNewsNoticeListForPage" parameterType="com.cxdai.console.maintain.portal.entity.NewsNoticeCnd" resultMap="newsNoticeVoResultMap" >
+		select 	
+		   <include refid="newsNoticeVoColumn"/>
+		from
+			rocky_news_notice n
+		where 1=1
+		<include refid="news_notice_Where_Clause"/>
+		ORDER BY n.UPDATETIME DESC,n.ADDTIME DESC
+  	</select>
+</mapper>  

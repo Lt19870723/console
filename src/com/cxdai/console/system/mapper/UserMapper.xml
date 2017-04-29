@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.system.mapper.UserMapper">
+
+	<select id="countUserList" parameterType="com.cxdai.console.system.vo.UserCnd" resultType="java.lang.Integer">
+		select count(*) from t_system_user u 
+		left join t_system_user_role s on u.ID=s.USER_ID
+		left join t_system_role r on s.ROLE_ID=r.ID
+		<include refid="selectUserList_where" />
+	</select>
+	<select id="selectUserList" parameterType="com.cxdai.console.system.vo.UserCnd" resultType="com.cxdai.console.system.entity.User">
+		select u.*,r.NAME as roleName from t_system_user u
+		left join t_system_user_role s on u.ID=s.USER_ID
+		left join t_system_role r on s.ROLE_ID=r.ID
+		<include refid="selectUserList_where" /> order by u.ID
+	</select>
+	<sql id="selectUserList_where">
+		<where>
+			<if test="userName != null and userName != ''">u.USERNAME like concat('%', #{userName},'%')</if>
+			<if test="name != null and name != ''">and u.NAME like concat('%', #{name},'%')</if>
+			<if test="status != null and status!='' ">and u.STATUS = #{status}</if>
+			<if test="roleName != null and roleName!='' ">and r.NAME = #{roleName}</if>
+		</where>
+	</sql>
+	
+	<select id="selectById" parameterType="java.lang.Integer" resultType="com.cxdai.console.system.vo.UserVo">
+		select u.*,
+		  (select ur.ROLE_ID from t_system_user_role ur where ur.USER_ID = u.ID) roleId
+		from t_system_user u where u.ID = #{roleId}
+	</select>
+
+	<select id="selectByUserName" resultType="com.cxdai.console.system.entity.User" parameterType="java.lang.String">
+		select * from t_system_user where USERNAME = #{userName}
+	</select>
+	
+	<insert id="insert" parameterType="com.cxdai.console.system.entity.User" useGeneratedKeys="true" keyProperty="id">
+		insert into t_system_user (USERNAME, PASSWORD, NAME, EMAIL, MOBILE, TEL, DEPT, POSITION, `STATUS`)
+		values (#{userName}, #{password}, #{name}, #{email}, #{mobile}, #{tel}, #{dept}, #{position}, #{status})
+		
+	</insert>
+	
+	<insert id="insertUserRole" parameterType="java.util.Map">
+		insert into t_system_user_role(USER_ID, ROLE_ID) values (#{userId}, #{roleId})
+	</insert>
+	
+	<update id="updateUserRole" parameterType="java.util.Map">
+		update t_system_user_role set ROLE_ID = #{roleId} where USER_ID = #{userId}
+	</update>
+	
+	<update id="update" parameterType="com.cxdai.console.system.entity.User">
+		update t_system_user
+		<set>
+			<if test="userName != null">
+				USERNAME = #{userName},
+			</if>
+			<if test="password != null">
+				PASSWORD = #{password},
+			</if>
+			<if test="name != null">
+				NAME = #{name},
+			</if>
+			<if test="email != null">
+				EMAIL = #{email},
+			</if>
+			<if test="mobile != null">
+				MOBILE = #{mobile},
+			</if>
+			<if test="tel != null">
+				TEL = #{tel},
+			</if>
+			<if test="dept != null">
+				DEPT = #{dept},
+			</if>
+			<if test="position != null">
+				POSITION = #{position},
+			</if>
+		</set>
+		where ID = #{id}
+	</update>
+	
+	<update id="updateStatus" parameterType="java.lang.Integer">
+		update t_system_user set `STATUS` = (case `STATUS` when 0 then 1 else 0 end) WHERE ID = #{userId}
+	</update>
+	
+	<select id="queryRolesByUserId" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select distinct r.NAME
+		from t_system_user_role ur
+		inner join t_system_role r on r.ID = ur.ROLE_ID and r.`STATUS` = 0
+		where ur.USER_ID = #{userId}
+	</select>
+	
+	<select id="queryPermissionsByUserId" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select distinct NAME from (
+		  select p.NAME
+		  from t_system_user_role ur
+		  inner join t_system_role r on r.ID = ur.ROLE_ID and r.`STATUS` = 0
+		  inner join t_system_role_permission rp on rp.ROLE_ID = r.ID
+		  inner join t_system_permission p on p.ID = rp.PERMISSION_ID and p.`STATUS` = 0
+		  where ur.USER_ID = #{userId}
+		  union all
+		  select p.NAME
+		  from t_system_user_permission up
+		  inner join t_system_permission p on p.ID = up.PERMISSION_ID and p.`STATUS` = 0
+		  where up.USER_ID = #{userId}
+		) t
+	</select>
+	
+	<select id="queryMenusByUserId" resultType="com.cxdai.console.system.entity.Menu" parameterType="java.lang.Integer">
+		select distinct m.ID, m.`NAME`, m.URL, m.PID, m.`ORDER`, m.`LEVEL`
+		from (
+	      select p.ID
+	      from t_system_user_role ur
+	      inner join t_system_role r on r.ID = ur.ROLE_ID and r.`STATUS` = 0
+	      inner join t_system_role_permission rp on rp.ROLE_ID = r.ID
+	      inner join t_system_permission p on p.ID = rp.PERMISSION_ID and p.`STATUS` = 0
+	      where ur.USER_ID = #{userId}
+	      union all
+	      select p.ID
+	      from t_system_user_permission up
+	      inner join t_system_permission p on p.ID = up.PERMISSION_ID and p.`STATUS` = 0
+	      where up.USER_ID = #{userId}
+		) p
+		inner join t_system_permission_resources pr on pr.PERMISSION_ID = p.ID and pr.TYPE = 0
+		inner join t_system_menu m on m.ID = pr.RESOURCES_ID and m.`STATUS` = 0
+	</select>
+	
+	<update id="changePwd" parameterType="com.cxdai.console.system.vo.UserCnd">
+		update t_system_user set `PASSWORD` = #{password} WHERE ID = #{userId}
+	</update>
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.borrow.approve.mapper.AccountUploadDocMapper">
+	
+	<!-- 返回的结果集 -->
+	<resultMap type="com.cxdai.console.borrow.emerg.vo.AccountUploadDocVo" id="accountUploadDocResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 				column="USERID" />
+		<result property="docName" 				column="DOCNAME" />
+		<result property="docPath" 				column="DOCPATH" />
+		<result property="uploadTime" 			column="UPLOADTIME" />
+		<result property="uploadIp"	    		column="UPLOADIP" />
+		<result property="style"  				column="STYLE" />
+		<result property="borrowId" 			column="BORROW_ID" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="accountUploadDocBaseColumn">
+		u.ID, 
+		u.USERID, 
+		u.DOCNAME, 
+		u.DOCPATH, 
+		u.UPLOADTIME, 
+		u.STYLE, 
+	<!-- 	u.NETVALUE,  -->
+		u.BORROW_ID
+	</sql>
+	
+	<!-- 封装查询条件 -->
+	<sql id="accountUploadDoc_Where_Clause">
+		<if test="id != null">
+			and u.id =#{id}
+		</if>
+		<if test="userId != null ">
+			and u.USERID = #{userId}
+		</if>
+		<if test="borrowId != null ">
+			and u.BORROW_ID = #{borrowId}
+		</if>	
+		<if test="style != null ">
+			and u.STYLE = #{style}
+		</if>				
+	</sql>
+	
+  	<!-- 根据条件查询记录集合 -->
+	<select id="queryAccountUploadDocList" parameterType="com.cxdai.console.borrow.emerg.vo.AccountUploadDocCnd" resultMap="accountUploadDocResultMap" >
+		select 	
+		   <include refid="accountUploadDocBaseColumn"/>
+		from
+			rocky_account_upload_doc u
+		where 1=1
+		<include refid="accountUploadDoc_Where_Clause"/>
+  	</select>
+  	
+  	  	<!-- 根据条件查询记录数量-->
+	<select id="queryAccountUploadDocCount" parameterType="com.cxdai.console.borrow.emerg.vo.AccountUploadDocCnd" resultType="java.lang.Integer" >
+		select count(u.id)
+		from
+			rocky_account_upload_doc u
+		where 1=1
+		<include refid="accountUploadDoc_Where_Clause"/>
+  	</select>
+  	
+  	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.base.entity.AccountUploadDoc">
+		insert into rocky_account_upload_doc
+			(USERID,DOCNAME,DOCPATH,UPLOADTIME,UPLOADIP,STYLE,BORROW_ID)
+		values
+			(#{userId},#{docName},#{docPath},#{uploadTime},#{uploadIp},#{style},#{borrowId})
+			
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+			select last_insert_id() as id
+		</selectKey>
+	</insert>
+	
+	<!-- 删除ByID -->
+	<delete id="deleteDoc" parameterType="Integer">
+		delete from rocky_account_upload_doc where id=#{docId}
+	</delete>
+	
+	<!-- 删除ByBorrowId -->
+	<delete id="deleteDocByBorrowId" parameterType="Integer">
+		delete from rocky_account_upload_doc where borrow_id=#{borrowId}
+	</delete>
+	
+	<!-- 根据条件查询style唯一值 -->
+	<select id="queryDistinctStyle" parameterType="java.util.Map" resultMap="accountUploadDocResultMap" >
+		select 	
+		   distinct u.style
+		from
+			rocky_account_upload_doc u
+		where 1=1
+		<include refid="accountUploadDoc_Where_Clause"/>
+  	</select>
+	
+	<!-- 根据借款标id查询认证类型集合和时间 -->
+	<select id="queryUniqueStylesByBorrowId" resultMap="accountUploadDocResultMap" >
+		SELECT style, MAX(uploadtime) as uploadtime
+		FROM rocky_account_upload_doc d
+		WHERE 1=1
+		AND BORROW_ID = #{borrowId}
+		GROUP BY style	
+	</select>
+</mapper>  

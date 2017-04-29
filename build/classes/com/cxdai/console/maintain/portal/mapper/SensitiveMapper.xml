@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.maintain.portal.mapper.SensitiveMapper">
+	
+	<!-- 返回的结果集 -->
+	<resultMap type="com.cxdai.console.maintain.portal.entity.SensitiveVo" id="SensitiveVoMapperResultMap">
+		<id property="id" column="id" />
+		<result property="id" 		column="id" />
+		<result property="word" 	column="word" />
+		<result property="type"		column="type" />
+		<result property="typeStr"		column="typeStr" />
+	 	<result property="source"		column="source" />
+	</resultMap>
+	
+	 
+	 <!-- 查询条件 -->
+	<sql id="whereClause">
+			 <if test=" word != '' and word != null ">
+				and word like #{word}
+			</if>
+			<if test="  type != null  and type !=0  ">
+				and type = #{type}
+			</if>
+	 
+	</sql>
+	 
+  	<!-- 根据条件查询记录集合 -->
+	<select id="querySensitiveList" parameterType="com.cxdai.console.maintain.portal.entity.SensitiveCnd" resultMap="SensitiveVoMapperResultMap" >
+		select 
+		id ,
+		word,
+		type,
+		source,
+		(select sensitive_name from t_sensitive_type  where id = type) as typeStr
+		from t_sensitive
+		where 1 = 1
+		<include refid="whereClause"/>
+ 		order by id
+  	</select>
+  	
+  		<!--分页总助 -->
+	<select id="querySensitiveCount" parameterType="com.cxdai.console.maintain.portal.entity.SensitiveCnd"  resultType="java.lang.Integer" >
+		select 
+	 	count(*)
+		from t_sensitive
+		where 1=1
+		<include refid="whereClause"/>
+  	</select>
+  	 
+  	 
+  	 
+  	 
+  	 <!-- 根据条件查询记录集合 -->
+	<select id="querySensitiveTypeList"  resultMap="SensitiveVoMapperResultMap" >
+		select 
+		id,
+	 	sensitive_name as typeStr
+		from t_sensitive_type
+ 	 
+  	</select>
+  	
+  	 
+  	
+  	<!-- 删除关键字 -->
+    <delete id="deleteSensitive" parameterType="com.cxdai.console.maintain.portal.entity.SensitiveCnd">  
+    	 DELETE FROM t_sensitive WHERE id  = #{id}  
+ 	</delete>  
+  	
+  	   <!-- 保存关键字-->
+	<select id="saveSensitive" parameterType="com.cxdai.console.maintain.portal.entity.SensitiveVo" >
+		  
+		 insert into t_sensitive  ( word,type,source) 
+		 values
+		 (#{word},#{type},#{source})
+		  
+  	</select>
+  	
+  	
+  	  	   <!-- 根据Id查询关键字-->
+	<select id="querySensitiveByid"  parameterType="java.lang.Integer"  resultMap="SensitiveVoMapperResultMap">
+		select   
+		 id ,
+		word,
+		type,
+		source,
+		(select sensitive_name from t_sensitive_type  where id = type) as typeStr
+		from t_sensitive
+		where id = #{ID}
+		  
+  	</select>
+ 
+    <!--修改信息-->
+	<update id="updateSensitive"  parameterType="com.cxdai.console.maintain.portal.entity.SensitiveVo">
+		update t_sensitive set word = #{word},type = #{type},source=#{source}
+		where id=#{id}
+  	</update>
+ 
+ 
+   	<!-- 更新前查询是否重复-->
+	<select id="querySensitiveForSave"  parameterType="com.cxdai.console.maintain.portal.entity.SensitiveVo"  resultType="java.lang.Integer">
+ 			select count(*) from t_sensitive 
+ 			where  
+ 			 id != #{id}
+ 			and	word= #{word}
+  	</select>
+  	
+</mapper>  

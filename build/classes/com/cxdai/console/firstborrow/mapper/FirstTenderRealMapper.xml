@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.firstborrow.mapper.FirstTenderRealMapper">
+	<!-- 基本结果集 -->
+	<resultMap type="com.cxdai.console.firstborrow.vo.FirstTenderRealVo" id="firstTenderRealBaseResultMap">
+		<id property="id" column="id" />
+		<result property="firstBorrowId" 		column="FIRST_BORROW_ID" />
+		<result property="account" 				column="ACCOUNT" />
+		<result property="rate" 				column="RATE" />
+		<result property="userId" 				column="USER_ID" />
+		<result property="useMoney"	    		column="USE_MONEY" />
+		<result property="planAccount"  		column="PLAN_ACCOUNT" />
+		<result property="remark"  				column="REMARK" />
+		<result property="status"  				column="STATUS" />
+		<result property="version"  			column="VERSION" />
+		<result property="addtime"  			column="ADDTIME" />
+		<result property="firstTenderType" 		column="FIRST_TENDER_TYPE" />
+		<result property="buyTime" 				column="buyTime" />
+		<result property="onBusTime" 			column="ONBUS_TIME" />
+		<result property="orderNum" 			column="ORDERNUM" />
+	</resultMap>
+	
+	<!-- 关联结果集 -->
+	<resultMap type="com.cxdai.console.firstborrow.vo.FirstTenderRealVo" id="firstTenderRealVoResultMap" extends="firstTenderRealBaseResultMap">
+		<result property="firstBorrowName"						column="firstBorrowName"/>
+		<result property="firstSuccessTime"						column="firstSuccessTime"/>
+		<result property="firstStatus"							column="firstStatus"/>		
+		<result property="username"								column="username"/>
+	</resultMap>
+		
+	
+	<!--基本列 -->
+	<sql id="firstTenderRealBaseColumn">
+		tr.ID, 
+		tr.FIRST_BORROW_ID, 
+		tr.ACCOUNT, 
+		tr.RATE, 
+		tr.USER_ID, 
+		tr.USE_MONEY, 
+		tr.PLAN_ACCOUNT,
+		tr.REMARK,
+		tr.STATUS,
+		tr.VERSION,
+		tr.ADDTIME,
+		tr.FIRST_TENDER_TYPE,
+		tr.ONBUS_TIME,
+		tr.ORDERNUM
+	</sql>
+	
+		<!-- 封装查询条件 -->
+	<sql id="firstTenderReal_Where_Clause">
+		<if test="id != null and id !=''">
+			and tr.id =#{id}
+		</if>
+		<if test="userId != null and userId !=''">
+			and tr.USER_ID =#{userId}
+		</if>
+		<if test="status != null and status!=''">
+			and tr.STATUS = #{status}
+		</if>
+	</sql>
+	
+	  	  <!-- 根据直通车id,用户id更新待收表中的优先投标计划为失效-->
+	  <update id="updateCollectionFirstToInvalid" parameterType="java.lang.Integer" >
+		  UPDATE rocky_b_collectionrecord c 
+		  INNER JOIN rocky_b_tenderrecord t 
+		  ON c.TENDER_ID = t.ID 
+		  SET c.IS_FIRST_BORROW = 2 
+		  WHERE 1=1
+		  AND c.FIRST_TENDER_REAL_ID= #{firstTenderRealId}
+		  AND t.USER_ID = #{memberId}	  
+	  </update> 
+	
+	<!-- 根据条件查询记录集合 -->
+	<select id="queryFirstTenderRealList" parameterType="com.cxdai.console.firstborrow.vo.FirstTenderRealCnd" resultMap="firstTenderRealVoResultMap" >
+		SELECT 
+			 f.name					as firstBorrowName,
+		     f.SUCCESS_TIME			as firstSuccessTime,
+		     f.STATUS				as firstStatus,			 
+			 m.USERNAME				as username,
+	         <include refid="firstTenderRealBaseColumn"/>,
+	         CASE WHEN td.ADDTIME IS NOT NULL THEN td.ADDTIME ELSE 
+	         (select ts.ADD_TIME from t_first_subscribe ts where  tr.USER_ID = ts.USER_ID AND tr.FIRST_BORROW_ID = ts.FIRST_BORROW_ID AND tr.id = ts.NEW_FIRST_TENDER_REAL_ID LIMIT 1) END as buyTime
+		FROM t_first_tender_real tr LEFT JOIN t_first_tender_detail td ON tr.USER_ID = td.USER_ID AND tr.FIRST_BORROW_ID = td.FIRST_BORROW_ID AND tr.id = td.FIRST_TENDER_REAL_ID
+		<!-- LEFT JOIN t_first_subscribe ts on tr.USER_ID = ts.USER_ID AND tr.FIRST_BORROW_ID = ts.FIRST_BORROW_ID AND tr.id = ts.NEW_FIRST_TENDER_REAL_ID -->
+		,t_first_borrow f,rocky_member m
+		where 1=1
+		and tr.FIRST_BORROW_ID = f.id
+		and tr.USER_ID = m.id
+	    <include refid="firstTenderReal_Where_Clause"/>
+	    <if test="firstBorrowName != null and firstBorrowName!='' ">
+			and f.NAME like concat('%', #{firstBorrowName} ,'%')
+		</if>
+	    <if test="username != null and username!='' ">
+			and m.USERNAME = trim(#{username})
+		</if>		
+		GROUP BY tr.id
+		<if test="orderSql != null and orderSql != ''">
+			${orderSql}
+		</if>
+		<if test="lockedRecordYn != null and lockedRecordYn == 'yes'">
+			FOR UPDATE
+		</if>		
+  	</select>
+  	
+  	<!-- 根据条件查询记录数量-->
+	<select id="queryFirstTenderRealCount" parameterType="com.cxdai.console.firstborrow.vo.FirstTenderRealCnd" resultType="java.lang.Integer" >
+		select count(tr.id)
+		from
+			t_first_tender_real tr
+			<if test="firstBorrowName != null and firstBorrowName!='' ">
+				,t_first_borrow f
+			</if>
+ 			<if test="username != null and username!='' ">
+ 				,rocky_member m
+ 			</if>			
+		where 1=1
+	    <if test="firstBorrowName != null and firstBorrowName!='' ">
+	    	and tr.FIRST_BORROW_ID = f.id
+			and f.NAME like concat('%', #{firstBorrowName} ,'%')
+		</if>
+	    <if test="username != null and username!='' ">
+	    	and tr.USER_ID = m.id
+			and m.USERNAME = trim(#{username})
+		</if>		
+		<include refid="firstTenderReal_Where_Clause"/>
+  	</select>  	
+  	
+  	<!-- 直通车开通金额的总额计算-->
+  	<select id="queryFirstTenderRealAccount" resultType="java.math.BigDecimal" >
+ 		select sum(tr.ACCOUNT)   from  
+			t_first_tender_real tr
+			<if test="firstBorrowName != null and firstBorrowName!='' ">
+				,t_first_borrow f
+			</if>
+ 			<if test="username != null and username!='' ">
+ 				,rocky_member m
+ 			</if>			
+		where 1=1
+	    <if test="firstBorrowName != null and firstBorrowName!='' ">
+	    	and tr.FIRST_BORROW_ID = f.id
+			and f.NAME like concat('%', #{firstBorrowName} ,'%')
+		</if>
+	    <if test="username != null and username!='' ">
+	    	and tr.USER_ID = m.id
+			and m.USERNAME = trim(#{username})
+		</if>		
+		<include refid="firstTenderReal_Where_Clause"/> 
+	</select>
+  	
+  	<!-- 根据条件查询记录集合 -->
+	<select id="findFirstTenderRealVoToExcel" parameterType="com.cxdai.console.firstborrow.vo.FirstTenderRealCnd" resultMap="firstTenderRealVoResultMap" >
+		SELECT
+			 f.name					as firstBorrowName,
+		     f.SUCCESS_TIME			as firstSuccessTime,
+		     f.STATUS				as firstStatus,			 
+			 m.USERNAME				as username,
+			 ra.REALNAME			as realName,
+	         <include refid="firstTenderRealBaseColumn"/>
+		FROM t_first_tender_real tr,t_first_borrow f,rocky_member m LEFT JOIN rocky_realname_appro ra on(m.id = ra.user_id)
+		where 1=1
+		and tr.FIRST_BORROW_ID = f.id
+		and tr.USER_ID = m.id
+	    <include refid="firstTenderReal_Where_Clause"/>
+	    <if test="firstBorrowName != null and firstBorrowName!='' ">
+			and f.NAME like concat('%', #{firstBorrowName} ,'%')
+		</if>
+	    <if test="username != null and username!='' ">
+			and m.USERNAME like concat('%', #{username} ,'%')
+		</if>		
+		<if test="orderSql != null and orderSql != ''">
+			${orderSql}
+		</if>
+  	</select>
+	
+	<!-- 查询直通车总余额 -->
+	<select id="queryFirstUseMoneyTotal" resultType="java.math.BigDecimal" >
+ 		SELECT ifnull(SUM(USE_MONEY),0) FROM t_first_tender_real  WHERE STATUS  = 0
+	</select>	
+	
+</mapper>  

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.customer.svip.mapper.BaseAutoInvestConfigRecordMapper">
+	<!-- AutoInvestConfigRecord结果集 -->
+	<resultMap type="com.cxdai.console.base.entity.AutoInvestConfigRecord" id="autoInvestConfigRecordResultMap">
+		<id property="id" column="id" />
+		<result property="auto_tender_id" 		column="AUTO_TENDER_ID" />
+		<result property="user_id" 				column="USER_ID" />
+		<result property="status" 				column="STATUS" />
+		<result property="tender_type" 			column="TENDER_TYPE" />
+		<result property="borrow_type" 			column="BORROW_TYPE" />
+		<result property="timelimit_status"	    column="TIMELIMIT_STATUS" />
+		<result property="min_time_limit"  		column="MIN_TIME_LIMIT" />
+		<result property="max_time_limit" 		column="MAX_TIME_LIMIT" />
+		<result property="min_day_limit" 		column="MIN_DAY_LIMIT" />
+		<result property="max_day_limit" 		column="MAX_DAY_LIMIT" />
+		<result property="min_tender_account" 	column="MIN_TENDER_ACCOUNT" />
+		<result property="tender_account_auto" 	column="TENDER_ACCOUNT_AUTO" />
+		<result property="tender_scale" 		column="TENDER_SCALE" />
+		<result property="award_flag" 			column="AWARD_FLAG" />
+		<result property="balance_not_enough" 	column="BALANCE_NOT_ENOUGH" />
+		<result property="settime" 				column="SETTIME" />
+		<result property="setip" 				column="SETIP" />
+		<result property="min_apr" 				column="MIN_APR" />
+		<result property="max_apr" 				column="MAX_APR" />
+		<result property="borrow_type1_status" 	column="BORROW_TYPE1_STATUS" />
+		<result property="borrow_type2_status" 	column="BORROW_TYPE2_STATUS" />
+		<result property="borrow_type3_status" 	column="BORROW_TYPE3_STATUS" />
+		<result property="borrow_type4_status" 	column="BORROW_TYPE4_STATUS" />
+		<result property="uptime" 				column="UPTIME" />
+		<result property="rownum" 				column="ROWNUM" />
+		<result property="addtime" 				column="ADDTIME" />
+		<result property="record_type" 			column="RECORD_TYPE" />
+		<result property="remark" 				column="REMARK" />
+		<result property="tender_record_id" 	column="TENDER_RECORD_ID" />
+		<result property="borrow_type5_status" 	column="BORROW_TYPE5_STATUS" />
+		<result property="borrowId" 			column="BORROW_ID" />
+		<result property="borrowName" 			column="BORROW_NAME" />
+		<result property="autoType" 			column="AUTO_TYPE" />
+		<result property="vipLevel" 			column="VIP_LEVEL" />
+	</resultMap>
+	
+	<!--自动投标规则基本列 -->
+	<sql id="autoInvestConfigRecordBaseColumn">
+		n.ID, 
+		n.AUTO_TENDER_ID, 
+		n.USER_ID, 
+		n.STATUS, 
+		n.TENDER_TYPE, 
+		n.BORROW_TYPE, 
+		n.TIMELIMIT_STATUS, 
+		n.MIN_TIME_LIMIT, 
+		n.MAX_TIME_LIMIT, 
+		n.MIN_DAY_LIMIT, 
+		n.MAX_DAY_LIMIT, 
+		n.MIN_TENDER_ACCOUNT, 
+		n.TENDER_ACCOUNT_AUTO,
+		n.TENDER_SCALE,
+		n.AWARD_FLAG,
+		n.BALANCE_NOT_ENOUGH,
+		n.SETTIME,
+		n.SETIP,
+		n.MIN_APR,
+		n.MAX_APR,
+		n.BORROW_TYPE1_STATUS,
+		n.BORROW_TYPE2_STATUS,
+		n.BORROW_TYPE3_STATUS,
+		n.BORROW_TYPE4_STATUS,
+		n.UPTIME,
+		n.rownum,
+		n.addtime,
+		n.record_type,
+		n.REMARK,
+		n.TENDER_RECORD_ID,
+		n.BORROW_TYPE5_STATUS,
+		n.BORROW_ID,
+		n.BORROW_NAME,
+		n.AUTO_TYPE,
+		n.VIP_LEVEL
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.base.entity.AutoInvestConfigRecord">
+		INSERT INTO rocky_account_auto_invest_config_record 
+		(auto_tender_id,user_id, STATUS, tender_type, borrow_type, timelimit_status, min_time_limit, max_time_limit, min_day_limit, 
+		 max_day_limit, min_tender_account, tender_account_auto, tender_scale, award_flag, balance_not_enough, settime, setip,
+		 min_apr, max_apr, borrow_type1_status, borrow_type2_status, borrow_type3_status, borrow_type4_status, uptime, rownum, addtime,
+		 record_type, remark,tender_record_id, borrow_type5_status, BORROW_ID, BORROW_NAME, AUTO_TYPE, VIP_LEVEL)
+		VALUES
+		(#{auto_tender_id}, #{user_id}, #{status}, #{tender_type},	#{borrow_type},	#{timelimit_status}, #{min_time_limit}, #{max_time_limit}, #{min_day_limit},
+		 #{max_day_limit}, #{min_tender_account}, #{tender_account_auto}, #{tender_scale}, #{award_flag}, #{balance_not_enough}, #{settime}, #{setip},  
+		 #{min_apr}, #{max_apr},	#{borrow_type1_status}, #{borrow_type2_status}, #{borrow_type3_status}, #{borrow_type4_status}, #{uptime}, #{rownum}, #{addtime},
+		 #{record_type}, #{remark}, #{tender_record_id}, #{borrow_type5_status}, #{borrowId}, #{borrowName}, #{autoType}, #{vipLevel})
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="autoInvestConfigRecordResultMap" >
+		select 	
+		   <include refid="autoInvestConfigRecordBaseColumn"/>
+		from
+			rocky_account_auto_invest_config_record n
+		where 1=1
+		and n.id=#{id}
+  	</select>
+	
+  <!-- 更新新闻公告类 -->
+  <update id="updateEntity" parameterType="com.cxdai.console.base.entity.AutoInvestConfigRecord" >
+    update rocky_account_auto_invest_config_record
+    <set >
+      <if test="auto_tender_id != null" >
+        auto_tender_id = #{auto_tender_id,jdbcType=INTEGER},
+      </if>
+      <if test="user_id != null" >
+        user_id = #{user_id,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="tender_type != null" >
+        tender_type = #{tender_type,jdbcType=INTEGER},
+      </if>
+      <if test="borrow_type != null" >
+        borrow_type = #{borrow_type,jdbcType=INTEGER},
+      </if>
+      <if test="timelimit_status != null" >
+        timelimit_status = #{timelimit_status,jdbcType=INTEGER},
+      </if>
+      <if test="min_time_limit != null" >
+        min_time_limit = #{min_time_limit,jdbcType=INTEGER},
+      </if>
+      <if test="max_time_limit != null" >
+        max_time_limit = #{max_time_limit,jdbcType=INTEGER},
+      </if>
+      <if test="min_day_limit != null" >
+        min_day_limit = #{min_day_limit,jdbcType=INTEGER},
+      </if>
+      <if test="max_day_limit != null" >
+        max_day_limit = #{max_day_limit,jdbcType=INTEGER},
+      </if>
+      <if test="min_tender_account != null" >
+        min_tender_account = #{min_tender_account},
+      </if>
+      <if test="tender_scale != null" >
+        tender_scale = #{tender_scale},
+      </if>
+      <if test="award_flag != null" >
+        award_flag = #{award_flag},
+      </if>
+      <if test="balance_not_enough != null" >
+        balance_not_enough = #{balance_not_enough},
+      </if>
+      <if test="settime != null" >
+        settime = #{settime,jdbcType=VARCHAR},
+      </if>
+      <if test="setip != null" >
+        setip = #{setip,jdbcType=VARCHAR},
+      </if>
+      <if test="min_apr != null" >
+        min_apr = #{min_apr},
+      </if>
+      <if test="max_apr != null" >
+        max_apr = #{max_apr},
+      </if>
+      <if test="borrow_type1_status != null" >
+        borrow_type1_status = #{borrow_type1_status,jdbcType=INTEGER},
+      </if>
+      <if test="borrow_type2_status != null" >
+        borrow_type2_status = #{borrow_type2_status,jdbcType=INTEGER},
+      </if>
+      <if test="borrow_type3_status != null" >
+        borrow_type3_status = #{borrow_type3_status,jdbcType=INTEGER},
+      </if>
+      <if test="borrow_type4_status != null" >
+        borrow_type4_status = #{borrow_type4_status,jdbcType=INTEGER},
+      </if>
+      <if test="uptime != null" >
+        uptime = #{uptime,jdbcType=VARCHAR},
+      </if>
+      <if test="rownum != null" >
+        rownum = #{rownum,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=Date},
+      </if>
+      <if test="record_type != null" >
+        record_type = #{record_type,jdbcType=INTEGER},
+      </if> 
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="tender_record_id != null" >
+        tender_record_id = #{tender_record_id},
+      </if>
+      <if test="borrow_type5_status != null" >
+        borrow_type5_status = #{borrow_type5_status,jdbcType=INTEGER},
+      </if>
+      <if test="borrowId != null" >
+        BORROW_ID = #{borrowId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowName != null and borrowName !=''" >
+        BORROW_NAME = #{borrowName,jdbcType=VARCHAR},
+      </if>
+      <if test="autoType != null" >
+        AUTO_TYPE = #{autoType,jdbcType=INTEGER},
+      </if>
+      <if test="vipLevel != null" >
+        VIP_LEVEL = #{vipLevel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  	
+  	<!--根据投标记录ID查询日志信息 -->
+	<select id="queryByTender_record_id" parameterType="java.lang.Integer" resultMap="autoInvestConfigRecordResultMap" >
+		select 	
+		   <include refid="autoInvestConfigRecordBaseColumn"/>
+		from
+			rocky_account_auto_invest_config_record n
+		where 1=1
+		and n.tender_record_id = #{tender_record_id} and n.record_type = 2 
+  	</select>
+</mapper>  

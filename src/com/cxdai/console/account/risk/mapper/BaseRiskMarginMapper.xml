@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.account.risk.mapper.BaseRiskMarginMapper">
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.account.risk.entity.RiskMargin" id="riskMarginResultMap">
+		<id property="id" column="id" />
+		<result property="account" column="account" />
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="riskMarginBaseColumn">
+		r.ID, 
+		r.account
+	</sql>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="riskMarginResultMap" >
+		select 	
+		   <include refid="riskMarginBaseColumn"/>
+		from
+			rocky_risk_margin r
+		where r.id=#{id}
+  	</select>
+	
+	<!-- 根据ID查询 -->
+	<select id="queryRiskMargin" resultMap="riskMarginResultMap" >
+		select 	
+		   <include refid="riskMarginBaseColumn"/>
+		from
+			rocky_risk_margin r
+		where r.id=1
+  	</select>
+  	
+  <!-- 更新 -->
+  <update id="updateEntity" parameterType="com.cxdai.console.account.risk.entity.RiskMargin" >
+    update rocky_risk_margin
+    <set >
+      <if test="account != null" >
+        account = #{account,jdbcType=DECIMAL},
+      </if>         
+    </set>
+    where ID = #{id}
+  </update>
+  
+</mapper>  

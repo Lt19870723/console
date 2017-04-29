@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.sycee.mapper.SyceeAddressMapper">
+
+<resultMap type="com.cxdai.console.sycee.entity.SyceeAddress" id="syceeAddressMap">
+	<id 	property="id" 				column="id" />
+	<result property="user_id" 	    	column="user_id" />
+	<result property="name" 	    	column="name" />
+	<result property="address"			column="address" />
+	<result property="phone"		    column="phone" />
+	<result property="zip_code"			column="zip_code" />
+	<result property="addtime"	     	column="addtime" />
+	<result property="updatetime"		column="updatetime" />
+	<result property="remark"	    	column="remark" />
+</resultMap>
+
+<!-- 根据ID查询 -->
+<select id="getById" parameterType="Integer" resultMap="syceeAddressMap">
+	select * from t_sycee_addr where user_id=#{user_id}
+</select>
+
+
+
+
+
+</mapper>

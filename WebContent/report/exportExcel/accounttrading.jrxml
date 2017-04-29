@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="accounttrading" language="groovy" pageWidth="1600" pageHeight="842" columnWidth="1560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="dcab0cb5-0f56-4b27-ae02-03a020413140">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="821"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="username" class="java.lang.String">
+		<fieldDescription><![CDATA[username]]></fieldDescription>
+	</field>
+	<field name="typeStr" class="java.lang.String">
+		<fieldDescription><![CDATA[typeStr]]></fieldDescription>
+	</field>
+	<field name="moneyStr" class="java.lang.String">
+		<fieldDescription><![CDATA[moneyStr]]></fieldDescription>
+	</field>
+	<field name="useMoneyStr" class="java.lang.String">
+		<fieldDescription><![CDATA[useMoneyStr]]></fieldDescription>
+	</field>
+	<field name="drawMoneyStr" class="java.lang.String">
+		<fieldDescription><![CDATA[drawMoneyStr]]></fieldDescription>
+	</field>
+	<field name="noDrawMoneyStr" class="java.lang.String">
+		<fieldDescription><![CDATA[noDrawMoneyStr]]></fieldDescription>
+	</field>
+	<field name="collectionStr" class="java.lang.String">
+		<fieldDescription><![CDATA[collectionStr]]></fieldDescription>
+	</field>
+	<field name="firstBorrowUseMoneyStr" class="java.lang.String">
+		<fieldDescription><![CDATA[firstBorrowUseMoneyStr]]></fieldDescription>
+	</field>
+	<field name="totalStr" class="java.lang.String">
+		<fieldDescription><![CDATA[totalStr]]></fieldDescription>
+	</field>
+	<field name="addtimeStr" class="java.lang.String">
+		<fieldDescription><![CDATA[addtimeStr]]></fieldDescription>
+	</field>
+	<field name="remark" class="java.lang.String">
+		<fieldDescription><![CDATA[remark]]></fieldDescription>
+	</field>
+	<field name="noUseMoneyStr" class="java.lang.String">
+		<fieldDescription><![CDATA[noUseMoneyStr]]></fieldDescription>
+	</field>
+	<field name="remarkStr" class="java.lang.String">
+		<fieldDescription><![CDATA[remarkStr]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="158" y="41" width="100" height="20" uuid="71e15e56-2d01-4298-aeb3-8f2af4694aa2"/>
+				<text><![CDATA[交易类型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="58" y="41" width="100" height="20" uuid="8fb85f70-5c7c-48aa-945c-e5c20a850078"/>
+				<text><![CDATA[用户名]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="258" y="41" width="100" height="20" uuid="d61934e2-fee2-4cda-8413-d944cf6b9ba8"/>
+				<text><![CDATA[交易金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="358" y="41" width="100" height="20" uuid="9aeaf438-1323-46c3-a5ca-c147d9b334d2"/>
+				<text><![CDATA[可用金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="458" y="41" width="100" height="20" uuid="925f2122-8e25-46e6-9b43-288897298b62"/>
+				<text><![CDATA[可提现金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="558" y="41" width="100" height="20" uuid="b68920f0-1eb2-48a0-b4b7-633da1e47696"/>
+				<text><![CDATA[不可提现金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="658" y="41" width="100" height="20" uuid="47d38d6f-2977-43d0-bdb6-b7f309ccb58b"/>
+				<text><![CDATA[冻结金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="758" y="41" width="100" height="20" uuid="1dbe924f-9ad7-4227-b925-36654946c000"/>
+				<text><![CDATA[待收总额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="858" y="41" width="152" height="20" uuid="d3a68e9a-f3ee-4afa-8bb6-32cc9b9a25ae"/>
+				<text><![CDATA[投标直通车余额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1010" y="41" width="100" height="20" uuid="570f9e65-2665-45f5-a884-50f4da0284e2"/>
+				<text><![CDATA[账户总额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1110" y="41" width="160" height="20" uuid="e264c674-3241-4ab1-8006-99cc8333effb"/>
+				<text><![CDATA[交易时间]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1270" y="41" width="290" height="20" uuid="cd9ba8d2-6a00-4f58-91d5-1266f2319250"/>
+				<text><![CDATA[交易明细]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="41" width="58" height="20" uuid="4a5479f6-0f12-470b-a2ed-e6e4a986e279"/>
+				<text><![CDATA[序号]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="158" y="0" width="100" height="20" uuid="dfa4da92-784d-4eab-b2bd-5becdb53c950"/>
+				<textFieldExpression><![CDATA[$F{typeStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="0" width="100" height="20" uuid="dddc48ca-0df4-41e4-999b-fbcd2318b08d"/>
+				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="58" height="20" uuid="06417543-4a3c-459a-a2db-fae597c6aba4"/>
+				<textFieldExpression><![CDATA[$V{PAGE_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="258" y="0" width="100" height="20" uuid="6f1a26de-f9f3-482f-a087-8f2ac612d7f7"/>
+				<textFieldExpression><![CDATA[$F{moneyStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="0" width="100" height="20" uuid="b6c33923-2334-41b1-9bb7-8a7d63c4fb1e"/>
+				<textFieldExpression><![CDATA[$F{useMoneyStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="458" y="0" width="100" height="20" uuid="b6832989-c022-4b0d-9431-ae714b3c18ac"/>
+				<textFieldExpression><![CDATA[$F{drawMoneyStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="558" y="0" width="100" height="20" uuid="5d526bd0-7d26-4e65-9237-cbd2c8d23538"/>
+				<textFieldExpression><![CDATA[$F{noDrawMoneyStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="658" y="0" width="100" height="20" uuid="b50c5545-21fb-4251-83db-21f803743b84"/>
+				<textFieldExpression><![CDATA[$F{noUseMoneyStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="758" y="0" width="100" height="20" uuid="4c4bf36b-c742-461e-8337-819e4d0ec940"/>
+				<textFieldExpression><![CDATA[$F{collectionStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="858" y="0" width="152" height="20" uuid="bcb04440-2e2c-4938-a765-e4d1424d9eb8"/>
+				<textFieldExpression><![CDATA[$F{firstBorrowUseMoneyStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1010" y="0" width="100" height="20" uuid="2f8b2bcd-de7c-4ff6-85ca-f12c731cdd1a"/>
+				<textFieldExpression><![CDATA[$F{totalStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1110" y="0" width="160" height="20" uuid="f32165f6-c21e-474c-a604-4c7ebdfb77ac"/>
+				<textFieldExpression><![CDATA[$F{addtimeStr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="1270" y="0" width="290" height="20" uuid="044b1ab8-336a-4e8e-9e6a-40b46d2187e4"/>
+				<textFieldExpression><![CDATA[$F{remarkStr}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.account.recharge.mapper.AutoInvestConfigMapper">
+	
+	<!-- AutoInvestConfig结果集 -->
+	<resultMap type="com.cxdai.console.account.recharge.vo.AutoInvestConfigVo" id="autoInvestConfigVoResultMap">
+		<id property="id" column="id" />
+		<result property="user_id" 				column="USER_ID" />
+		<result property="status" 				column="STATUS" />
+		<result property="tender_type" 			column="TENDER_TYPE" />
+		<result property="borrow_type" 			column="BORROW_TYPE" />
+		<result property="timelimit_status"	    column="TIMELIMIT_STATUS" />
+		<result property="min_time_limit"  		column="MIN_TIME_LIMIT" />
+		<result property="max_time_limit" 		column="MAX_TIME_LIMIT" />
+		<result property="min_day_limit" 		column="MIN_DAY_LIMIT" />
+		<result property="max_day_limit" 		column="MAX_DAY_LIMIT" />
+		<result property="min_tender_account" 	column="MIN_TENDER_ACCOUNT" />
+		<result property="tender_account_auto" 	column="TENDER_ACCOUNT_AUTO" />
+		<result property="tender_scale" 		column="TENDER_SCALE" />
+		<result property="award_flag" 			column="AWARD_FLAG" />
+		<result property="balance_not_enough" 	column="BALANCE_NOT_ENOUGH" />
+		<result property="settime" 				column="SETTIME" />
+		<result property="setip" 				column="SETIP" />
+		<result property="min_apr" 				column="MIN_APR" />
+		<result property="max_apr" 				column="MAX_APR" />
+		<result property="borrow_type1_status" 	column="BORROW_TYPE1_STATUS" />
+		<result property="borrow_type2_status" 	column="BORROW_TYPE2_STATUS" />
+		<result property="borrow_type3_status" 	column="BORROW_TYPE3_STATUS" />
+		<result property="borrow_type4_status" 	column="BORROW_TYPE4_STATUS" />
+		<result property="uptime" 				column="UPTIME" />
+		<result property="remark" 				column="REMARK" />
+		<result property="rownum" 				column="rownum" />
+		<result property="borrow_type5_status" 	column="BORROW_TYPE5_STATUS" />
+		<result property="username" 			column="username" />
+		<result property="useMoney" 			column="use_money" />
+		<result property="vipLevel" 			column="VIP_LEVEL"/>
+	</resultMap>
+	
+	<!--自动投标规则基本列 -->
+	<sql id="autoInvestConfigVoColumn">
+		n.ID, 
+		n.USER_ID, 
+		n.STATUS, 
+		n.TENDER_TYPE, 
+		n.BORROW_TYPE, 
+		n.TIMELIMIT_STATUS, 
+		n.MIN_TIME_LIMIT, 
+		n.MAX_TIME_LIMIT, 
+		n.MIN_DAY_LIMIT, 
+		n.MAX_DAY_LIMIT, 
+		n.MIN_TENDER_ACCOUNT, 
+		n.TENDER_ACCOUNT_AUTO,
+		n.TENDER_SCALE,
+		n.AWARD_FLAG,
+		n.BALANCE_NOT_ENOUGH,
+		n.SETTIME,
+		n.SETIP,
+		n.MIN_APR,
+		n.MAX_APR,
+		n.BORROW_TYPE1_STATUS,
+		n.BORROW_TYPE2_STATUS,
+		n.BORROW_TYPE3_STATUS,
+		n.BORROW_TYPE4_STATUS,
+		n.UPTIME,
+		n.REMARK,
+		n.BORROW_TYPE5_STATUS
+	</sql>
+	
+	 <!-- 封装查询条件 -->
+	<sql id="autoInvestConfigVo_Where_Clause">
+		<if test="user_id != null">
+			and n.user_id =#{user_id}
+		</if>
+		<if test="autoTenderType != null and autoTenderType !=''">
+			and n.tender_type = #{autoTenderType}
+		</if>
+		<if test="status != null and status != ''">
+			and n.STATUS = #{status}
+		</if>		
+	</sql>
+	
+	<!-- 根据USER_ID查询自动投标规则列表. -->
+	<select id="queryListByCnd" parameterType="com.cxdai.console.account.recharge.vo.AutoInvestConfigCnd" resultMap="autoInvestConfigVoResultMap" >
+		SELECT 
+		rm.USERNAME as username,a.use_money,
+		<include refid="autoInvestConfigVoColumn"/>, 
+		CASE WHEN n.AUTO_TYPE = 1 THEN m.rownum WHEN n.AUTO_TYPE = 2 THEN r.rownum END as rownum 
+		FROM rocky_account_auto_invest_config n
+		LEFT JOIN (
+				SELECT @rank1:=@rank1+1 as rownum,a.* FROM (
+					SELECT t1.* FROM (
+							SELECT ID, uptime FROM rocky_account_auto_invest_config WHERE `STATUS` = 1 AND AUTO_TYPE = 1  GROUP BY user_id ORDER BY uptime asc
+					) t1 ORDER BY t1.uptime asc
+				) a,(SELECT @rank1:=0) b
+		) m on(n.id =m.id)
+		LEFT JOIN (
+				SELECT @rank2:=@rank2+1 as rownum,a.* FROM (
+					SELECT t1.* FROM (
+							SELECT ID, uptime FROM rocky_account_auto_invest_config WHERE `STATUS` = 1 AND AUTO_TYPE = 2  GROUP BY user_id ORDER BY uptime asc
+					) t1 ORDER BY t1.uptime asc
+				) a,(SELECT @rank2:=0) b
+		) r on(n.id = r.id), rocky_member rm, rocky_account a WHERE  n.USER_ID = rm.id and a.user_id = rm.id
+		<include refid="autoInvestConfigVo_Where_Clause"/>
+		<if test="username != null and username != ''">
+			and rm.USERNAME = #{username}
+		</if>
+		ORDER BY FIELD(n.`STATUS`,1,0,2),n.uptime asc
+  	</select>
+  	
+  	<!-- 查询自动投标规则数量 -->
+  	<select id="queryListCountByCnd" parameterType="com.cxdai.console.account.recharge.vo.AutoInvestConfigCnd" resultType="java.lang.Integer" >
+		SELECT count(n.id)
+		FROM rocky_account_auto_invest_config n
+		LEFT JOIN (
+				SELECT @rank1:=@rank1+1 as rownum,a.* FROM (
+					SELECT t1.* FROM (
+							SELECT ID, uptime FROM rocky_account_auto_invest_config WHERE `STATUS` = 1 AND AUTO_TYPE = 1  GROUP BY user_id ORDER BY uptime asc
+					) t1 ORDER BY t1.uptime asc
+				) a,(SELECT @rank1:=0) b
+		) m on(n.id =m.id)
+		LEFT JOIN (
+				SELECT @rank2:=@rank2+1 as rownum,a.* FROM (
+					SELECT t1.* FROM (
+							SELECT ID, uptime FROM rocky_account_auto_invest_config WHERE `STATUS` = 1 AND AUTO_TYPE = 2  GROUP BY user_id ORDER BY uptime asc
+					) t1 ORDER BY t1.uptime asc
+				) a,(SELECT @rank2:=0) b
+		) r on(n.id = r.id), rocky_member rm WHERE n.USER_ID = rm.id
+		<include refid="autoInvestConfigVo_Where_Clause"/>
+		<if test="username != null and username != ''">
+			and rm.USERNAME = #{username}
+		</if>
+  	</select>
+  	
+  	<!-- 根据id查询自动投标规则 -->
+  	<select id="queryById" parameterType="java.lang.Integer" resultMap="autoInvestConfigVoResultMap" >
+		SELECT 
+		rm.USERNAME as username,a.use_money,
+		<include refid="autoInvestConfigVoColumn"/>, 
+		CASE WHEN n.AUTO_TYPE = 1 THEN m.rownum WHEN n.AUTO_TYPE = 2 THEN r.rownum END as rownum 
+		FROM rocky_account_auto_invest_config n
+		LEFT JOIN (
+				SELECT @rank1:=@rank1+1 as rownum,a.* FROM (
+					SELECT t1.* FROM (
+							SELECT ID, uptime FROM rocky_account_auto_invest_config WHERE `STATUS` = 1 AND AUTO_TYPE = 1  GROUP BY user_id ORDER BY uptime asc
+					) t1 ORDER BY t1.uptime asc
+				) a,(SELECT @rank1:=0) b
+		) m on(n.id =m.id)
+		LEFT JOIN (
+				SELECT @rank2:=@rank2+1 as rownum,a.* FROM (
+					SELECT t1.* FROM (
+							SELECT ID, uptime FROM rocky_account_auto_invest_config WHERE `STATUS` = 1 AND AUTO_TYPE = 2  GROUP BY user_id ORDER BY uptime asc
+					) t1 ORDER BY t1.uptime asc
+				) a,(SELECT @rank2:=0) b
+		) r on(n.id = r.id), rocky_member rm, rocky_account a WHERE  n.USER_ID = rm.id and a.user_id = rm.id AND n.id = #{id}
+  	</select>
+  	
+  	<!-- 根据borrowId查询最后一笔自动投标的排队时间 -->
+  	<select id="queryUptimeForLastAutoTender" parameterType="java.lang.Integer" resultType="java.lang.String" >
+		SELECT r.uptime FROM rocky_account_auto_invest_config_record r,(SELECT id FROM rocky_b_tenderrecord 
+		WHERE BORROW_ID = #{borrowId} AND TENDER_TYPE = 1 ORDER BY ID desc LIMIT 0,1) t 
+		WHERE r.tender_record_id = t.id
+  	</select>
+  	
+  	<!-- 调用自动投标存储过程 -->
+	<select id="autoTender" parameterType="java.util.Map"
+		statementType="CALLABLE">  
+		<![CDATA[  
+		    {call auto_tender(#{borrowid,mode=IN,jdbcType=INTEGER}, #{v_uptime,mode=IN,jdbcType=INTEGER}, #{msg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>
+	</select>
+	
+	
+	
+<select id="findAutoInvestConfig" parameterType="com.cxdai.console.borrow.approve.vo.BorrowVo" resultMap="autoInvestConfigVoResultMap">
+<![CDATA[
+SELECT rc.* FROM rocky_account_auto_invest_config rc 												
+WHERE rc.`STATUS`=1 AND rc.custody_flag in(2,3)												
+AND 												
+CASE												
+WHEN rc.BORROW_TYPE=0 THEN 1=1												
+WHEN rc.BORROW_TYPE<>0 THEN rc.BORROW_TYPE=#{style}												
+END AND 												
+CASE 												
+WHEN rc.TIMELIMIT_STATUS=1 THEN 1=1												
+WHEN rc.TIMELIMIT_STATUS=0 THEN (rc.MIN_TIME_LIMIT <=#{timeLimit} AND rc.MAX_TIME_LIMIT>=#{timeLimit})												
+END AND 												
+CASE 												
+WHEN rc.MIN_APR IS NULL AND rc.MAX_APR IS NULL THEN 1=1 												
+WHEN rc.MIN_APR IS NOT NULL AND rc.MAX_APR IS NOT NULL THEN (rc.MIN_APR <= #{apr}  AND rc.MAX_APR >= #{apr})	
+END
+]]>											
+</select>
+
+
+<select id="findInvestConfig" parameterType="java.lang.Integer" resultMap="autoInvestConfigVoResultMap">
+SELECT <include refid="autoInvestConfigVoColumn"/> FROM rocky_account_auto_invest_config n WHERE n.ID = #{id} AND n.`STATUS` = 1 FOR UPDATE;
+</select>
+	
+<update id="updateAutoInvestConfig">
+	UPDATE rocky_account_auto_invest_config SET uptime = #{uptime} WHERE ID = #{id};
+</update>	
+	
+</mapper>  

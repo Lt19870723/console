@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.red.mapper.RedAccountLogMapper">
+
+	<resultMap type="com.cxdai.console.red.entity.RedAccountLog"
+		id="redAccountLogMap">
+		<id property="id" column="id" />
+		<result property="redId" column="red_id" />
+		<result property="userId" column="user_id" />
+		<result property="usebizId" column="USEBIZ_ID" />
+		<result property="bizId" column="BIZ_ID" />
+		<result property="bizType" column="BIZ_TYPE" />
+		<result property="freezeTime" column="FREEZE_TIME" />
+		<result property="useTime" column="USE_TIME" />
+		<result property="redType" column="RED_TYPE" />
+		<result property="addTime" column="ADD_TIME" />
+		<result property="fixContractno" column="FIXCONTRACT_NO" />
+		<result property="rockyContractno" column="ROCKYCONTRACT_NO" />
+		<result property="source" column="SOURCE" />
+	</resultMap>
+	<!-- 查询所有 -->
+	<select id="getAll" resultMap="redAccountLogMap">
+		select * from t_red_envelop_account_log
+	</select>
+
+	<!-- 根据ID查询 -->
+	<select id="getById" parameterType="Integer" resultMap="redAccountLogMap">
+		select * from t_red_envelop_account_log where id=#{id}
+	</select>
+
+	<!-- 新增 -->
+	<insert id="add" parameterType="com.cxdai.console.red.entity.RedAccountLog">
+		insert into
+		t_red_envelop_account_log(RED_ID,MONEY,USER_ID,USEBIZ_ID,BIZ_ID,BIZ_TYPE,STATUS,OPTUSER,OPTTIME,FREEZE_TIME,USE_TIME,ADDIP,REMARK)
+		values(#{redId},#{money},#{userId},#{usebizId},#{bizId},#{bizType},#{status},#{optuser},now(),#{freezeTime},#{useTime},#{addip},#{remark})
+	</insert>
+	<sql id="redAccountLog_Where_Clause">
+		<if test="username != null and username != ''">
+			AND m.USERNAME like concat('%',#{username},'%')
+		</if>
+		<if test="redmoney != null and redmoney != ''">
+			AND t.MONEY = #{redmoney}
+		</if>
+		<if test="usebeginTime != null and usebeginTime != ''">
+			AND a.USE_TIME <![CDATA[>=]]>
+			#{usebeginTime}
+		</if>
+		<if test="useendTime != null and useendTime != ''">
+			AND a.USE_TIME <![CDATA[<=]]>
+			#{useendTime}
+		</if>
+		<if test="redsource != null and redsource != ''">
+			AND a.RED_TYPE = #{redsource}
+		</if>
+	</sql>
+	<!-- 根据条件查询记录集合 -->
+	<select id="queryRedAccountLogVoList" parameterType="com.cxdai.console.red.vo.RedRecordCnd"
+		resultMap="redAccountLogMap">
+		SELECT t.*,IF(t.BIZ_TYPE=1,ftd.ACCOUNT,bt.ACCOUNT) as ACCOUNT,m.USERNAME,a.ADD_TIME,a.RED_TYPE,a.USE_TIME,
+        fix.CONTRACT_NO AS FIXCONTRACT_NO,rocky.CONTRACT_NO AS ROCKYCONTRACT_NO,
+       (select c.VALUE from rocky_configuration c where c.NAME =a.RED_TYPE AND c.STATUS=0 and c.type=1900 limit 1)  AS SOURCE,
+       (select rc.VALUE from rocky_configuration rc where rc.NAME =m.SOURCE AND rc.STATUS=0 and rc.type=1101 limit 1)  AS memberSource
+		 FROM(
+		 SELECT RED_ID,MONEY,BIZ_ID,BIZ_TYPE,USEBIZ_ID,USER_ID FROM t_red_envelop_account_log WHERE `STATUS`in(3,4) GROUP BY RED_ID,USEBIZ_ID HAVING COUNT(RED_ID)=2
+		 )t
+		 LEFT JOIN t_fix_borrow fix on t.USEBIZ_ID=fix.ID and t.BIZ_TYPE=1
+	     LEFT JOIN rocky_borrow rocky on t.USEBIZ_ID=rocky.ID and t.BIZ_TYPE=3
+		 LEFT JOIN t_fix_tender_detail ftd ON ftd.ID=t.BIZ_ID AND t.BIZ_TYPE=1
+		 LEFT JOIN rocky_b_tenderrecord bt ON bt.ID=t.BIZ_ID AND t.BIZ_TYPE=3
+		 LEFT JOIN rocky_member m on t.USER_ID = m.ID 
+		 JOIN t_red_envelop_account a on a.ID = t.RED_ID and a.`STATUS`=4
+		<include refid="redAccountLog_Where_Clause" />
+		order by a.USE_TIME DESC
+	</select>
+	<!-- 根据条件查询记录数量 -->
+	<select id="queryRedAccountLogVoCount" parameterType="com.cxdai.console.red.vo.RedRecordCnd"
+		resultType="java.lang.Integer">
+		SELECT count(1)
+		 FROM(
+		 SELECT RED_ID,MONEY,BIZ_ID,BIZ_TYPE,USEBIZ_ID,USER_ID FROM t_red_envelop_account_log WHERE `STATUS`in(3,4) GROUP BY RED_ID,USEBIZ_ID HAVING COUNT(RED_ID)=2
+		 )t
+		 LEFT JOIN rocky_member m on t.USER_ID = m.ID 
+		 JOIN t_red_envelop_account a on a.ID = t.RED_ID and a.`STATUS`=4
+		<include refid="redAccountLog_Where_Clause" />
+	</select>
+</mapper>

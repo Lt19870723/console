@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.fix.mapper.FixUserCollectionrecordMapper">
+	<resultMap id="BaseResultMap" type="com.cxdai.console.fix.entity.FixUserCollectionrecord">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="FIX_BORROW_ID" property="fixBorrowId" jdbcType="INTEGER" />
+		<result column="BORROW_ID" property="borrowId" jdbcType="INTEGER" />
+		<result column="USER_ID" property="userId" jdbcType="INTEGER" />
+		<result column="TENDER_ID" property="tenderId" jdbcType="INTEGER" />
+		<result column="ORDER" property="order" jdbcType="INTEGER" />
+		<result column="CAPITAL" property="capital" jdbcType="DECIMAL" />
+		<result column="ADDTIME" property="addtime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		ID, FIX_BORROW_ID, BORROW_ID, USER_ID, TENDER_ID, `ORDER`, CAPITAL, ADDTIME
+	</sql>
+	<select id="selectById" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from t_fix_user_collectionrecord
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+
+	<insert id="insert" parameterType="com.cxdai.console.fix.entity.FixUserCollectionrecord">
+		insert into t_fix_user_collectionrecord
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			
+			<if test="fixBorrowId != null">
+				FIX_BORROW_ID,
+			</if>
+			<if test="borrowId != null">
+				BORROW_ID,
+			</if>
+			<if test="userId != null">
+				USER_ID,
+			</if>
+			<if test="tenderId != null">
+				TENDER_ID,
+			</if>
+			<if test="order != null">
+				`ORDER`,
+			</if>
+			<if test="capital != null">
+				CAPITAL,
+			</if>
+			ADDTIME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="fixBorrowId != null">
+				#{fixBorrowId,jdbcType=INTEGER},
+			</if>
+			<if test="borrowId != null">
+				#{borrowId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="tenderId != null">
+				#{tenderId,jdbcType=INTEGER},
+			</if>
+			<if test="order != null">
+				#{order,jdbcType=INTEGER},
+			</if>
+			<if test="capital != null">
+				#{capital,jdbcType=DECIMAL},
+			</if>
+			now(),
+		</trim>
+	</insert>
+	
+	<update id="updateById" parameterType="com.cxdai.console.fix.entity.FixUserCollectionrecord">
+		update t_fix_user_collectionrecord
+		<set>
+			<if test="fixBorrowId != null">
+				FIX_BORROW_ID = #{fixBorrowId,jdbcType=INTEGER},
+			</if>
+			<if test="borrowId != null">
+				BORROW_ID = #{borrowId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				USER_ID = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="tenderId != null">
+				TENDER_ID = #{tenderId,jdbcType=INTEGER},
+			</if>
+			<if test="order != null">
+				`ORDER` = #{order,jdbcType=INTEGER},
+			</if>
+			<if test="capital != null">
+				CAPITAL = #{capital,jdbcType=DECIMAL},
+			</if>
+			<if test="addtime != null">
+				ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="queryCapitalSum" parameterType="com.cxdai.console.fix.vo.FixUserCollectionrecordCnd" resultType="java.math.BigDecimal">
+		SELECT IFNULL(SUM(CAPITAL),0) from t_fix_user_collectionrecord
+		WHERE USER_ID = #{userId}
+		AND FIX_BORROW_ID = #{fixBorrowId}
+		AND TENDER_ID = #{tenderId} 
+		AND BORROW_ID = #{borrowId}
+	</select>
+	
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 诚薪贷&诚商贷Mapper -->
+<mapper namespace="com.cxdai.console.borrow.approve.mapper.SalariatBorrowMapper">
+
+<!-- 插入rocky_borrow记录，返回主键 -->
+<insert id="insertEntity" parameterType="com.cxdai.console.base.entity.Borrow">
+	INSERT INTO rocky_borrow 
+		(NAME,CONTENT,is_mortgage,mortgage_type,is_guaranty,guaranty_organization,ACCOUNT,TIME_LIMIT,
+		MOST_ACCOUNT,lowest_account,borrow_use,STYLE,VALID_TIME,`STATUS`,APPRSTATUS,BORROWTYPE,ADDTIME,ADDIP,
+		USER_ID,is_joint_guaranty,joint_guaranty,bid_password,`order`,apr,uuid,product_type,contract_no,pledge_type,PLATFORM,is_custody,IS_CHECK,E_ProjectId,RepayName,RepayAcct,isNotice)
+	VALUES
+		(#{name},#{content},#{isMortgage},#{mortgageType},#{isGuaranty},#{guarantyOrganization},#{account},#{timeLimit},
+		#{mostAccount},#{lowestAccount},#{borrowUse},#{style},#{validTime},#{status},#{apprstatus},#{borrowtype},NOW(),#{addip},
+		#{userId},#{isJointGuaranty},#{jointGuaranty},#{bidPassword},#{order},#{apr},#{uuid},#{productType},#{contractNo},#{pledgeType},#{platform},#{isCustody},#{isCheck},#{eProjectId},#{repayName},#{repayAcct},#{isNotice})
+	
+	<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+		SELECT LAST_INSERT_ID() AS ID    
+	</selectKey>
+</insert>
+
+<!-- 查询用户历史标,不含净值和秒标 -->
+<select id="getBeforeBorrow" resultType="com.cxdai.console.base.entity.Borrow">
+	select id,name,contract_no as contractNo from rocky_borrow where user_id=#{userId} and BORROWTYPE in(1,2,5) and id !=#{borrowId}
+</select>
+
+<!-- 根据历史标插入认证资料 -->
+<insert id="insertPicFromBorrowId">
+INSERT INTO rocky_account_upload_doc(userid,docname,docpath,uploadtime,uploadip,style,BORROW_ID)(
+	select userid,docname,docpath,now(),#{addip},style,#{borrowId} from rocky_account_upload_doc where BORROW_ID=#{oldBorrowId}
+)
+</insert>
+
+<!-- 插入审批表初始记录 -->
+<insert id="insertBorrowApproved" parameterType="Integer">
+	insert into rocky_borrow_approved(borrow_id,`status`) values(#{borrowId},0)
+</insert>
+
+<!-- 根据ID更新标信息 -->
+<update id="updateBorrowById" parameterType="com.cxdai.console.base.entity.Borrow">
+	update rocky_borrow set `name`=#{name},content=#{content},IS_JOINT_GUARANTY=#{isJointGuaranty},JOINT_GUARANTY=#{jointGuaranty} where id=#{id}
+</update>
+
+<!-- 根据ID更新标所有信息 -->
+<update id="updateBorrowFullInfoById" parameterType="com.cxdai.console.base.entity.Borrow">
+	update rocky_borrow 
+	set `name`=#{name},content=#{content},is_mortgage=#{isMortgage},mortgage_type=#{mortgageType},is_guaranty=#{isGuaranty},
+		guaranty_organization=#{guarantyOrganization},ACCOUNT=#{account},TIME_LIMIT=#{timeLimit},MOST_ACCOUNT=#{mostAccount},lowest_account=#{lowestAccount},
+		borrow_use=#{borrowUse},STYLE=#{style},VALID_TIME=#{validTime},BORROWTYPE=#{borrowtype},is_joint_guaranty=#{isJointGuaranty},
+		joint_guaranty=#{jointGuaranty},bid_password=#{bidPassword},`order`=#{order},apr=#{apr},contract_no=#{contractNo},
+		pledge_type=#{pledgeType},is_custody=#{isCustody},IS_CHECK=#{isCheck},E_ProjectId=#{eProjectId},RepayName=#{repayName},RepayAcct=#{repayAcct}
+	where id=#{id}
+</update>
+
+<!-- 根据标ID更新借款人信息 -->
+<update id="updateBorrowerByBorrowId" parameterType="com.cxdai.console.base.entity.Borrower">
+	update t_borrower set MARITAL_STATUS=#{maritalStatus},EDUCATION=#{education},INDUSTRY=#{industry},SCALE=#{scale},JOB_TITLE=#{jobTitle},WORK_CITY=#{workCity},WORK_YEARS=#{workYears} where BORROW_ID=#{borrowId}
+</update>
+
+<!-- 根据标ID更新抵押信息 -->
+<update id="updateMortgageByBorrowId" parameterType="com.cxdai.console.base.entity.Mortgage">
+	update t_mortgage set HAS_HOUSE=#{hasHouse},HAS_HOUSE_MORTGAGE=#{hasHouseMortgage},HOUSE_LOCATION=#{houseLocation},HOUSE_AREA=#{houseArea},HAS_CAR=#{hasCar},HAS_CAR_MORTGAGE=#{hasCarMortgage},CAR_NO=#{carNo},CAR_VALUE=#{carValue} where BORROW_ID=#{borrowId};
+</update>
+
+<!-- 根据属性查询抵押信息 -->
+<select id="getMortgageByProperty" resultType="com.cxdai.console.base.entity.Mortgage">
+	select * from t_mortgage where ${proName} = #{proValue}
+</select>	
+
+<!-- 根据属性查询借款人信息 -->
+<select id="getBorrowerByProperty" resultType="com.cxdai.console.base.entity.Borrower">
+	select * from t_borrower where ${proName} = #{proValue}
+</select>	
+ 		
+</mapper>

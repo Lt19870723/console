@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+                   
+<mapper namespace="com.cxdai.console.statistics.account.mapper.AccountLogMapper">
+	
+	<!-- 返回的结果集 -->
+	<resultMap type="com.cxdai.console.statistics.account.vo.AccountLogVo" id="accountLogVoResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="type" 					column="TYPE" />
+		<result property="total" 					column="TOTAL" />
+		<result property="money" 					column="MONEY" />
+		<result property="useMoney" 				column="USE_MONEY" />
+		<result property="noUseMoney" 				column="NO_USE_MONEY" />
+		<result property="collection"	    		column="COLLECTION" />
+		<result property="toUser"  					column="TO_USER" />
+		<result property="remark"  					column="REMARK" />
+		<result property="addtime"  				column="ADDTIME" />
+		<result property="addip"  					column="ADDIP" />
+		<result property="firstBorrowUseMoney" 		column="FIRST_BORROW_USE_MONEY" />
+		<result property="drawMoney"				column="DRAW_MONEY"/>
+		<result property="noDrawMoney" 				column="NO_DRAW_MONEY"/>
+		<result property="username" 				column="username"/>			
+		<result property="typeStr" 					column="typeStr"/>
+		<result property="idType" 					column="ID_TYPE"/>
+		<result property="borrowId" 				column="BORROW_ID" />
+		<result property="borrowName" 				column="BORROW_NAME" />
+		<result property="eUseMoney" 				column="e_use_money"/>
+		<result property="eFreezeMoney" 			column="e_freeze_money"/>
+		<result property="eCollection" 				column="e_collection"/>
+		<result property="isCustody" 				column="IS_CUSTODY"/>
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="accountLogColumn">
+		a.ID, 
+		a.USER_ID, 
+		a.TYPE, 
+		a.TOTAL, 
+		a.MONEY,
+		a.USE_MONEY, 
+		a.NO_USE_MONEY, 
+		a.COLLECTION, 
+		a.TO_USER, 
+		a.REMARK,
+		a.ADDTIME,
+		a.ADDIP,
+		a.FIRST_BORROW_USE_MONEY,
+		a.DRAW_MONEY,
+		a.NO_DRAW_MONEY	,
+		a.ID_TYPE ,
+		  (case  WHEN a.ID_TYPE = 0 THEN a.BORROW_ID 
+		          WHEN a.ID_TYPE = 1 THEN a.BORROW_ID 
+		          WHEN a.ID_TYPE = 2 THEN (SELECT rbt.BORROW_ID  FROM rocky_b_repaymentrecord rbt WHERE rbt.ID = a.BORROW_ID   )
+		        ELSE  a.BORROW_ID   END 
+		  ) AS  BORROW_ID,
+		  (case  WHEN a.ID_TYPE = 0 THEN a.borrow_name 
+		          WHEN a.ID_TYPE = 1 THEN (SELECT tfb.NAME FROM t_first_borrow tfb WHERE tfb.ID = a.BORROW_ID) 
+		          WHEN a.ID_TYPE = 2 THEN (SELECT rb.NAME  FROM rocky_b_repaymentrecord rbt  INNER JOIN rocky_borrow rb ON rbt.BORROW_ID = rb.ID  WHERE rbt.ID = a.BORROW_ID   )
+		        ELSE  a.borrow_name   END 
+		  ) AS  borrow_name,
+	    a.e_use_money,
+		a.e_freeze_money,
+		a.e_collection,
+		a.IS_CUSTODY
+				
+	</sql>
+	
+	
+	<!-- 结果集 -->
+	<resultMap type="com.cxdai.console.statistics.account.entity.AccountLog" id="accountLogEntityResultMap">
+		<id property="id" column="id" />
+		<result property="userId" 					column="USER_ID" />
+		<result property="type" 					column="TYPE" />
+		<result property="total" 					column="TOTAL" />
+		<result property="money" 					column="MONEY" />
+		<result property="useMoney"	    			column="USE_MONEY" />
+		<result property="noUseMoney"  				column="NO_USE_MONEY" />
+		<result property="collection" 				column="COLLECTION" />
+		<result property="toUser" 					column="TO_USER" />
+		<result property="borrowId" 				column="BORROW_ID" />
+		<result property="borrowName" 				column="BORROW_NAME" />
+		<result property="idType"					column="ID_TYPE"/>
+		<result property="remark" 					column="REMARK" />
+		<result property="addtime" 					column="ADDTIME" />
+		<result property="addip" 					column="ADDIP" />
+		<result property="firstBorrowUseMoney" 		column="FIRST_BORROW_USE_MONEY" />
+		<result property="drawMoney"				column="DRAW_MONEY"/>
+		<result property="noDrawMoney" 				column="NO_DRAW_MONEY"/>
+		<result property="eUseMoney" 				column="e_use_money"/>
+		<result property="eFreezeMoney" 			column="e_freeze_money"/>
+		<result property="eCollection" 				column="e_collection"/>
+		<result property="isCustody" 				column="IS_CUSTODY"/>
+	</resultMap>
+	
+	<!--基本列 -->
+	<sql id="accountlogBaseColumn">
+		a.ID, 
+		a.USER_ID,
+		a.TYPE, 
+		a.TOTAL,
+		a.MONEY,
+		a.USE_MONEY, 
+		a.NO_USE_MONEY, 
+		a.COLLECTION, 
+		a.TO_USER,
+		a.BORROW_ID,
+		a.BORROW_NAME,
+		a.ID_TYPE,
+		a.REMARK,
+		a.ADDTIME,
+		a.ADDIP,
+		a.DRAW_MONEY,
+		a.NO_DRAW_MONEY,		
+		a.FIRST_BORROW_USE_MONEY,
+		a.eUseMoney,
+		a.eFreezeMoney,
+		a.eCollection,
+		a.IS_CUSTODY
+	</sql>
+	
+	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.statistics.account.entity.AccountLog">
+		INSERT INTO rocky_accountlog 
+		(USER_ID, 	TYPE,	TOTAL,	MONEY,	USE_MONEY,	NO_USE_MONEY,	COLLECTION,	TO_USER,BORROW_ID,BORROW_NAME,ID_TYPE,REMARK,
+		 ADDTIME,	ADDIP,	FIRST_BORROW_USE_MONEY ,	DRAW_MONEY,	    NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,IS_CUSTODY)
+		
+		SELECT USER_ID,#{type},total,#{money},use_money,no_use_money,collection,#{toUser},#{borrowId},#{borrowName},#{idType},#{remark},
+		UNIX_TIMESTAMP(),#{addip},FIRST_BORROW_USE_MONEY,DRAW_MONEY,NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,ifnull(#{isCustody},0)
+		FROM rocky_account WHERE USER_ID=#{userId}
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+	
+  	<!-- 根据ID查询 -->
+	<select id="queryById" parameterType="java.lang.Integer" resultMap="accountLogEntityResultMap" >
+		select 	
+		   <include refid="accountlogBaseColumn"/>
+		from
+			rocky_accountlog a
+		where 1=1
+		and a.id=#{id}
+  	</select>
+	
+  <!-- 更新-->
+  <update id="updateEntity" parameterType="com.cxdai.console.statistics.account.entity.AccountLog" >
+    update rocky_accountlog
+    <set >
+      <if test="type != null" >
+        TYPE = #{type},
+      </if>
+      <if test="total != null" >
+        TOTAL = #{total},
+      </if>
+      <if test="money != null" >
+        MONEY = #{money},
+      </if>
+      <if test="useMoney != null" >
+        USE_MONEY = #{useMoney},
+      </if>
+      <if test="noUseMoney != null" >
+        NO_USE_MONEY = #{noUseMoney},
+      </if>
+      <if test="collection != null" >
+        COLLECTION = #{collection},
+      </if>
+      <if test="toUser != null" >
+        TO_USER = #{toUser},
+      </if>
+      <if test="borrowId != null" >
+        BORROW_ID = #{borrowId},
+      </if>
+      <if test="borrowName != null" >
+        BORROW_NAME = #{borrowName},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark},
+      </if>
+      <if test="addtime != null" >
+        ADDTIME = #{addtime},
+      </if>
+      <if test="addip != null" >
+        ADDIP = #{addip},
+      </if>
+      <if test="drawMoney != null" >
+        DRAW_MONEY = #{drawMoney},
+      </if>
+       <if test="noDrawMoney != null" >
+        NO_DRAW_MONEY = #{noDrawMoney},
+      </if>      
+      <if test="firstBorrowUseMoney != null" >
+        FIRST_BORROW_USE_MONEY = #{firstBorrowUseMoney},
+      </if>                        
+    </set>
+    where ID = #{id}
+  </update>
+	
+	
+	
+	<!-- 封装查询条件 -->
+	<sql id="accountLog_Where_Clause">
+		<if test="id != null">
+			and a.id =#{id}
+		</if>
+		<if test="userId != null ">
+			and a.USER_ID = #{userId}
+		</if>
+		<if test="type != null ">
+			and a.TYPE = #{type}
+		</if>
+		<if test="remark != null ">
+			and a.REMARK = #{remark}
+		</if>	
+					
+	</sql>
+	
+  	  	<!-- 根据条件查询记录数量-->
+	<select id="queryAccountLogCount" parameterType="com.cxdai.console.statistics.account.vo.AccountLogCnd" resultType="java.lang.Integer" >
+		select count(a.id)
+		from
+			rocky_accountlog a
+		where 1=1
+		<include refid="accountLog_Where_Clause"/>
+  	</select>
+  	
+  	<!-- 查询账户资金日志记录 -->
+  	<select id="queryAccountLogForPage" parameterType="com.cxdai.console.statistics.account.vo.AccountLogCnd" resultMap="accountLogVoResultMap" >
+		SELECT DISTINCT <include refid="accountLogColumn"/>,RM.username,DATE_FORMAT(FROM_UNIXTIME(RM.ADDTIME),'%Y-%m-%d %H:%i:%s') as registTime,
+		RC2.VALUE AS typeStr,
+		IFNULL(a.TOTAL,0)+IFNULL(ca.TOTAL,0)+IFNULL(fix.fixCapitalTotal,0)+IFNULL(coll.fixInvestNoTotal,0) as accountTotal
+		FROM ROCKY_ACCOUNTLOG a 
+		LEFT JOIN ROCKY_MEMBER RM ON a.USER_ID = RM.ID 
+		LEFT JOIN (SELECT * FROM ROCKY_CONFIGURATION RC WHERE RC.TYPE = 1 ) AS RC2 ON a.TYPE = RC2.`NAME`
+		LEFT JOIN t_cur_account ca on ca.USER_ID=a.USER_ID and ca.`STATUS`=0
+   	    LEFT JOIN (SELECT USER_ID,SUM(c.ACCOUNT) as fixCapitalTotal FROM t_fix_tender_detail c where c.status in(0,1) GROUP by USER_ID) fix on a.USER_ID = fix.USER_ID 
+  	    LEFT JOIN (SELECT USER_ID,SUM(co.INTEREST) as fixInvestNoTotal FROM t_fix_collectionrecord co where co.status=0  GROUP by USER_ID) coll on a.USER_ID = coll.USER_ID 
+		WHERE 1 = 1
+  		<if test="username != null and  username != '' ">
+			and RM.USERNAME = #{username}
+		</if>
+		<if test="registTimeStart != null and  registTimeStart != '' ">
+			and FROM_UNIXTIME(RM.ADDTIME) &gt;= #{registTimeStart}
+		</if>
+		<if test="registTimeEnd != null and  registTimeEnd != '' ">
+			and FROM_UNIXTIME(RM.ADDTIME) &lt;= #{registTimeEnd}
+		</if>
+		<if test="type != null and type != '' ">
+			and a.TYPE = #{type}
+		</if>
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> UNIX_TIMESTAMP(CONCAT(#{beginTimeStr},' 00:00:00')) 
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> UNIX_TIMESTAMP(CONCAT(#{endTimeStr},' 23:59:59'))  
+		</if> 
+		ORDER BY a.ID DESC
+  	</select>
+  	
+  	<!-- 查询账户资金日志记录数量 -->
+  	<select id="queryAccountLogForCounts" parameterType="com.cxdai.console.statistics.account.vo.AccountLogCnd" resultType="java.lang.Integer" >
+		SELECT count(*)
+		FROM ROCKY_ACCOUNTLOG a 
+		LEFT JOIN ROCKY_MEMBER RM ON a.USER_ID = RM.ID 
+		LEFT JOIN (SELECT * FROM ROCKY_CONFIGURATION RC WHERE RC.TYPE = 1 ) AS RC2 ON a.TYPE = RC2.`NAME`
+		WHERE 1 = 1
+		<if test="username != null  and  username != '' ">
+			and RM.USERNAME = #{username}
+		</if>
+		<if test="registTimeStart != null and  registTimeStart != '' ">
+			and FROM_UNIXTIME(RM.ADDTIME) &gt;= #{registTimeStart}
+		</if>
+		<if test="registTimeEnd != null and  registTimeEnd != '' ">
+			and FROM_UNIXTIME(RM.ADDTIME) &lt;= #{registTimeEnd}
+		</if>
+		<if test="type != null and type != '' ">
+			and a.TYPE = #{type}
+		</if>
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and a.ADDTIME <![CDATA[>=]]> UNIX_TIMESTAMP(CONCAT(#{beginTimeStr},' 00:00:00')) 
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and a.ADDTIME <![CDATA[<=]]> UNIX_TIMESTAMP(CONCAT(#{endTimeStr},' 23:59:59'))  
+		</if> 
+  	</select>
+  	
+  	<!-- 统计各类渠道的充值金额总计 -->
+  	<select id="queryAccoutLogByRecharge" parameterType="com.cxdai.console.statistics.account.vo.AccountLogCnd" resultType="java.util.Map" >
+		SELECT 
+		TRUNCATE(SUM(CASE WHEN al.TYPE = 'online_recharge' AND (al.REMARK LIKE '%网银在线%' or al.REMARK LIKE '%京东支付%') THEN MONEY END),2) as onlinePaymentRechargeTotal,
+		TRUNCATE(SUM(CASE WHEN al.TYPE = 'online_recharge' AND al.REMARK LIKE '%新浪支付%' THEN MONEY END),2) as sinaPayRechargeTotal,
+		TRUNCATE(SUM(CASE WHEN al.TYPE = 'online_recharge' AND al.REMARK LIKE '%盛付通%' THEN MONEY END),2) as shengFutongRechargeTotal,
+		TRUNCATE(SUM(CASE WHEN al.TYPE = 'online_recharge' AND al.REMARK LIKE '%国付宝%' THEN MONEY END),2) as guoFuBaoRechargeTotal,
+		TRUNCATE(SUM(CASE WHEN al.TYPE = 'online_recharge' AND al.REMARK LIKE '%连连支付%' THEN MONEY END),2) as lianlianRechargeTotal,
+		TRUNCATE(SUM(CASE WHEN al.TYPE = 'online_recharge' AND al.REMARK LIKE '%富友支付%' THEN MONEY END),2) as fuiouRechargeTotal,
+        TRUNCATE(SUM(CASE WHEN al.TYPE = 'online_recharge' AND al.REMARK LIKE '%浙商存管%' THEN MONEY END),2) as czbankRechargeTotal,
+		<!-- TRUNCATE(SUM(CASE WHEN al.TYPE = 'offline_recharge' and al.remark like'%充值审核通过%' THEN MONEY END),2) as alipayRechargeTotal -->
+		TRUNCATE(SUM(CASE WHEN al.TYPE = 'offline_recharge' THEN MONEY END),2) as alipayRechargeTotal
+		FROM rocky_accountlog al
+	   <if test="username != null and username != ''">
+		     join rocky_member m on al.USER_ID = m.ID
+			 and m.USERNAME = #{username}
+		</if>
+		 where 1=1
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and al.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and al.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if> 
+	
+       
+       
+  	</select>
+  	
+  	<!-- 查询最新一笔受限为0的id -->
+  	<select id="queryMaxIdForNoDrawByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+		SELECT MAX(id) FROM  rocky_accountlog where USER_ID = #{userId} AND NO_DRAW_MONEY = 0
+  	</select>
+  	
+  	<!-- 查询最新一笔受限为0之后的受限增加金额总计（资金类型：线上充值、现金行权、网站奖励、网站充值、积分兑换工资） -->
+  	<select id="queryNoDrawAddByUserId" resultType="java.math.BigDecimal" >
+  		SELECT (
+				SELECT IFNULL(SUM(MONEY),0) FROM rocky_accountlog l 
+				where USER_ID = #{userId} AND id > #{accountLogId} AND TYPE in('online_recharge','stock_to_money','web_award','web_recharge','point_exchange_money')
+		) + (
+			  SELECT IFNULL(SUM(NO_DRAW_MONEY),0) FROM rocky_accountlog l 
+				where USER_ID = #{userId} AND id > #{accountLogId} AND TYPE in('first_subscribe_failed','first_cancel','tender_failed','transfer_cancel')
+		) - (
+				SELECT IFNULL(SUM(NO_DRAW_MONEY),0) FROM rocky_accountlog al where id in(
+					SELECT (SELECT t.id FROM rocky_accountlog t where t.USER_ID = #{userId} AND t.id <![CDATA[ < ]]> l.id ORDER BY t.id desc LIMIT 1) FROM rocky_accountlog l where USER_ID = #{userId} AND id > #{accountLogId} AND TYPE in('first_subscribe_failed','first_cancel','tender_failed','transfer_cancel')
+				)
+		) FROM DUAL
+  	</select>
+  	
+  	<!-- 查询最新一笔受限为0之后的受限减少金额总计（资金类型：投标成功、还款扣除、债权转让复审通过、投标直通车认购成功） -->
+  	<select id="queryNoDrawReduceByUserId" resultType="java.math.BigDecimal" >
+  		SELECT (
+			SELECT IFNULL(SUM(NO_DRAW_MONEY),0) FROM rocky_accountlog al where al.id in(
+				SELECT (SELECT t.id FROM rocky_accountlog t where t.USER_ID = #{userId} AND t.id  <![CDATA[ < ]]> l.id ORDER BY t.id desc LIMIT 1) as id FROM rocky_accountlog l where USER_ID = #{userId} AND id > #{accountLogId} AND TYPE in('tender_cold','transfer_cold','repayment_deduct','first_subscribe_cold')
+			) 
+		) -
+		(
+				SELECT IFNULL(SUM(NO_DRAW_MONEY),0) FROM rocky_accountlog l 
+				where USER_ID = #{userId} AND id > #{accountLogId} AND TYPE in('tender_cold','transfer_cold','repayment_deduct','first_subscribe_cold')
+		) FROM DUAL
+  	</select>
+  	
+  	<select id="queryAccoutLogByRechargeForLianLian" parameterType="com.cxdai.console.statistics.account.vo.AccountLogCnd" resultType="java.util.Map" >
+		 SELECT   TRUNCATE(SUM(IF(al.PLATFORM =1,MONEY,0)),2)   lianlianRechargeForPCTotal  ,  TRUNCATE(SUM(IF(al.PLATFORM =2,MONEY,0)),2) lianlianRechargeForWXTotal  ,TRUNCATE(SUM(IF(al.PLATFORM =3,MONEY,0)),2)  lianlianRechargeForAndroidTotal  ,TRUNCATE(SUM(IF(al.PLATFORM =4,MONEY,0)),2) lianlianRechargeForIOSTotal 
+         FROM   rocky_rechargerecord  al
+         <if test="username != null and username != ''">
+		     join rocky_member m on al.USER_ID = m.ID
+			 and m.USERNAME = #{username}
+		</if>
+		 where al.onlinetype    = 5   AND al.STATUS=1   
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and al.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and al.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if> 
+  	</select>
+  	
+  	<select id="queryAccoutLogByRechargeForWy" parameterType="com.cxdai.console.statistics.account.vo.AccountLogCnd" resultType="java.util.Map" >
+		SELECT   TRUNCATE(SUM(IF(al.PLATFORM =1,MONEY,0)),2)   wyRechargeForPCTotal  ,  TRUNCATE(SUM(IF(al.PLATFORM =2,MONEY,0)),2) wyRechargeForWXTotal  ,TRUNCATE(SUM(IF(al.PLATFORM =3,MONEY,0)),2)  wyRechargeForAndroidTotal  ,TRUNCATE(SUM(IF(al.PLATFORM =4,MONEY,0)),2) wyRechargeForIOSTotal 
+         FROM   rocky_rechargerecord  al
+         <if test="username != null and username != ''">
+		     join rocky_member m on al.USER_ID = m.ID
+			 and m.USERNAME = #{username}
+		</if>
+		 where al.onlinetype    = 1   AND al.STATUS=1   
+		<if test="beginTimeStr != null and beginTimeStr != '' ">
+			and al.ADDTIME <![CDATA[>=]]> #{beginTimeStr}
+		</if>
+		<if test="endTimeStr != null and endTimeStr != '' ">
+			and al.ADDTIME <![CDATA[<=]]> #{endTimeStr}
+		</if> 
+  	</select>
+  	
+  	<insert id="insertAccountLog"  parameterType="com.cxdai.console.statistics.account.entity.AccountLog">
+ 		INSERT INTO rocky_accountlog 
+		(USER_ID, 	TYPE,	TOTAL,	MONEY,	USE_MONEY,	NO_USE_MONEY,	COLLECTION,	TO_USER,BORROW_ID,BORROW_NAME,ID_TYPE,REMARK,
+		 ADDTIME,	ADDIP,	FIRST_BORROW_USE_MONEY ,	DRAW_MONEY,	    NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,IS_CUSTODY)
+		SELECT USER_ID,#{type},total,#{money},use_money,no_use_money,collection,#{toUser},#{borrowId},#{borrowName},#{idType},#{remark},
+		UNIX_TIMESTAMP(),#{addip},FIRST_BORROW_USE_MONEY,DRAW_MONEY,NO_DRAW_MONEY,e_use_money,e_freeze_money,e_collection,ifnull(#{isCustody},0)
+		FROM rocky_account WHERE USER_ID=#{userId}
+	</insert>
+</mapper>  

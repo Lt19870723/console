@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.base.mapper.BaseGoodSendInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.lottery.entity.BaseGoodSendInfo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="LOTTERY_USE_RECORD_ID" property="lotteryUseRecordId" jdbcType="INTEGER" />
+    <result column="CONTACT" property="contact" jdbcType="VARCHAR" />
+    <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="POSTCODE" property="postcode" jdbcType="VARCHAR" />
+    <result column="EXPRESS_COMPANY" property="expressCompany" jdbcType="VARCHAR" />
+    <result column="EXPRESS_CODE" property="expressCode" jdbcType="VARCHAR" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="ADD_IP" property="addIp" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="PLATFORM" property="platform" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USER_ID, LOTTERY_USE_RECORD_ID, CONTACT, MOBILE, ADDRESS, POSTCODE, EXPRESS_COMPANY, 
+    EXPRESS_CODE, ADD_TIME, ADD_IP, REMARK, PLATFORM
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_lottery_goods_send_info
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_lottery_goods_send_info
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cxdai.console.lottery.entity.BaseGoodSendInfo" >
+    insert into t_lottery_goods_send_info (ID, USER_ID, LOTTERY_USE_RECORD_ID, 
+      CONTACT, MOBILE, ADDRESS, 
+      POSTCODE, EXPRESS_COMPANY, EXPRESS_CODE, 
+      ADD_TIME, ADD_IP, REMARK, 
+      PLATFORM)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{lotteryUseRecordId,jdbcType=INTEGER}, 
+      #{contact,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{postcode,jdbcType=VARCHAR}, #{expressCompany,jdbcType=VARCHAR}, #{expressCode,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{addIp,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{platform,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cxdai.console.lottery.entity.BaseGoodSendInfo" >
+    insert into t_lottery_goods_send_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="lotteryUseRecordId != null" >
+        LOTTERY_USE_RECORD_ID,
+      </if>
+      <if test="contact != null" >
+        CONTACT,
+      </if>
+      <if test="mobile != null" >
+        MOBILE,
+      </if>
+      <if test="address != null" >
+        ADDRESS,
+      </if>
+      <if test="postcode != null" >
+        POSTCODE,
+      </if>
+      <if test="expressCompany != null" >
+        EXPRESS_COMPANY,
+      </if>
+      <if test="expressCode != null" >
+        EXPRESS_CODE,
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME,
+      </if>
+      <if test="addIp != null" >
+        ADD_IP,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="platform != null" >
+        PLATFORM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryUseRecordId != null" >
+        #{lotteryUseRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="contact != null" >
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null" >
+        #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCompany != null" >
+        #{expressCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCode != null" >
+        #{expressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        #{platform,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.lottery.entity.BaseGoodSendInfo" >
+    update t_lottery_goods_send_info
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="lotteryUseRecordId != null" >
+        LOTTERY_USE_RECORD_ID = #{lotteryUseRecordId,jdbcType=INTEGER},
+      </if>
+      <if test="contact != null" >
+        CONTACT = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        MOBILE = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null" >
+        POSTCODE = #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCompany != null" >
+        EXPRESS_COMPANY = #{expressCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="expressCode != null" >
+        EXPRESS_CODE = #{expressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        ADD_IP = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        PLATFORM = #{platform,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="dealUser != null" >
+        deal_user = #{dealUser},
+      </if>
+      
+      <if test="dealTime != null" >
+        deal_time = #{dealTime},
+      </if>
+      
+      <if test="dealIp != null" >
+        deal_ip = #{dealIp},
+      </if>
+      
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.lottery.entity.BaseGoodSendInfo" >
+    update t_lottery_goods_send_info
+    set USER_ID = #{userId,jdbcType=INTEGER},
+      LOTTERY_USE_RECORD_ID = #{lotteryUseRecordId,jdbcType=INTEGER},
+      CONTACT = #{contact,jdbcType=VARCHAR},
+      MOBILE = #{mobile,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      POSTCODE = #{postcode,jdbcType=VARCHAR},
+      EXPRESS_COMPANY = #{expressCompany,jdbcType=VARCHAR},
+      EXPRESS_CODE = #{expressCode,jdbcType=VARCHAR},
+      ADD_TIME = #{addTime,jdbcType=TIMESTAMP},
+      ADD_IP = #{addIp,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      PLATFORM = #{platform,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

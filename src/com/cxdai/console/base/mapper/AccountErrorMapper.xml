@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.base.mapper.AccountErrorMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.base.entity.AccountError" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="total" property="total" jdbcType="DECIMAL" />
+    <result column="p2p_netvalue" property="p2pNetvalue" jdbcType="DECIMAL" />
+    <result column="p2p_use_money" property="p2pUseMoney" jdbcType="DECIMAL" />
+    <result column="p2p_no_use_money" property="p2pNoUseMoney" jdbcType="DECIMAL" />
+    <result column="p2p_collection" property="p2pCollection" jdbcType="DECIMAL" />
+    <result column="p2p_FIRST_BORROW_USE_MONEY" property="p2pFirstBorrowUseMoney" jdbcType="DECIMAL" />
+    <result column="p2p_VERSION" property="p2pVersion" jdbcType="INTEGER" />
+    <result column="p2p_DRAW_MONEY" property="p2pDrawMoney" jdbcType="DECIMAL" />
+    <result column="p2p_NO_DRAW_MONEY" property="p2pNoDrawMoney" jdbcType="DECIMAL" />
+    <result column="p2p_e_use_money" property="zsEUseMoney" jdbcType="DECIMAL" />
+    <result column="p2p_e_no_use_money" property="zsEFreezeMoney" jdbcType="DECIMAL" />
+    <result column="p2p_e_collection" property="zsWithdrawamount" jdbcType="DECIMAL" />
+	<result column="zs_e_use_money" property="p2peUseMoney" jdbcType="DECIMAL" />
+    <result column="zs_e_freeze_money" property="p2peNoUseMoney" jdbcType="DECIMAL" />
+    <result column="zs_withdrawAmount" property="p2peCollection" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="dispose_user" property="disposeUser" jdbcType="INTEGER" />
+    <result column="dispose_time" property="disposeTime" jdbcType="TIMESTAMP" />
+    <result column="dispose_remark" property="disposeRemark" jdbcType="VARCHAR" />
+    <result column="ADDTIME" property="addtime" jdbcType="TIMESTAMP" />
+    <result column="ADDIP" property="addip" jdbcType="VARCHAR" />
+    <result column="PLATFORM" property="platform" jdbcType="INTEGER" />
+    <result column="Scene" property="scene" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="userName"/>
+  </resultMap>
+
+  
+  <sql id="Base_Column_List" >
+    id, user_id, total, p2p_netvalue, p2p_use_money, p2p_no_use_money, p2p_collection, 
+    p2p_FIRST_BORROW_USE_MONEY, p2p_VERSION, p2p_DRAW_MONEY, p2p_NO_DRAW_MONEY, zs_e_use_money, 
+    zs_e_freeze_money, zs_withdrawAmount, STATUS, dispose_user, dispose_time, dispose_remark, 
+    ADDTIME, ADDIP, PLATFORM, Scene,p2p_e_use_money,p2p_e_no_use_money,p2p_e_collection
+  </sql>
+  
+  <sql id="Base_Column_List2" >
+    tae.id, tae.user_id, tae.total, tae.p2p_netvalue, tae.p2p_use_money, tae.p2p_no_use_money, tae.p2p_collection, 
+    tae.p2p_FIRST_BORROW_USE_MONEY, tae.p2p_VERSION, tae.p2p_DRAW_MONEY, tae.p2p_NO_DRAW_MONEY, tae.zs_e_use_money, 
+    tae.zs_e_freeze_money, tae.zs_withdrawAmount, tae.STATUS, tae.dispose_user, tae.dispose_time, tae.dispose_remark, 
+    tae.ADDTIME, tae.ADDIP, tae.PLATFORM, tae.Scene,tae.p2p_e_use_money,tae.p2p_e_no_use_money,tae.p2p_e_collection
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_account_error
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="findAccountError" resultMap="BaseResultMap" parameterType="com.cxdai.console.borrow.check.vo.AccountErrorCnd">
+  	select <include refid="Base_Column_List2" />,rm.USERNAME
+  	from t_account_error tae left join rocky_member rm on tae.user_id=rm.id
+  	where 1=1
+  	<if test="userName!=null and userName!=''">
+  	and rm.USERNAME=#{userName}
+  	</if>
+  	<if test="status!=null and status!=''">
+    and	tae.STATUS=#{status}
+  	</if>
+  	<if test="beginDate != null and beginDate!=''">
+  	and DATE(tae.ADDTIME) <![CDATA[>=]]> #{beginDate}
+  	</if>
+  	<if test="endDate != null and endDate!=''">
+  	and DATE(tae.ADDTIME) <![CDATA[<=]]> #{endDate}
+  	</if>
+  	<if test="scene != null and scene!=''">
+  	and tae.Scene like CONCAT('%',trim(#{scene}),'%')
+  	</if>
+  </select>
+  
+    <select id="findAccountErrorCount" resultType="java.lang.Integer"  parameterType="com.cxdai.console.borrow.check.vo.AccountErrorCnd">
+  	select count(*)
+  	from t_account_error tae left join rocky_member rm on tae.user_id=rm.id
+  	where 1=1
+  	<if test="userName!=null and userName!=''">
+  	and rm.USERNAME=#{userName}
+  	</if>
+  	<if test="status!=null and status!=''">
+    and	tae.STATUS=#{status}
+  	</if>
+  	<if test="beginDate != null and beginDate!=''">
+  	and DATE(tae.ADDTIME) <![CDATA[>=]]>DATE(#{beginDate}) 
+  	</if>
+  	<if test="endDate != null and endDate!=''">
+  	and DATE(tae.ADDTIME) <![CDATA[<=]]> DATE(#{endDate})
+  	</if>
+  	<if test="scene != null and scene!=''">
+  	and tae.Scene like CONCAT('%',trim(#{scene}),'%')
+  	</if>
+  </select>
+  
+  
+  
+  <select id="findAccountErrorByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+    <include refid="Base_Column_List" />
+    from t_account_error
+    where user_id=#{userId} and STATUS=0 order by id desc
+  </select>
+  
+   <select id="findAccountErrorByUserIdCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+  select count(id) from t_account_error where user_id=#{userId} and STATUS=0
+  </select>
+  
+  
+  <insert id="insert" parameterType="com.cxdai.console.base.entity.AccountError" >
+    insert into t_account_error (user_id, total, 
+      p2p_netvalue, p2p_use_money, p2p_no_use_money, 
+      p2p_collection, p2p_FIRST_BORROW_USE_MONEY, 
+      p2p_VERSION, p2p_DRAW_MONEY, p2p_NO_DRAW_MONEY, p2p_e_use_money,p2p_e_no_use_money,p2p_e_collection,
+      zs_e_use_money, zs_e_freeze_money, zs_withdrawAmount, 
+      STATUS, dispose_user, dispose_time, 
+      dispose_remark, ADDTIME, ADDIP, 
+      PLATFORM, Scene)
+    values (#{userId,jdbcType=INTEGER}, #{total,jdbcType=DECIMAL}, 
+      #{p2pNetvalue,jdbcType=DECIMAL}, #{p2pUseMoney,jdbcType=DECIMAL}, #{p2pNoUseMoney,jdbcType=DECIMAL}, 
+      #{p2pCollection,jdbcType=DECIMAL}, #{p2pFirstBorrowUseMoney,jdbcType=DECIMAL}, 
+      #{p2pVersion,jdbcType=INTEGER}, #{p2pDrawMoney,jdbcType=DECIMAL}, #{p2pNoDrawMoney,jdbcType=DECIMAL}, 
+      #{p2peUseMoney,jdbcType=DECIMAL}, #{p2peNoUseMoney,jdbcType=DECIMAL},#{p2peCollection,jdbcType=DECIMAL}, 
+      #{zsEUseMoney,jdbcType=DECIMAL}, #{zsEFreezeMoney,jdbcType=DECIMAL}, #{zsWithdrawamount,jdbcType=DECIMAL}, 
+      #{status,jdbcType=INTEGER}, #{disposeUser,jdbcType=INTEGER}, #{disposeTime,jdbcType=TIMESTAMP}, 
+      #{disposeRemark,jdbcType=VARCHAR}, now(), #{addip,jdbcType=VARCHAR}, 
+      #{platform,jdbcType=INTEGER}, #{scene,jdbcType=VARCHAR})
+  </insert>
+
+
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.base.entity.AccountError" >
+   
+    update t_account_error
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        total = #{total,jdbcType=DECIMAL},
+      </if>
+      <if test="p2pNetvalue != null" >
+        p2p_netvalue = #{p2pNetvalue,jdbcType=DECIMAL},
+      </if>
+      <if test="p2pUseMoney != null" >
+        p2p_use_money = #{p2pUseMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="p2pNoUseMoney != null" >
+        p2p_no_use_money = #{p2pNoUseMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="p2pCollection != null" >
+        p2p_collection = #{p2pCollection,jdbcType=DECIMAL},
+      </if>
+      <if test="p2pFirstBorrowUseMoney != null" >
+        p2p_FIRST_BORROW_USE_MONEY = #{p2pFirstBorrowUseMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="p2pVersion != null" >
+        p2p_VERSION = #{p2pVersion,jdbcType=INTEGER},
+      </if>
+      <if test="p2pDrawMoney != null" >
+        p2p_DRAW_MONEY = #{p2pDrawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="p2pNoDrawMoney != null" >
+        p2p_NO_DRAW_MONEY = #{p2pNoDrawMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="zsEUseMoney != null" >
+        zs_e_use_money = #{zsEUseMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="zsEFreezeMoney != null" >
+        zs_e_freeze_money = #{zsEFreezeMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="zsWithdrawamount != null" >
+        zs_withdrawAmount = #{zsWithdrawamount,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="disposeUser != null" >
+        dispose_user = #{disposeUser,jdbcType=INTEGER},
+      </if>
+      <if test="disposeUser != null" >
+        dispose_time = now(),
+      </if>
+      <if test="disposeRemark != null" >
+        dispose_remark = #{disposeRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null" >
+        ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addip != null" >
+        ADDIP = #{addip,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        PLATFORM = #{platform,jdbcType=INTEGER},
+      </if>
+      <if test="scene != null" >
+        Scene = #{scene,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cxdai.console.base.entity.AccountError" >
+    update t_account_error
+    set user_id = #{userId,jdbcType=INTEGER},
+      total = #{total,jdbcType=DECIMAL},
+      p2p_netvalue = #{p2pNetvalue,jdbcType=DECIMAL},
+      p2p_use_money = #{p2pUseMoney,jdbcType=DECIMAL},
+      p2p_no_use_money = #{p2pNoUseMoney,jdbcType=DECIMAL},
+      p2p_collection = #{p2pCollection,jdbcType=DECIMAL},
+      p2p_FIRST_BORROW_USE_MONEY = #{p2pFirstBorrowUseMoney,jdbcType=DECIMAL},
+      p2p_VERSION = #{p2pVersion,jdbcType=INTEGER},
+      p2p_DRAW_MONEY = #{p2pDrawMoney,jdbcType=DECIMAL},
+      p2p_NO_DRAW_MONEY = #{p2pNoDrawMoney,jdbcType=DECIMAL},
+      zs_e_use_money = #{zsEUseMoney,jdbcType=DECIMAL},
+      zs_e_freeze_money = #{zsEFreezeMoney,jdbcType=DECIMAL},
+      zs_withdrawAmount = #{zsWithdrawamount,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=INTEGER},
+      dispose_user = #{disposeUser,jdbcType=INTEGER},
+      dispose_time = #{disposeTime,jdbcType=TIMESTAMP},
+      dispose_remark = #{disposeRemark,jdbcType=VARCHAR},
+      ADDTIME = #{addtime,jdbcType=TIMESTAMP},
+      ADDIP = #{addip,jdbcType=VARCHAR},
+      PLATFORM = #{platform,jdbcType=INTEGER},
+      Scene = #{scene,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

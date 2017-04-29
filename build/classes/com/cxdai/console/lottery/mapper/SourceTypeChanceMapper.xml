@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.lottery.mapper.SourceTypeChanceMapper" >
+  <resultMap id="BaseResultMap" type="com.cxdai.console.lottery.vo.SourceTypeChance"  extends="com.cxdai.console.base.mapper.BaseSourceTypeChanceMapper.BaseResultMap" >
+         <result column="ruleName" property="ruleName" jdbcType="VARCHAR" />
+  </resultMap>
+   
+   
+    
+   <select id="querySourceTypeChanceByGoodId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+      select 
+	   tlstc.*,tlcri.NAME ruleName
+	    from t_lottery_source_type_chance  tlstc LEFT JOIN  t_lottery_chance_rule_info tlcri  ON tlstc.LOTTERY_CHANCE_RULE_INFO_ID=tlcri.ID
+	    where LOTTERY_GOODS_ID = #{id,jdbcType=INTEGER} and tlstc.status =0
+   </select>
+   
+   
+    <select id="getSourceTypeChance"   resultMap="BaseResultMap" parameterType="java.util.Map" >
+      select   *   from t_lottery_source_type_chance  tlstc 
+	    where LOTTERY_GOODS_ID = #{lotteryGoodsId}   and 
+	     LOTTERY_CHANCE_RULE_INFO_ID=#{lotteryChanceRuleInfoId} 
+	      and tlstc.status =0
+   </select>
+   
+   
+     <select id="queryCountGlParentChanceByGood"   resultType="java.lang.Integer" parameterType="com.cxdai.console.lottery.entity.BaseGood" >
+      select   count(1)   from t_lottery_source_type_chance  tlstc 
+	    where LOTTERY_GOODS_ID = #{id} and status=0   and  tlstc.CHANCE  > #{chance}
+   </select>
+   
+   
+   
+    
+</mapper>

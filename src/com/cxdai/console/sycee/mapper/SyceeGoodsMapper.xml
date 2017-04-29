@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.sycee.mapper.SyceeGoodsMapper">
+
+<resultMap type="com.cxdai.console.sycee.entity.SyceeGoods" id="BaseResultMap">
+	 <id column="id" property="id" />
+    <result column="name" property="name"  />
+    <result column="money"  property="money"  />
+    <result column="sycee" property="sycee" />
+    <result column="old_sycee" property="oldSycee" />
+    <result column="num" property="num"  />
+    <result column="first_class" property="firstClass"  />
+    <result column="second_class" property="secondClass"  />
+    <result column="show_flag" property="showFlag"  />
+    <result column="imgurl" property="imgurl"  />
+    <result column="use_exp" property="useExp"  />
+    <result column="use_way" property="useWay"  />
+    <result column="exchange_exp" property="exchangeExp"  />
+    <result column="valid_day" property="validDay"  />
+    <result column="adduser" property="adduser" />
+    <result column="addtime" property="addtime"  />
+    <result column="addusername" property="addusername"  />
+    <result column="approve_user" property="approveUser" />
+    <result column="approve_username" property="approveUsername"  />
+    <result column="approve_status" property="approveStatus"  />
+    <result column="approve_time" property="approveTime"  />
+    <result column="approve_remark" property="approveRemark"  />
+    <result column="REMARK" property="remark"  />
+</resultMap>
+<sql id="Base_Column_List" >
+    id, name, money, sycee, num, first_class, second_class, show_flag, imgurl, use_exp, 
+    use_way, exchange_exp, valid_day, adduser, addtime, addusername, approve_user, approve_username, 
+    approve_status, approve_time, approve_remark, REMARK
+ </sql>
+ <insert id="insertSelective" parameterType="com.cxdai.console.sycee.entity.SyceeGoods" >
+    insert into t_sycee_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="oldSycee != null" >
+        old_sycee,
+      </if>
+      <if test="discount != null" >
+        discount,sycee,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="firstClass != null" >
+        first_class,
+      </if>
+      <if test="secondClass != null" >
+        second_class,
+      </if>
+      <if test="showFlag != null" >
+        show_flag,
+      </if>
+      <if test="imgurl != null" >
+        imgurl,
+      </if>
+      <if test="useExp != null" >
+        use_exp,
+      </if>
+      <if test="useWay != null" >
+        use_way,
+      </if>
+      <if test="exchangeExp != null" >
+        exchange_exp,
+      </if>
+      <if test="validDay != null" >
+        valid_day,
+      </if>
+      <if test="adduser != null" >
+        adduser,
+      </if>
+      <if test="addtime != null" >
+        addtime,
+      </if>
+      <if test="addusername != null" >
+        addusername,
+      </if>
+      <if test="approveUser != null" >
+        approve_user,
+      </if>
+      <if test="approveUsername != null" >
+        approve_username,
+      </if>
+      <if test="approveStatus != null" >
+        approve_status,
+      </if>
+      <if test="approveTime != null" >
+        approve_time,
+      </if>
+      <if test="approveRemark != null" >
+        approve_remark,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="oldSycee != null" >
+        #{oldSycee,jdbcType=INTEGER},
+      </if>
+       <if test="discount != null" >
+        #{discount},
+        #{oldSycee}*#{discount}*0.1,
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=TINYINT},
+      </if>
+      <if test="firstClass != null" >
+        #{firstClass,jdbcType=TINYINT},
+      </if>
+      <if test="secondClass != null" >
+        #{secondClass,jdbcType=VARCHAR},
+      </if>
+      <if test="showFlag != null" >
+        #{showFlag,jdbcType=TINYINT},
+      </if>
+      <if test="imgurl != null" >
+        #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="useExp != null" >
+        #{useExp,jdbcType=VARCHAR},
+      </if>
+      <if test="useWay != null" >
+        #{useWay,jdbcType=VARCHAR},
+      </if>
+      <if test="exchangeExp != null" >
+        #{exchangeExp,jdbcType=VARCHAR},
+      </if>
+      <if test="validDay != null" >
+        #{validDay,jdbcType=TINYINT},
+      </if>
+      <if test="adduser != null" >
+        #{adduser,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addusername != null" >
+        #{addusername,jdbcType=VARCHAR},
+      </if>
+      <if test="approveUser != null" >
+        #{approveUser,jdbcType=INTEGER},
+      </if>
+      <if test="approveUsername != null" >
+        #{approveUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="approveStatus != null" >
+        #{approveStatus,jdbcType=BIT},
+      </if>
+      <if test="approveTime != null" >
+        #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveRemark != null" >
+        #{approveRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cxdai.console.sycee.entity.SyceeGoods" >
+    update t_sycee_goods
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="oldSycee != null" >
+      old_sycee = #{oldSycee,jdbcType=INTEGER},
+      </if>
+     <if test="discount != null" >   
+        discount = #{discount},
+        sycee=old_sycee*discount*0.1,
+      </if>
+      <if test="num != null" >
+        num = #{num,jdbcType=TINYINT},
+      </if>
+      <if test="firstClass != null" >
+        first_class = #{firstClass,jdbcType=TINYINT},
+      </if>
+      <if test="secondClass != null" >
+        second_class = #{secondClass,jdbcType=VARCHAR},
+      </if>
+      <if test="showFlag != null" >
+        show_flag = #{showFlag,jdbcType=TINYINT},
+      </if>
+      <if test="imgurl != null" >
+        imgurl = #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="useExp != null" >
+        use_exp = #{useExp,jdbcType=VARCHAR},
+      </if>
+      <if test="useWay != null" >
+        use_way = #{useWay,jdbcType=VARCHAR},
+      </if>
+      <if test="exchangeExp != null" >
+        exchange_exp = #{exchangeExp,jdbcType=VARCHAR},
+      </if>
+      <if test="validDay != null" >
+        valid_day = #{validDay,jdbcType=TINYINT},
+      </if>
+      <if test="adduser != null" >
+        adduser = #{adduser,jdbcType=INTEGER},
+      </if>
+      <if test="addtime != null" >
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addusername != null" >
+        addusername = #{addusername,jdbcType=VARCHAR},
+      </if>
+      <if test="approveUser != null" >
+        approve_user = #{approveUser,jdbcType=INTEGER},
+      </if>
+      <if test="approveUsername != null" >
+        approve_username = #{approveUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="approveStatus != null" >
+        approve_status = #{approveStatus,jdbcType=BIT},
+      </if>
+      <if test="approveTime != null" >
+        approve_time = #{approveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approveRemark != null" >
+        approve_remark = #{approveRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+ <sql id="Base_Column_Cnd">
+   <where>
+      <if test=" name!=null and name!='' ">
+         and name like CONCAT(trim(#{name}), '%' )
+      </if>
+      <if test="showFlag !=null and showFlag !='' ">
+         and show_flag = #{showFlag}
+      </if>
+      <if test=" approveStatus !=null and approveStatus !='' ">
+         and approve_status = #{approveStatus}
+      </if>
+       <if test=" firstClass !=null and firstClass !='' ">
+         and first_class = #{firstClass}
+      </if>
+   </where>
+ </sql>
+ <!-- 统计所有商品数量 -->
+ <select id="countSyceeGoodList" parameterType="com.cxdai.console.sycee.vo.SyceeGoodCnd" resultType="java.lang.Integer">
+		select count(*) from t_sycee_goods  <include refid="Base_Column_Cnd"/>
+ </select>
+ <!-- 查询所有商品 -->	
+ <select id="selectSyceeGoodList" resultMap="BaseResultMap" parameterType="com.cxdai.console.sycee.vo.SyceeGoodCnd">
+    select  * from t_sycee_goods
+    <include refid="Base_Column_Cnd"/>
+    order by id desc
+ </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select  * from t_sycee_goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.account.reward.mapper.NetvalueLogMapper">
+
+  	<!-- 插入记录，返回主键 -->
+	<insert id="insertEntity" parameterType="com.cxdai.console.account.reward.entity.NetvalueLog">
+		INSERT INTO t_netvalue_log 
+        (BORROW_ID, USER_ID, NET_MONEY_LIMIT, NET_WAIT_TOPAY_COUNT, WAIT_RECEIVE_CAPITAL, TENDER_LOCK_ACCOUNT_TOTAL, REPAYMENT_ACCOUNT_TOTAL, 
+         FIRST_FREEZE_ACCOUNT,USE_MONEY,FIRST_BORROW_USE_MONEY,TAKE_CASH_LOCK_ACCOUNT, REMARK, ADDTIME, ADDIP, TYPE)
+        VALUES
+        (#{borrowId}, #{userId}, #{netMoneyLimit}, #{netWaitTopayCount}, #{waitReceiveCapital}, #{tenderLockAccountTotal}, #{repaymentAccountTotal}, 
+         #{firstFreezeAccount},#{useMoney},#{firstBorrowUseMoney},#{takeCashFreezeAccount}, #{remark}, NOW(), #{addip}, #{type});
+ 		 <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">  
+      	    SELECT LAST_INSERT_ID() AS ID    
+   		 </selectKey>
+	</insert>
+  	
+</mapper>  

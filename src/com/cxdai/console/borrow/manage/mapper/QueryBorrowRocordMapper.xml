@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cxdai.console.borrow.manage.mapper.QueryBorrowRocordMapper">
+  
+	<resultMap type="com.cxdai.console.borrow.approve.vo.BorrowVo" id="borrowRecordResultMap">
+		    <id property="id" column="id" />
+			<result property="userId" 				column="USER_ID" />
+			<result property="userName" 			column="USERNAME" />
+			<result property="name" 				column="NAME" />
+			<result property="status" 				column="STATUS" />
+			<result property="apprstatus" 			column="APPRSTATUS" />
+			<result property="borrowtype" 			column="BORROWTYPE" />
+			<result property="account" 				column="ACCOUNT" />
+			<result property="apr" 				    column="APR" />
+			<result property="validTime" 			column="VALID_TIME" />
+			<result property="addtime" 				column="ADDTIME" />
+			<result property="style"				column="STYLE" />
+			<result property="publishTime"        	column="PUBLISH_TIME" />
+			<result property="successTime"        	column="SUCCESS_TIME" />
+			<result property="repaymentAccount"     column="REPAYMENT_ACCOUNT" />
+
+			<result column="INTEREST"     property="interest" />
+			<result column="REPAYMENT_TIME"     property="shouldRepaymentTime" />
+			<result column="ACTUAL_INTEREST"     property="actualInterest" />
+			<result column="REPAYMENT_YESTIME"     property="repaymentYestime" />
+			<result column="LATE_INTEREST"     property="lateInterest" />
+			<result column="is_custody" 	property="isCustody"/>
+		</resultMap>
+
+<sql id="borrowRecord_Select_Column">
+	RB.is_custody,RB.NAME,RB.BORROWTYPE,RB.STATUS,RB.USER_ID,RM.USERNAME,RB.ACCOUNT,RB.APR,RB.STYLE,RB.ADDTIME,RB.VALID_TIME,RB.APPRSTATUS,RB.PUBLISH_TIME,SUCCESS_TIME,REPAYMENT_ACCOUNT   
+</sql>
+
+	<sql id="borrowRecord_Where_Clause">
+	
+		<if test="status != null and status =='over'">
+		 	AND RB.status <![CDATA[=]]> 5
+		</if>
+		<if test="status != null and status == 'fail'">
+			AND RB.status <![CDATA[<]]> 0 
+		</if>
+		<if test="name != null and name != ''">
+			and RB.NAME like concat('%',#{name},'%')
+		</if>
+		<if test="userName != null and userName != ''">
+			and RM.USERNAME like concat('%',#{userName},'%')
+		</if>
+		<if test="borrowtype != null and borrowtype != ''">
+			and RB.BORROWTYPE =#{borrowtype} 
+		</if>
+
+		<if test="beginPublicTimeStr != null and beginPublicTimeStr != ''">
+			and RB.PUBLISH_TIME <![CDATA[>=]]> #{beginPublicTimeStr}
+		</if>
+		<if test="endPublicTimeStr != null and endPublicTimeStr != ''">
+			and RB.PUBLISH_TIME <![CDATA[<=]]> #{endPublicTimeStr}
+		</if>
+
+
+		
+		
+	</sql>
+
+
+	<!-- 根据条件查询记录数量 -->
+	<select id="queryBorrowRecordCount" parameterType="com.cxdai.console.borrow.manage.vo.BorrowCnd"
+		resultType="java.lang.Integer">
+		SELECT count(*) FROM ROCKY_BORROW RB LEFT JOIN ROCKY_MEMBER RM
+		      ON RB.USER_ID = RM.ID
+			 
+			where 1=1 
+			 <if test="statuslist != null and statuslist !='' ">		 
+			    and RB.STATUS in
+		       <foreach collection="statuslist" item="status" index="index" open="(" separator="," close=")">#{status}</foreach>
+			</if>
+			<include refid="borrowRecord_Where_Clause"/>
+			<if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (RB.is_custody=0 or RB.is_custody is null)
+	  		</if>
+	  		<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and RB.is_custody=1
+	  		</if>  
+	</select>
+	
+	
+	<select id="queryBorrowRecordList" parameterType="com.cxdai.console.borrow.manage.vo.BorrowCnd"
+		resultMap="borrowRecordResultMap">
+		SELECT 
+		<include refid="borrowRecord_Select_Column"/>
+		<if test="status != null and status =='over'">
+			 ,
+			  BR.INTEREST ,
+			  BR.REPAYMENT_TIME ,
+			  BR.ACTUAL_INTEREST  ,
+			  BR.REPAYMENT_YESTIME ,
+			  BR.LATE_INTEREST
+			  
+	    </if>
+		 FROM ROCKY_BORROW RB LEFT JOIN ROCKY_MEMBER RM
+				      ON RB.USER_ID = RM.ID
+	    <if test="status != null and status =='over'">		 
+			 INNER JOIN (
+			  SELECT BORROW_ID,
+			    SUM(INTEREST) AS INTEREST,
+			    FROM_UNIXTIME(MAX(REPAYMENT_TIME), '%Y-%m-%d %H:%i:%S') AS REPAYMENT_TIME,
+			    SUM(REPAYMENT_YESACCOUNT - CAPITAL) AS ACTUAL_INTEREST,
+			    FROM_UNIXTIME(MAX(REPAYMENT_YESTIME), '%Y-%m-%d %H:%i:%S') AS REPAYMENT_YESTIME,
+			    SUM(LATE_INTEREST) AS LATE_INTEREST
+			  FROM rocky_b_repaymentrecord
+			  WHERE `STATUS` = 1
+			  GROUP BY BORROW_ID
+			) BR ON BR.BORROW_ID = RB.ID
+		</if>	 
+			where 1=1 
+			 <if test="statuslist != null and statuslist !='' ">		 
+			    and RB.STATUS in
+		       <foreach collection="statuslist" item="status" index="index" open="(" separator="," close=")">#{status}</foreach>
+			</if>
+			   <include refid="borrowRecord_Where_Clause"/>
+		<if test="isCustody!=null and isCustody!='' and isCustody==0">
+	  		and (RB.is_custody=0 or RB.is_custody is null)
+	  	</if>
+	  	<if test="isCustody!=null and isCustody!='' and isCustody==1">
+	  		and RB.is_custody=1
+	  	</if> 
+	</select>
+	<select id="queryBorrowTotal" parameterType="com.cxdai.console.borrow.manage.vo.BorrowCnd"
+			resultMap="borrowRecordResultMap">
+			SELECT 
+			 	IFNULL(SUM(ACCOUNT),0) as accountTotal,IFNULL(SUM(REPAYMENT_ACCOUNT),0) as repaymentAccountTotal
+			 FROM ROCKY_BORROW RB 
+				where 1=1 
+				 <if test="statuslist != null and statuslist !='' ">		 
+				    and RB.STATUS in
+			       <foreach collection="statuslist" item="status" index="index" open="(" separator="," close=")">#{status}</foreach>
+				</if>
+				   <include refid="borrowRecord_Where_Clause"/>
+	</select>
+</mapper>  

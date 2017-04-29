@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cxdai.console.system.mapper.ConfigurationMapper">
+
+	<select id="selectAll" resultMap="com.cxdai.console.base.mapper.BaseConfigurationMapper.BaseResultMap">
+		select * from rocky_configuration where STATUS = 0 order by TYPE, `ORDER`
+	</select>
+
+
+	<!-- 根据 type 获取 数据字典 集合 -->
+	<select id="selectConfigurationByConn" parameterType="com.cxdai.console.system.entity.Configuration" resultType="java.util.Map">
+		select * from
+		rocky_configuration where 1=1
+		and STATUS = 0
+		and type = #{type}
+		order by TYPE
+	</select>
+	
+	<select id="selectByType" parameterType="Integer" resultMap="com.cxdai.console.base.mapper.BaseConfigurationMapper.BaseResultMap">
+		SELECT * from rocky_configuration where type=#{typeId} and STATUS = 0 limit 1
+	</select>
+	<select id="queeyMaxId" resultType="java.lang.Integer">
+		SELECT max(id) from rocky_configuration
+	</select>
+	<insert id="insert" parameterType="com.cxdai.console.system.entity.Configuration">
+	INSERT INTO rocky_configuration (ID, TYPE, `ORDER`, `NAME`, `VALUE`) VALUES 
+	(#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{order,jdbcType=INTEGER}, 
+	#{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR})
+	</insert>
+</mapper>
